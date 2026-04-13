@@ -1,0 +1,76 @@
+{
+  "name": "ops",
+  "description": "Operations agent — manages infrastructure, CI/CD, monitoring, and incident response",
+  "category": ["coding", "operations"],
+  "mcpServers": {
+    "cubic-channel": {
+      "command": "bun",
+      "args": ["run", "packages/cubic-channel/channel/index.ts"],
+      "env": {
+        "CONVEX_URL": "${CONVEX_URL}",
+        "REPO": "${GITHUB_REPO}",
+        "POLL_INTERVAL": "5000"
+      }
+    }
+  },
+  "allowedTools": [
+    "Read", "Edit", "Write", "Bash", "Glob", "Grep",
+    "cubic-channel:mark_processed",
+    "cubic-channel:mark_all_processed"
+  ],
+  "fileScope": {
+    "writable": [
+      "infrastructure/**",
+      ".github/**",
+      "railway.json",
+      "convex.json",
+      "vercel.json",
+      "Dockerfile",
+      "docker-compose*.yml"
+    ],
+    "readonly": [
+      "src/**",
+      "app/**",
+      "convex/**",
+      "package.json",
+      "tsconfig.json"
+    ],
+    "blocked": [
+      ".harness/agents/**",
+      ".harness/agent-categories.yml"
+    ]
+  },
+  "hooks": {
+    "gateguard": {
+      "event": "preEdit",
+      "description": "Block Edit without prior Read on the same file",
+      "action": "block_if_not_read"
+    },
+    "scope-restriction": {
+      "event": "preEdit",
+      "description": "Cannot modify application code — only infra, CI/CD, monitoring configs",
+      "patterns": ["src/**", "app/**", "components/**", "convex/**"],
+      "action": "block"
+    },
+    "deploy-gate": {
+      "event": "preBash",
+      "description": "Rollback plan required before any production deploy",
+      "triggerPatterns": ["railway up", "vercel deploy --prod", "convex deploy"],
+      "action": "require_rollback_plan"
+    },
+    "budget-enforcer": {
+      "turnLimit": 150,
+      "wallClockTimeout": "30m",
+      "action": "warn_then_stop"
+    }
+  },
+  "rules": [
+    "All infra changes go through feature branches + PRs (never commit to main)",
+    "Every PR gets Cubic auto-review — no merge until clean",
+    "Cannot modify application code — only infra, CI/CD, monitoring",
+    "Incident response: diagnose → fix → deploy → verify → post-mortem",
+    "All deploy actions logged as GitHub Issue comments",
+    "Rollback plan required before any production deploy",
+    "Check /cubic-comments after each push, fix until clean"
+  ]
+}

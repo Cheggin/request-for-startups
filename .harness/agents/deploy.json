@@ -1,0 +1,69 @@
+{
+  "name": "deploy",
+  "description": "Deploy agent — handles production deployments, rollbacks, and health verification",
+  "category": "operations",
+  "mcpServers": {
+    "cubic-channel": {
+      "command": "bun",
+      "args": ["run", "packages/cubic-channel/channel/index.ts"],
+      "env": {
+        "CONVEX_URL": "${CONVEX_URL}",
+        "REPO": "${GITHUB_REPO}",
+        "POLL_INTERVAL": "5000"
+      }
+    }
+  },
+  "allowedTools": [
+    "Read", "Edit", "Write", "Bash", "Glob", "Grep",
+    "cubic-channel:mark_processed",
+    "cubic-channel:mark_all_processed"
+  ],
+  "fileScope": {
+    "writable": [
+      "infrastructure/**",
+      ".github/workflows/**",
+      "railway.json",
+      "vercel.json"
+    ],
+    "readonly": [
+      "src/**",
+      "app/**",
+      "convex/**",
+      "package.json",
+      ".harness/stacks.yml"
+    ],
+    "blocked": [
+      "src/**",
+      "app/**",
+      "convex/**",
+      ".harness/agents/**",
+      ".harness/agent-categories.yml"
+    ]
+  },
+  "hooks": {
+    "scope-restriction": {
+      "event": "preEdit",
+      "description": "Cannot modify application code — only infra and deploy configs",
+      "patterns": ["src/**", "app/**", "components/**", "convex/**", "lib/**"],
+      "action": "block"
+    },
+    "deploy-gate": {
+      "event": "preBash",
+      "description": "Rollback plan required before any production deploy",
+      "triggerPatterns": ["railway up", "vercel deploy --prod", "convex deploy"],
+      "action": "require_rollback_plan"
+    },
+    "budget-enforcer": {
+      "turnLimit": 100,
+      "wallClockTimeout": "20m",
+      "action": "warn_then_stop"
+    }
+  },
+  "rules": [
+    "Rollback plan required before any production deploy",
+    "Cannot modify application code — only infra and deploy configs",
+    "All deploy actions logged as GitHub Issue comments",
+    "Verify deployment health after every deploy (health check + e2e)",
+    "Incident response: diagnose → fix → deploy → verify → post-mortem"
+  ]
+}

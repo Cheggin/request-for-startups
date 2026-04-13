@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "cubic-channel": {
+      "command": "bun",
+      "args": ["run", "packages/cubic-channel/channel/index.ts"],
+      "env": {
+        "CONVEX_URL": "${CONVEX_URL}",
+        "REPO": "${GITHUB_REPO}",
+        "POLL_INTERVAL": "5000"
+      }
+    }
+  }
+}

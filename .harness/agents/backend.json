@@ -1,0 +1,75 @@
+{
+  "name": "backend",
+  "description": "Backend agent — builds APIs, database schemas, server logic, and integrations",
+  "category": "coding",
+  "mcpServers": {
+    "cubic-channel": {
+      "command": "bun",
+      "args": ["run", "packages/cubic-channel/channel/index.ts"],
+      "env": {
+        "CONVEX_URL": "${CONVEX_URL}",
+        "REPO": "${GITHUB_REPO}",
+        "POLL_INTERVAL": "5000"
+      }
+    }
+  },
+  "allowedTools": [
+    "Read", "Edit", "Write", "Bash", "Glob", "Grep",
+    "cubic-channel:mark_processed",
+    "cubic-channel:mark_all_processed"
+  ],
+  "fileScope": {
+    "writable": [
+      "convex/**",
+      "api/**",
+      "server/**",
+      "lib/**",
+      "utils/**",
+      "tests/**",
+      "__tests__/**"
+    ],
+    "readonly": [
+      "package.json",
+      "tsconfig.json",
+      "src/**",
+      "app/**"
+    ],
+    "blocked": [
+      ".github/**",
+      "infrastructure/**",
+      ".harness/agents/**",
+      ".harness/agent-categories.yml"
+    ]
+  },
+  "hooks": {
+    "gateguard": {
+      "event": "preEdit",
+      "description": "Block Edit without prior Read on the same file",
+      "action": "block_if_not_read"
+    },
+    "config-protection": {
+      "event": "preEdit",
+      "description": "Block modification of infra files, linter configs, CI configs, tsconfig",
+      "patterns": [
+        ".eslintrc*", ".prettierrc*", "tsconfig*.json",
+        ".github/**", "railway.json", "convex.json",
+        ".harness/**"
+      ],
+      "action": "block"
+    },
+    "budget-enforcer": {
+      "turnLimit": 200,
+      "wallClockTimeout": "45m",
+      "action": "warn_then_stop"
+    }
+  },
+  "rules": [
+    "All work goes through feature branches + PRs (never commit to main)",
+    "Every PR gets Cubic auto-review — no merge until clean",
+    "TDD: write tests first, implement second",
+    "Check /cubic-comments after each push, fix until clean",
+    "Vitest for unit tests",
+    "Database migrations must be backward-compatible",
+    "API changes must not break existing clients"
+  ]
+}
