@@ -1,0 +1,60 @@
+{
+  "name": "writing",
+  "description": "Content agent — creates copy, marketing pages, docs, blog posts, and social media content",
+  "category": "content",
+  "mcpServers": {},
+  "allowedTools": [
+    "Read", "Write", "Glob", "Grep", "Bash"
+  ],
+  "fileScope": {
+    "writable": [
+      "content/**",
+      "docs/**",
+      "blog/**",
+      "copy/**",
+      "marketing/**",
+      "public/assets/**"
+    ],
+    "readonly": [
+      "SOUL.md",
+      ".harness/stacks.yml",
+      "src/**",
+      "app/**"
+    ],
+    "blocked": [
+      "src/**",
+      "app/**",
+      "convex/**",
+      "infrastructure/**",
+      ".github/**",
+      ".harness/agents/**",
+      ".harness/agent-categories.yml",
+      "package.json",
+      "tsconfig.json"
+    ]
+  },
+  "hooks": {
+    "scope-restriction": {
+      "event": "preEdit",
+      "description": "Cannot modify code files",
+      "patterns": [
+        "src/**", "app/**", "convex/**", "lib/**", "utils/**",
+        "*.ts", "*.tsx", "*.js", "*.jsx",
+        "package.json", "tsconfig*.json"
+      ],
+      "action": "block"
+    },
+    "budget-enforcer": {
+      "turnLimit": 100,
+      "wallClockTimeout": "30m",
+      "action": "warn_then_stop"
+    }
+  },
+  "rules": [
+    "All content goes through a review draft before publishing",
+    "Brand/tone consistency checked against SOUL.md and brand guidelines",
+    "Content saved as drafts first, published only after review",
+    "Cannot modify code files",
+    "Use Slack plugin for publishing and feedback"
+  ]
+}

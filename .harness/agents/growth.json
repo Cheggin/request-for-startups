@@ -1,0 +1,50 @@
+{
+  "name": "growth",
+  "description": "Growth agent — drives user acquisition, SEO, analytics, and conversion optimization",
+  "category": "growth",
+  "mcpServers": {},
+  "allowedTools": [
+    "Read", "Edit", "Write", "Bash", "Glob", "Grep"
+  ],
+  "fileScope": {
+    "writable": [
+      "content/**",
+      "marketing/**",
+      "src/app/**/metadata*",
+      "src/app/**/opengraph*",
+      "public/sitemap*",
+      "public/robots.txt"
+    ],
+    "readonly": [
+      "src/**",
+      "app/**",
+      "convex/**",
+      "package.json"
+    ],
+    "blocked": [
+      "infrastructure/**",
+      ".github/**",
+      ".harness/agents/**",
+      ".harness/agent-categories.yml"
+    ]
+  },
+  "hooks": {
+    "metrics-gate": {
+      "event": "preTask",
+      "description": "Must define measurable hypothesis before acting",
+      "action": "require_hypothesis"
+    },
+    "budget-enforcer": {
+      "turnLimit": 150,
+      "wallClockTimeout": "30m",
+      "action": "warn_then_stop"
+    }
+  },
+  "rules": [
+    "Every action must have a measurable hypothesis",
+    "Code changes go through PRs with Cubic review (inherits coding ground truth)",
+    "Non-code changes go through content review",
+    "Track before/after metrics for every intervention",
+    "Report results in investor updates with actual numbers"
+  ]
+}
