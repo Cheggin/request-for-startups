@@ -11,6 +11,25 @@ Cubic reviews PR  ->  GitHub webhook fires
   ->  Claude fixes the issue, pushes, Cubic re-reviews
 ```
 
+## Ground Truth: Cubic Review Pipeline (Non-Negotiable)
+
+Every repo the harness creates MUST have the following. No exceptions.
+
+1. **`.mcp.json` with cubic-channel registered** — The cubic-channel MCP server must be in every repo's `.mcp.json` so every Claude Code session (Builder, QA, Deployer, any agent) receives Cubic review findings in real time.
+
+2. **Cubic GitHub App installed** — The Cubic GitHub App must be installed on the repo so it auto-reviews every PR.
+
+3. **All work goes through PRs with Cubic review** — Agents never push directly to main. Every change is a feature branch + PR. Cubic reviews automatically on push. No merging until Cubic is clean.
+
+4. **Agents fix until clean** — When Cubic posts findings, the agent checks `/cubic-comments`, fixes every issue, and pushes again. This loops until Cubic returns a clean review. Only then can the PR be merged.
+
+The onboarding scaffold step (Step 5 in the harness) automates this setup for every new repo:
+- Deploys a Convex project for the event queue
+- Deploys the webhook receiver to Railway
+- Configures the GitHub webhook
+- Registers the cubic-channel in `.mcp.json`
+- Installs the Cubic GitHub App
+
 ## Components
 
 | Component | Location | Runs where |
