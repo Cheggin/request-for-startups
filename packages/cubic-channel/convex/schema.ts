@@ -14,5 +14,6 @@ export default defineSchema({
     status: v.union(v.literal("pending"), v.literal("processed")),
   })
     .index("by_status", ["status"])
-    .index("by_repo_status", ["repo", "status"]),
+    .index("by_repo_status", ["repo", "status"])
+    .index("by_commentId", ["commentId"]),
 });

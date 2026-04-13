@@ -99,7 +99,12 @@ export function createHandler(deps: {
     }
 
     const event = req.headers.get("x-github-event");
-    const payload = JSON.parse(body);
+    let payload: unknown;
+    try {
+      payload = JSON.parse(body);
+    } catch {
+      return new Response("invalid JSON", { status: 400 });
+    }
 
     if (event === "pull_request_review") {
       const review = payload.review;

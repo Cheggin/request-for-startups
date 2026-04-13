@@ -15,7 +15,7 @@ export const addEvent = mutation({
   handler: async (ctx, args) => {
     const existing = await ctx.db
       .query("cubicEvents")
-      .filter((q) => q.eq(q.field("commentId"), args.commentId))
+      .withIndex("by_commentId", (q) => q.eq("commentId", args.commentId))
       .first();
 
     if (existing) return existing._id;

@@ -22,7 +22,8 @@ import {
 
 const CONVEX_URL = process.env.CONVEX_URL;
 const REPO = process.env.REPO;
-const POLL_INTERVAL = parseInt(process.env.POLL_INTERVAL || "5000", 10);
+const _parsedInterval = parseInt(process.env.POLL_INTERVAL || "5000", 10);
+const POLL_INTERVAL = Number.isFinite(_parsedInterval) && _parsedInterval > 0 ? _parsedInterval : 5000;
 
 if (!CONVEX_URL) throw new Error("CONVEX_URL is required");
 if (!REPO) throw new Error("REPO is required (e.g. owner/repo)");
@@ -151,7 +152,6 @@ async function pollAndDeliver(): Promise<void> {
 
     for (const event of events) {
       if (deliveredIds.has(event._id)) continue;
-      deliveredIds.add(event._id);
 
       const meta: Record<string, string> = {
         event_id: event._id,
@@ -171,6 +171,7 @@ async function pollAndDeliver(): Promise<void> {
           meta,
         },
       });
+      deliveredIds.add(event._id);
     }
   } catch (err) {
     // Silently retry on next poll — don't crash the channel

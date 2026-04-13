@@ -326,6 +326,18 @@ describe("createHandler", () => {
     expect(writeToConvex).not.toHaveBeenCalled();
   });
 
+  // ── Malformed JSON ─────────────────────────────────────────────
+
+  it("returns 400 for malformed JSON body", async () => {
+    const req = makeRequest("not valid json {{{", {
+      "x-github-event": "pull_request_review",
+      "x-hub-signature-256": "sha256=valid",
+    });
+    const res = await handler(req);
+    expect(res.status).toBe(400);
+    expect(await res.text()).toBe("invalid JSON");
+  });
+
   // ── Unhandled events ───────────────────────────────────────────
 
   it("ignores unhandled event types", async () => {
