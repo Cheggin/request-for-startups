@@ -46,7 +46,7 @@ export interface JudgeOptions {
  */
 async function runClaudeP(prompt: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    const proc = spawn("claude", ["-p", "--output-format", "json"], {
+    const proc = spawn("claude", ["-p", "--dangerously-skip-permissions", "--output-format", "json"], {
       stdio: ["pipe", "pipe", "pipe"],
     });
 
