@@ -1,30 +1,53 @@
-# brand-guidelines
+---
+name: brand-guidelines
+description: Extract and codify brand guidelines from design assets into a reusable brand configuration
+category: content
+allowed-tools:
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - Bash
+---
 
-**Status:** 🔴 Not started
-**Agent:** design
-**Category:** design
-**Created:** 2026-04-13
+## Purpose
 
-## Description
+Generate a comprehensive brand guidelines file from design assets and project configuration. Extracts color palette, typography, spacing, component usage rules, and voice/tone into a structured format that all content and development agents reference for visual and verbal consistency.
 
-Generate brand guidelines from the Figma design. Extracts color palette, typography, component usage rules, and voice/tone. Stored as .harness/brand.yml. All content agents reference this file for visual and verbal consistency.
+## Steps
+
+1. Read existing design tokens, Figma exports, or CSS variable definitions to identify the color palette (primary, secondary, neutral, semantic colors).
+2. Extract typography rules including font families, sizes, weights, and line heights.
+3. Extract spacing and layout conventions from the design system.
+4. Document component usage rules with do's and don'ts for each major component.
+5. Read SOUL.md or equivalent voice/tone documentation to capture verbal brand identity.
+6. Document logo usage rules including minimum size, clear space, and color variants.
+7. Write all guidelines to a structured YAML file (e.g., .harness/brand.yml).
+8. Validate that existing content and code conform to the documented brand guidelines.
+9. Flag any violations found during validation.
+
+## Examples
+
+Good:
+- "brand.yml defines primary color as #1A73E8 with documented accessible contrast ratios against white and dark backgrounds."
+- "Typography section specifies Inter 16px/1.5 for body text and Inter 600 24px/1.3 for H2 headings."
+- "Voice guidelines state: use active voice, second person, and short sentences under 20 words."
+
+Bad:
+- "Brand file lists colors as 'blue' and 'red' without hex values or usage context."
+- "Typography section missing font weights or line heights."
+- "No voice/tone section, leaving content agents to guess the writing style."
 
 ## Checklist
 
-- [ ] Extract color palette from Figma design tokens (primary, secondary, neutral, semantic)
-- [ ] Extract typography rules — font families, sizes, weights, line heights
-- [ ] Extract spacing and layout conventions
-- [ ] Component usage rules — when to use each component, do's and don'ts
-- [ ] Voice and tone guidelines derived from SOUL.md
-- [ ] Logo usage rules — minimum size, clear space, color variants
-- [ ] Store all guidelines in .harness/brand.yml
-- [ ] Content agents read brand.yml before generating any content
-- [ ] Website-dev agent references brand.yml for CSS variables and design tokens
-- [ ] Brand guidelines updated when Figma design changes
-- [ ] Validation — flag any content or code that violates brand guidelines
-
-## Notes
-
-- brand.yml is the single source of truth for all brand-related decisions
-- Figma design tokens can be exported via the Figma API or Variables REST API
-- Voice/tone from SOUL.md and visual identity from Figma should feel cohesive
+- [ ] Color palette extracted with hex values for primary, secondary, neutral, and semantic colors
+- [ ] Typography rules documented with font families, sizes, weights, and line heights
+- [ ] Spacing and layout conventions captured
+- [ ] Component usage rules with do's and don'ts
+- [ ] Voice and tone guidelines derived from SOUL.md or equivalent
+- [ ] Logo usage rules including minimum size, clear space, and color variants
+- [ ] All guidelines stored in a structured file (e.g., .harness/brand.yml)
+- [ ] Content agents reference the brand file before generating content
+- [ ] Development agents reference the brand file for CSS variables and design tokens
+- [ ] Validation flags content or code that violates brand guidelines
