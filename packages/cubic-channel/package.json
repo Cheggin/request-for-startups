@@ -6,6 +6,7 @@
   "scripts": {
     "dev:channel": "bun run channel/index.ts",
     "dev:receiver": "bun run receiver/index.ts",
+    "start": "bun run receiver/index.ts",
     "deploy:receiver": "railway up",
     "test": "vitest run"
   },

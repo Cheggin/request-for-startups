@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "cubic-channel": {
+      "command": "bun",
+      "args": ["run", "packages/cubic-channel/channel/index.ts"],
+      "env": {
+        "CONVEX_URL": "https://fantastic-partridge-818.convex.cloud",
+        "REPO": "Cheggin/request-for-startups",
+        "POLL_INTERVAL": "5000"
+      }
+    }
+  }
+}
