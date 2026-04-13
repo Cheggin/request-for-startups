@@ -1,0 +1,23 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "ui-loop",
+  "description": "Autonomous AI agent that builds UIs in a loop",
+  "owner": {
+    "name": "Reagan Hsu"
+  },
+  "plugins": [
+    {
+      "name": "ui-loop",
+      "description": "Autonomous AI agent that builds UIs in a loop — runs for hours or days, writing code, taking screenshots, and iterating until the UI is right",
+      "version": "0.1.0",
+      "author": {
+        "name": "Reagan Hsu"
+      },
+      "source": "./",
+      "category": "development",
+      "homepage": "https://github.com/Cheggin/ui-loop",
+      "tags": ["ui", "agent", "autonomous", "frontend", "loop"]
+    }
+  ],
+  "version": "0.1.0"
+}
