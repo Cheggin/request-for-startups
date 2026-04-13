@@ -1,38 +1,62 @@
-# deploy-pipeline
+---
+name: deploy-pipeline
+description: Automated deploy pipeline for Vercel, Railway, and Convex with pre/post checks and rollback
+category: coding
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - Grep
+  - Glob
+---
 
-**Status:** 🔴 Not started
-**Agent:** unassigned
-**Category:** ops
-**Created:** 2026-04-13
+# Deploy Pipeline
 
-## Description
+## Purpose
 
-Automated deploy to Vercel (frontend) + Railway (backend) + Convex (database). Pre-deploy checks: tests pass, build succeeds, no security vulnerabilities. Post-deploy: health check, e2e tests against production URL. Rollback mechanism if post-deploy checks fail.
+Automate deployment to Vercel (frontend), Railway (backend), and Convex (database) with proper ordering, pre-deploy validation, post-deploy health checks, and automatic rollback on failure. Ensure every deploy is safe, verified, and reversible.
+
+## Steps
+
+1. Acquire a deploy lock to prevent concurrent deployments; queue any subsequent requests.
+2. Record current deployed versions of all services as a rollback snapshot.
+3. Run the full test suite; abort the deploy if any tests fail.
+4. Run a production build locally; abort the deploy if the build fails.
+5. Run `npm audit` or equivalent security audit; abort on critical vulnerabilities.
+6. Deploy Convex schema and functions first via `npx convex deploy` (database must be ready before backend).
+7. Deploy backend to Railway via Railway CLI.
+8. Deploy frontend to Vercel via Vercel CLI or git push to production branch.
+9. Hit the /health endpoint on both frontend and backend; confirm 200 responses.
+10. Run the e2e test suite against the production URL to verify critical user flows.
+11. Monitor error tracking for 5 minutes post-deploy; flag if error rate spikes.
+12. If any post-deploy check fails, rollback in reverse order: frontend first, then backend, then database (only if migration is backward-compatible).
+13. Post deploy result (success or rollback) to the project Slack channel.
+14. Record the deploy in the deploy log with timestamp, commit SHA, services deployed, check results, and outcome.
+15. Release the deploy lock.
+
+## Examples
+
+Good:
+- "Deploy all services to production: run tests, build, audit, then deploy Convex, Railway, Vercel in order. Health check and e2e after. Rollback if anything fails."
+- "Rollback frontend and backend to the previous deploy snapshot after post-deploy e2e failures."
+
+Bad:
+- "Deploy to production." (No pre-checks, no ordering, no rollback plan.)
+- "Push to Vercel." (Only deploys frontend, ignores backend and database dependencies.)
 
 ## Checklist
 
-- [ ] Vercel deploy — trigger frontend deployment via Vercel CLI or git push to production branch
-- [ ] Railway deploy — trigger backend deployment via Railway CLI
-- [ ] Convex deploy — push Convex schema and functions via `npx convex deploy`
-- [ ] Deploy ordering — deploy database (Convex) first, then backend (Railway), then frontend (Vercel) to respect dependencies
-- [ ] Pre-deploy: test suite — run full test suite; abort deploy if tests fail
-- [ ] Pre-deploy: build check — run production build locally; abort deploy if build fails
-- [ ] Pre-deploy: security audit — run `npm audit` or equivalent; abort on critical vulnerabilities
-- [ ] Pre-deploy: snapshot — record current deployed versions of all services for rollback reference
-- [ ] Post-deploy: health check — hit /health endpoint on both frontend and backend; confirm 200 response
-- [ ] Post-deploy: e2e tests — run e2e test suite against production URL to verify critical user flows
-- [ ] Post-deploy: error rate check — monitor error-tracking for 5 minutes post-deploy; flag if error rate spikes
-- [ ] Rollback mechanism — revert all services to pre-deploy snapshot versions if post-deploy checks fail
-- [ ] Rollback ordering — rollback in reverse order: frontend first, then backend, then database (if safe)
-- [ ] Deploy lock — prevent concurrent deploys; queue subsequent deploy requests
-- [ ] Downtime window signal — notify uptime-monitor of expected downtime during deploy to suppress false alerts
-- [ ] Deploy log — record every deploy with: timestamp, commit SHA, services deployed, pre/post check results, success/rollback
-- [ ] Slack notification — post deploy result (success or rollback) to project Slack channel
-- [ ] Unit tests for deploy ordering, rollback logic, pre/post check gates, and deploy lock
-
-## Notes
-
-- Deploy ordering matters — deploying frontend before backend can cause API mismatches
-- Rollback is the safety net — every deploy must be reversible
-- Database rollbacks (Convex) are tricky if schema migrations are involved — only rollback Convex if the migration is backward-compatible
-- The 5-minute error rate window after deploy catches regressions that pass tests but fail in production
+- [ ] Deploy lock prevents concurrent deploys
+- [ ] Pre-deploy snapshot records current service versions for rollback
+- [ ] Pre-deploy test suite runs and gates the deploy
+- [ ] Pre-deploy production build check passes
+- [ ] Pre-deploy security audit passes with no critical vulnerabilities
+- [ ] Deploy order: Convex first, then Railway, then Vercel
+- [ ] Post-deploy health check confirms 200 on /health endpoints
+- [ ] Post-deploy e2e tests verify critical user flows against production
+- [ ] Post-deploy error rate monitoring for 5 minutes
+- [ ] Rollback triggers automatically on post-deploy check failure
+- [ ] Rollback order: frontend, backend, database (if safe)
+- [ ] Deploy log records timestamp, SHA, services, results, and outcome
+- [ ] Slack notification posted on deploy success or rollback
