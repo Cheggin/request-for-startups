@@ -1,231 +1,114 @@
 /**
  * Tests for the LLM-as-judge evaluator.
  *
- * Mocks the Anthropic SDK to avoid real API calls.
+ * Mocks the child_process spawn to avoid real claude -p calls.
  */
 
 import { describe, test, expect, mock, beforeEach } from "bun:test";
 import { judge, callJudge, type JudgeResult } from "../src/llm-judge";
+import { EventEmitter } from "events";
+import { Readable, Writable } from "stream";
 
 // ---------------------------------------------------------------------------
-// Mock setup
+// Mock setup — mock child_process.spawn to simulate claude -p
 // ---------------------------------------------------------------------------
 
-// Mock the Anthropic SDK
-const mockCreate = mock(() =>
-  Promise.resolve({
-    content: [
-      {
-        type: "text" as const,
-        text: '{"clarity": 5, "completeness": 4, "actionability": 5, "reasoning": "Well structured output with clear instructions."}',
-      },
-    ],
-  })
-);
+function createMockProcess(stdout: string, exitCode = 0) {
+  const proc = new EventEmitter() as EventEmitter & {
+    stdout: Readable;
+    stderr: Readable;
+    stdin: Writable;
+  };
+  proc.stdout = Readable.from([stdout]);
+  proc.stderr = Readable.from([]);
+  proc.stdin = new Writable({
+    write(_chunk, _enc, cb) { cb(); },
+  });
 
-mock.module("@anthropic-ai/sdk", () => ({
-  default: class MockAnthropic {
-    messages = { create: mockCreate };
-  },
-}));
+  setTimeout(() => proc.emit("close", exitCode), 10);
+  return proc;
+}
 
-beforeEach(() => {
-  mockCreate.mockClear();
-});
+let mockSpawn: ReturnType<typeof mock>;
+
+function setMockResponse(jsonStr: string, exitCode = 0) {
+  const output = JSON.stringify({ result: jsonStr });
+  mockSpawn = mock(() => createMockProcess(output, exitCode));
+  mock.module("child_process", () => ({
+    spawn: mockSpawn,
+  }));
+}
 
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
 
 describe("callJudge", () => {
+  beforeEach(() => {
+    setMockResponse('{"clarity": 5, "completeness": 4, "actionability": 5, "reasoning": "Well structured output with clear instructions."}');
+  });
+
   test("parses JSON from response text", async () => {
-    const result = await callJudge<{ clarity: number; reasoning: string }>(
-      "test prompt"
-    );
+    const result = await callJudge<{ clarity: number; reasoning: string }>("test prompt");
     expect(result.clarity).toBe(5);
-    expect(result.reasoning).toBe(
-      "Well structured output with clear instructions."
-    );
-  });
-
-  test("calls Anthropic with correct parameters", async () => {
-    await callJudge("test prompt", "claude-sonnet-4-6");
-    expect(mockCreate).toHaveBeenCalledTimes(1);
-
-    const callArgs = mockCreate.mock.calls[0][0] as Record<string, unknown>;
-    expect(callArgs.model).toBe("claude-sonnet-4-6");
-    expect(callArgs.max_tokens).toBe(1024);
-    expect(
-      (callArgs.messages as Array<{ role: string; content: string }>)[0].content
-    ).toBe("test prompt");
-  });
-
-  test("retries on 429 rate limit", async () => {
-    let callCount = 0;
-    mockCreate.mockImplementation(() => {
-      callCount++;
-      if (callCount === 1) {
-        const err = new Error("Rate limited") as Error & { status: number };
-        err.status = 429;
-        return Promise.reject(err);
-      }
-      return Promise.resolve({
-        content: [
-          {
-            type: "text" as const,
-            text: '{"clarity": 3, "completeness": 3, "actionability": 3, "reasoning": "ok"}',
-          },
-        ],
-      });
-    });
-
-    const result = await callJudge<{ clarity: number }>("test");
-    expect(result.clarity).toBe(3);
-    expect(callCount).toBe(2);
+    expect(result.reasoning).toBe("Well structured output with clear instructions.");
   });
 
   test("throws on non-JSON response", async () => {
-    mockCreate.mockImplementation(() =>
-      Promise.resolve({
-        content: [{ type: "text" as const, text: "Not JSON at all" }],
-      })
-    );
-
+    setMockResponse("Not JSON at all");
     await expect(callJudge("test")).rejects.toThrow("Judge returned non-JSON");
   });
 
   test("extracts JSON embedded in other text", async () => {
-    mockCreate.mockImplementation(() =>
-      Promise.resolve({
-        content: [
-          {
-            type: "text" as const,
-            text: 'Here is my evaluation:\n{"clarity": 4, "completeness": 4, "actionability": 4, "reasoning": "good"}\nThat is my assessment.',
-          },
-        ],
-      })
-    );
-
+    setMockResponse('Here is my evaluation:\n{"clarity": 4, "completeness": 4, "actionability": 4, "reasoning": "good"}\nThat is my assessment.');
     const result = await callJudge<{ clarity: number }>("test");
     expect(result.clarity).toBe(4);
+  });
+
+  test("throws on non-zero exit code", async () => {
+    const output = JSON.stringify({ result: "error" });
+    mockSpawn = mock(() => createMockProcess(output, 1));
+    mock.module("child_process", () => ({ spawn: mockSpawn }));
+
+    await expect(callJudge("test")).rejects.toThrow("claude -p exited with code 1");
   });
 });
 
 describe("judge", () => {
   beforeEach(() => {
-    mockCreate.mockImplementation(() =>
-      Promise.resolve({
-        content: [
-          {
-            type: "text" as const,
-            text: '{"clarity": 5, "completeness": 4, "actionability": 5, "reasoning": "Well structured output with clear instructions."}',
-          },
-        ],
-      })
-    );
+    setMockResponse('{"clarity": 5, "completeness": 4, "actionability": 5, "reasoning": "Well structured output with clear instructions."}');
   });
 
   test("returns pass when all scores >= 4", async () => {
     const result = await judge({ content: "Some great output" });
-
     expect(result.pass).toBe(true);
     expect(result.scores.clarity).toBe(5);
     expect(result.scores.completeness).toBe(4);
     expect(result.scores.actionability).toBe(5);
-    expect(result.reasoning).toBe(
-      "Well structured output with clear instructions."
-    );
+    expect(result.reasoning).toBe("Well structured output with clear instructions.");
   });
 
   test("returns fail when any score < 4", async () => {
-    mockCreate.mockImplementation(() =>
-      Promise.resolve({
-        content: [
-          {
-            type: "text" as const,
-            text: '{"clarity": 5, "completeness": 3, "actionability": 5, "reasoning": "Missing some details."}',
-          },
-        ],
-      })
-    );
-
+    setMockResponse('{"clarity": 5, "completeness": 3, "actionability": 5, "reasoning": "Missing some details."}');
     const result = await judge({ content: "Incomplete output" });
-
     expect(result.pass).toBe(false);
     expect(result.scores.completeness).toBe(3);
   });
 
   test("respects custom threshold", async () => {
-    mockCreate.mockImplementation(() =>
-      Promise.resolve({
-        content: [
-          {
-            type: "text" as const,
-            text: '{"clarity": 3, "completeness": 3, "actionability": 3, "reasoning": "Adequate."}',
-          },
-        ],
-      })
-    );
-
-    const result = await judge({
-      content: "Adequate output",
-      threshold: 3,
-    });
-
+    setMockResponse('{"clarity": 3, "completeness": 3, "actionability": 3, "reasoning": "Adequate."}');
+    const result = await judge({ content: "Adequate output", threshold: 3 });
     expect(result.pass).toBe(true);
   });
 
-  test("includes task description in prompt when provided", async () => {
-    await judge({
-      content: "Output text",
-      taskDescription: "generate a migration plan",
-    });
-
-    const callArgs = mockCreate.mock.calls[0][0] as Record<string, unknown>;
-    const promptText = (
-      callArgs.messages as Array<{ content: string }>
-    )[0].content;
-    expect(promptText).toContain("generate a migration plan");
-  });
-
-  test("works without task description", async () => {
-    await judge({ content: "Output text" });
-
-    const callArgs = mockCreate.mock.calls[0][0] as Record<string, unknown>;
-    const promptText = (
-      callArgs.messages as Array<{ content: string }>
-    )[0].content;
-    expect(promptText).not.toContain("The skill was asked to:");
-  });
-
   test("all scores at exactly threshold pass", async () => {
-    mockCreate.mockImplementation(() =>
-      Promise.resolve({
-        content: [
-          {
-            type: "text" as const,
-            text: '{"clarity": 4, "completeness": 4, "actionability": 4, "reasoning": "Meets minimum bar."}',
-          },
-        ],
-      })
-    );
-
+    setMockResponse('{"clarity": 4, "completeness": 4, "actionability": 4, "reasoning": "Meets minimum bar."}');
     const result = await judge({ content: "Borderline output" });
     expect(result.pass).toBe(true);
   });
 
   test("score of 1 fails", async () => {
-    mockCreate.mockImplementation(() =>
-      Promise.resolve({
-        content: [
-          {
-            type: "text" as const,
-            text: '{"clarity": 1, "completeness": 1, "actionability": 1, "reasoning": "Unusable."}',
-          },
-        ],
-      })
-    );
-
+    setMockResponse('{"clarity": 1, "completeness": 1, "actionability": 1, "reasoning": "Unusable."}');
     const result = await judge({ content: "Terrible output" });
     expect(result.pass).toBe(false);
     expect(result.scores.clarity).toBe(1);

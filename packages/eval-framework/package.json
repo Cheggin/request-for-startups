@@ -6,9 +6,6 @@
     "test": "bun test",
     "typecheck": "tsc --noEmit"
   },
-  "dependencies": {
-    "@anthropic-ai/sdk": "^0.39.0"
-  },
   "devDependencies": {
     "@types/bun": "^1.2.0",
     "typescript": "^5.7.0"

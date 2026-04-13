@@ -1,14 +1,15 @@
 /**
  * LLM-as-judge evaluator for skill output quality.
  *
- * Sends skill output to Claude Sonnet with a structured judge prompt,
- * scoring on clarity, completeness, and actionability (1-5 each).
- * All axes must be >= 4 to pass.
+ * Uses `claude -p` (Claude Code CLI) to judge skill output,
+ * running through the user's existing Claude Max subscription.
+ * No API key needed.
  *
- * Requires: ANTHROPIC_API_KEY env var.
+ * Scores on clarity, completeness, and actionability (1-5 each).
+ * All axes must be >= 4 to pass.
  */
 
-import Anthropic from "@anthropic-ai/sdk";
+import { spawn } from "child_process";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -33,46 +34,55 @@ export interface JudgeOptions {
   taskDescription?: string;
   /** Minimum score on each axis to pass. Default 4. */
   threshold?: number;
-  /** Model to use for judging. Default 'claude-opus-4-6'. */
-  model?: string;
 }
 
 // ---------------------------------------------------------------------------
-// Internal: call the Anthropic API
+// Internal: call claude -p
 // ---------------------------------------------------------------------------
 
 /**
- * Call Claude with a prompt and extract JSON from the response.
- * Retries once on 429 rate limit errors.
+ * Run a prompt through `claude -p` and return the text output.
+ * Uses the user's Claude Code subscription (no API key needed).
  */
-export async function callJudge<T>(
-  prompt: string,
-  model: string = "claude-opus-4-6"
-): Promise<T> {
-  const client = new Anthropic();
-
-  const makeRequest = () =>
-    client.messages.create({
-      model,
-      max_tokens: 1024,
-      messages: [{ role: "user", content: prompt }],
+async function runClaudeP(prompt: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const proc = spawn("claude", ["-p", "--output-format", "json"], {
+      stdio: ["pipe", "pipe", "pipe"],
     });
 
-  let response;
-  try {
-    response = await makeRequest();
-  } catch (err: unknown) {
-    const error = err as { status?: number };
-    if (error.status === 429) {
-      await new Promise((r) => setTimeout(r, 1000));
-      response = await makeRequest();
-    } else {
-      throw err;
-    }
-  }
+    let stdout = "";
+    let stderr = "";
 
-  const text =
-    response.content[0].type === "text" ? response.content[0].text : "";
+    proc.stdout.on("data", (chunk: Buffer) => {
+      stdout += chunk.toString();
+    });
+    proc.stderr.on("data", (chunk: Buffer) => {
+      stderr += chunk.toString();
+    });
+
+    proc.on("close", (code) => {
+      if (code !== 0) {
+        reject(new Error(`claude -p exited with code ${code}: ${stderr}`));
+        return;
+      }
+      try {
+        const parsed = JSON.parse(stdout);
+        resolve(parsed.result || stdout);
+      } catch {
+        resolve(stdout);
+      }
+    });
+
+    proc.stdin.write(prompt);
+    proc.stdin.end();
+  });
+}
+
+/**
+ * Call Claude via CLI and extract JSON from the response.
+ */
+export async function callJudge<T>(prompt: string): Promise<T> {
+  const text = await runClaudeP(prompt);
   const jsonMatch = text.match(/\{[\s\S]*\}/);
   if (!jsonMatch)
     throw new Error(`Judge returned non-JSON: ${text.slice(0, 200)}`);
@@ -96,12 +106,7 @@ const PASS_THRESHOLD = 4;
  * All axes must be >= threshold (default 4) to pass.
  */
 export async function judge(options: JudgeOptions): Promise<JudgeResult> {
-  const {
-    content,
-    taskDescription,
-    threshold = PASS_THRESHOLD,
-    model = "claude-opus-4-6",
-  } = options;
+  const { content, taskDescription, threshold = PASS_THRESHOLD } = options;
 
   const taskContext = taskDescription
     ? `\nThe skill was asked to: ${taskDescription}\n`
@@ -129,10 +134,7 @@ Here is the output to evaluate:
 
 ${content}`;
 
-  const raw = await callJudge<JudgeScores & { reasoning: string }>(
-    prompt,
-    model
-  );
+  const raw = await callJudge<JudgeScores & { reasoning: string }>(prompt);
 
   const scores: JudgeScores = {
     clarity: raw.clarity,
@@ -157,17 +159,15 @@ ${content}`;
 // ---------------------------------------------------------------------------
 
 /**
- * Judge a specific documentation section (mirrors the gstack reference).
+ * Judge a specific documentation section.
  */
 export async function judgeDocSection(
   sectionName: string,
-  content: string,
-  model?: string
+  content: string
 ): Promise<JudgeResult> {
   return judge({
     content,
     taskDescription: `produce documentation for the "${sectionName}" section`,
-    model,
   });
 }
 
@@ -175,9 +175,6 @@ export async function judgeDocSection(
  * Judge with a custom prompt. For advanced use cases where the standard
  * 3-axis evaluation doesn't fit.
  */
-export async function judgeCustom<T>(
-  prompt: string,
-  model?: string
-): Promise<T> {
-  return callJudge<T>(prompt, model);
+export async function judgeCustom<T>(prompt: string): Promise<T> {
+  return callJudge<T>(prompt);
 }
