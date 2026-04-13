@@ -1,0 +1,154 @@
+version: '3'
+
+vars:
+  PROJECT_ROOT: '{{.ROOT_DIR}}'
+  FEATURES_DIR: '{{.PROJECT_ROOT}}/features'
+
+tasks:
+  # === Development ===
+  dev:website:
+    desc: Start the website template dev server
+    dir: packages/website-template
+    cmd: npm run dev
+
+  dev:receiver:
+    desc: Start the Cubic webhook receiver locally
+    dir: packages/cubic-channel
+    cmd: bun run dev:receiver
+
+  dev:channel:
+    desc: Start the Cubic MCP channel locally
+    dir: packages/cubic-channel
+    cmd: bun run dev:channel
+
+  # === Testing ===
+  test:
+    desc: Run all tests
+    cmds:
+      - task: test:cubic
+      - task: test:website
+
+  test:cubic:
+    desc: Run Cubic channel tests
+    dir: packages/cubic-channel
+    cmd: bun run test
+
+  test:website:
+    desc: Run website template tests
+    dir: packages/website-template
+    cmd: npm test
+
+  # === Build ===
+  build:website:
+    desc: Build the website template
+    dir: packages/website-template
+    cmd: npm run build
+
+  # === Deploy ===
+  deploy:receiver:
+    desc: Deploy Cubic webhook receiver to Railway
+    dir: packages/cubic-channel
+    cmd: railway up
+
+  deploy:convex:
+    desc: Deploy Convex functions
+    dir: packages/cubic-channel
+    cmd: npx convex deploy
+
+  # === Features ===
+  feature:new:
+    desc: Create a new feature checklist
+    vars:
+      NAME: '{{.CLI_ARGS}}'
+    cmds:
+      - |
+        cat > {{.FEATURES_DIR}}/{{.NAME}}.md << 'TEMPLATE'
+        # {{.NAME}}
+
+        **Status:** 🔴 Not started
+        **Agent:** unassigned
+        **Category:** coding | content | growth | operations
+        **Created:** $(date +%Y-%m-%d)
+
+        ## Description
+
+        [What this feature does and why]
+
+        ## Checklist
+
+        - [ ] Research / requirements
+        - [ ] Write tests (TDD)
+        - [ ] Implementation
+        - [ ] Tests passing
+        - [ ] Code review clean
+        - [ ] Visual QA (if UI)
+        - [ ] Deployed
+        - [ ] Verified in production
+
+        ## Notes
+
+        [Agent notes, blockers, decisions]
+        TEMPLATE
+    preconditions:
+      - sh: '[ -n "{{.CLI_ARGS}}" ]'
+        msg: "Usage: task feature:new -- feature-name"
+
+  feature:list:
+    desc: List all features and their status
+    cmd: |
+      echo "=== Features ==="
+      for f in {{.FEATURES_DIR}}/*.md; do
+        [ -f "$f" ] || continue
+        name=$(basename "$f" .md)
+        total=$(grep -c '^\- \[' "$f" 2>/dev/null || echo 0)
+        done=$(grep -c '^\- \[x\]' "$f" 2>/dev/null || echo 0)
+        status=$(grep '^**Status:**' "$f" | head -1 | sed 's/\*\*Status:\*\* //')
+        printf "%-30s %s (%d/%d)\n" "$name" "$status" "$done" "$total"
+      done
+
+  feature:status:
+    desc: Show detailed status of a feature
+    vars:
+      NAME: '{{.CLI_ARGS}}'
+    cmd: cat {{.FEATURES_DIR}}/{{.NAME}}.md
+    preconditions:
+      - sh: '[ -n "{{.CLI_ARGS}}" ]'
+        msg: "Usage: task feature:status -- feature-name"
+
+  # === Agent Panes ===
+  panes:start:
+    desc: Start tmux harness session with agent panes
+    cmd: |
+      export PATH="$HOME/.smux/bin:$PATH"
+      tmux new-session -d -s harness -n main
+      tmux split-window -h -t harness:main
+      tmux split-window -v -t harness:main.0
+      tmux split-window -v -t harness:main.1
+      tmux-bridge read "%0" 1 >/dev/null 2>&1; tmux-bridge name "%0" "agent-1"
+      tmux-bridge read "%1" 1 >/dev/null 2>&1; tmux-bridge name "%1" "agent-2"
+      tmux-bridge read "%2" 1 >/dev/null 2>&1; tmux-bridge name "%2" "agent-3"
+      tmux-bridge read "%3" 1 >/dev/null 2>&1; tmux-bridge name "%3" "agent-4"
+      echo "Harness session started. Attach with: tmux attach -t harness"
+
+  panes:kill:
+    desc: Kill all harness panes
+    cmd: tmux kill-session -t harness 2>/dev/null || true
+
+  panes:list:
+    desc: List all active panes
+    cmd: |
+      export PATH="$HOME/.smux/bin:$PATH"
+      tmux-bridge list 2>/dev/null || echo "No harness session running"
+
+  # === Git ===
+  push:
+    desc: Push current changes to main
+    cmds:
+      - git add -A
+      - git commit -m "{{.CLI_ARGS}}" || true
+      - git push origin main
+
+  # === Scan ===
+  scan:cubic:
+    desc: Run Cubic codebase scan
+    cmd: echo "TODO - run /cubic-scan when API key is configured"

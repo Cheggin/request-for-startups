@@ -90,11 +90,32 @@ Takes a startup idea (one sentence to one paragraph) and produces:
 - **This step is generalizable**: any user, any repo — the wizard gets them connected
 - Once all services are connected, skill proceeds to intake
 
-#### Step 1: Intake
+#### Step 1: Repo Setup (infrastructure — same for every startup)
+- **Agent**: Builder (coding category)
+- **Input**: stacks.yml + agent-categories.yml
+- **Actions**:
+  - Create GitHub repo (`gh repo create`)
+  - Scaffold project from website-template
+  - Generate Taskfile.yml with project-specific paths and standard tasks
+  - Create `features/` directory for checklist-driven development
+  - Set up `.harness/` (stacks.yml, agent-categories.yml, agent configs)
+  - Configure `.claude/settings.json` with hooks (GateGuard, config protection, budget)
+  - Register `.mcp.json` with cubic-channel
+  - Set up `.github/workflows/ci.yml` (lint, typecheck, test on PR)
+  - Init Convex project + deploy
+  - Link Vercel project
+  - Link Railway project
+  - Configure GitHub webhook for Cubic channel
+  - Run `task test` to validate everything works
+- **Output**: Fully configured repo with all infrastructure ready
+- **This is the same for every startup** — no creative decisions, pure infrastructure
+- Agents use `task feature:list` to see what needs doing, `task feature:new` to add features
+
+#### Step 2: Intake
 - Skill asks for one thing: "What's your startup idea?"
 - User provides idea (free text)
 
-#### Step 2: Research
+#### Step 3: Research
 - **Agent**: Researcher (web search)
 - **Input**: The startup idea
 - **Actions**:
@@ -105,7 +126,7 @@ Takes a startup idea (one sentence to one paragraph) and produces:
 - **Output**: `research-report.md` saved to repo, GitHub Issue created with findings
 - **Investor update**: Posts to Slack — "Completed market research. Found X competitors. Key differentiator: Y."
 
-#### Step 3: Spec Generation
+#### Step 4: Spec Generation
 - **Agent**: Planner (Opus-level)
 - **Input**: Research report + startup idea
 - **Actions**:
@@ -116,7 +137,7 @@ Takes a startup idea (one sentence to one paragraph) and produces:
 - **Output**: `product-spec.md` saved to repo, GitHub Issues created for each feature
 - **Investor update**: Posts to Slack — "Product spec complete. X features identified. Building: [feature list]."
 
-#### Step 4: Design
+#### Step 5: Design
 - **Agent**: Designer (Figma MCP)
 - **Input**: Product spec + research report (competitor design patterns)
 - **Actions**:
@@ -125,28 +146,6 @@ Takes a startup idea (one sentence to one paragraph) and produces:
   - Use inspiration references from `reagan_inspirations_directory` for quality benchmarks
 - **Output**: Figma file URL, screenshots saved to repo for visual QA reference
 - **Investor update**: Posts to Slack — "Designs complete. [Figma link]. X pages designed."
-
-#### Step 5: Scaffold
-- **Agent**: Builder
-- **Input**: Product spec + stacks.yml
-- **Actions**:
-  - Initialize repo with tech stack from stacks.yml
-  - Set up project structure, config files, CI/CD
-  - Create `.harness/` directory with state files
-  - Set up GitHub Project board (columns: Backlog, In Progress, In Review, Done)
-  - Configure Vercel project (`vercel link`, `vercel env`)
-  - **Set up Cubic review pipeline (non-negotiable — see below)**:
-    1. Install Cubic GitHub App on the repo
-    2. Install Cubic plugin (`npx @cubic-plugin/cubic-plugin install --to claude`)
-    3. Deploy Convex project for the cubic-channel event queue (`npx convex deploy`)
-    4. Deploy cubic-channel webhook receiver to Railway (`railway up`)
-    5. Configure GitHub webhook on the repo pointing at the Railway URL (events: `pull_request_review`, `pull_request_review_comment`, `issue_comment`)
-    6. Register cubic-channel MCP server in `.mcp.json` with the Convex URL and repo name
-    7. Verify end-to-end: push a test commit, confirm Cubic reviews, confirm events flow through to Convex
-  - Configure Railway project for app backend (`railway link`)
-  - Set up Convex for app data (`npx convex dev` for local, `npx convex deploy` for prod)
-- **Output**: Clean repo with CI/CD, Cubic review pipeline, Vercel, Railway, and Convex configured
-- **Ground truth**: Every agent session in this repo will have the cubic-channel MCP server running. All work goes through PRs. No PR merges without a clean Cubic review. Agents check `/cubic-comments` and fix until clean.
 
 #### Step 6: TDD — Write Tests First
 - **Agent**: Builder (test-writing mode)
