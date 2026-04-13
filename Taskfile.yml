@@ -148,6 +148,34 @@ tasks:
       - git commit -m "{{.CLI_ARGS}}" || true
       - git push origin main
 
+  # === Evals ===
+  eval:static:
+    desc: Run static validation on all skills
+    dir: packages/eval-framework
+    cmd: bun run src/cli-static.ts
+
+  eval:e2e:
+    desc: Run E2E evals (diff-gated)
+    dir: packages/eval-framework
+    cmd: bun run src/cli-e2e.ts
+
+  eval:judge:
+    desc: Run LLM-as-judge evals
+    dir: packages/eval-framework
+    cmd: bun run src/cli-judge.ts
+
+  eval:all:
+    desc: Run all eval tiers (static, e2e, judge)
+    cmds:
+      - task: eval:static
+      - task: eval:e2e
+      - task: eval:judge
+
+  eval:test:
+    desc: Run eval framework unit tests
+    dir: packages/eval-framework
+    cmd: bun test
+
   # === Scan ===
   scan:cubic:
     desc: Run Cubic codebase scan
