@@ -4,8 +4,8 @@
       "command": "bun",
       "args": ["run", "packages/cubic-channel/channel/index.ts"],
       "env": {
-        "CONVEX_URL": "https://fantastic-partridge-818.convex.cloud",
-        "REPO": "Cheggin/request-for-startups",
+        "CONVEX_URL": "${CONVEX_URL}",
+        "REPO": "${GITHUB_REPO}",
         "POLL_INTERVAL": "5000"
       }
     }
