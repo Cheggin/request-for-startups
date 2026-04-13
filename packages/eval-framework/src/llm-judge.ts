@@ -33,7 +33,7 @@ export interface JudgeOptions {
   taskDescription?: string;
   /** Minimum score on each axis to pass. Default 4. */
   threshold?: number;
-  /** Model to use for judging. Default 'claude-sonnet-4-6'. */
+  /** Model to use for judging. Default 'claude-opus-4-6'. */
   model?: string;
 }
 
@@ -47,7 +47,7 @@ export interface JudgeOptions {
  */
 export async function callJudge<T>(
   prompt: string,
-  model: string = "claude-sonnet-4-6"
+  model: string = "claude-opus-4-6"
 ): Promise<T> {
   const client = new Anthropic();
 
@@ -100,7 +100,7 @@ export async function judge(options: JudgeOptions): Promise<JudgeResult> {
     content,
     taskDescription,
     threshold = PASS_THRESHOLD,
-    model = "claude-sonnet-4-6",
+    model = "claude-opus-4-6",
   } = options;
 
   const taskContext = taskDescription
