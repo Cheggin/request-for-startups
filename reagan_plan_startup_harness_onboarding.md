@@ -7,22 +7,34 @@ A multi-agent orchestration system (Claude Code skill) that takes a startup idea
 ## Architecture Overview
 
 ```
-User (Slack) <──> Slack Channel MCP <──> Claude Code Session
-                                             │
-                                    ┌────────┴────────┐
-                                    │  Harness Core    │
-                                    │  (Orchestrator)  │
-                                    └────────┬────────┘
-                                             │
-                    ┌────────┬───────┬───────┼───────┬───────┬────────┐
-                    │        │       │       │       │       │        │
-                Researcher Planner Designer Builder  QA    Cubic   Deployer
-                (web search)(spec) (Figma)  (code) (Playwright)(review)(infra)
-                                             │
-                                     GitHub Issues + 
-                                     Project Board
-                                     (state store)
+User (Slack) <──> Slack Plugin <──> Commander (orchestrator)
+                                         │
+                    ┌────────────────┬────┴────┬──────────────┬──────────────┐
+                    │                │         │              │              │
+              Website Agent    Backend Agent  Growth Agent  Writing Agent  Ops Agent
+              ┌──────────┐    ┌──────────┐   ┌──────────┐  ┌──────────┐  ┌──────────┐
+              │Research   │    │Research   │   │Research   │  │Research   │  │Monitor   │
+              │Plan       │    │Plan       │   │Analyze    │  │Draft      │  │Diagnose  │
+              │Build      │    │Build      │   │Implement  │  │Write      │  │Fix       │
+              │Verify     │    │Verify     │   │Measure    │  │Review     │  │Deploy    │
+              └──────────┘    └──────────┘   └──────────┘  └──────────┘  └──────────┘
+              Tools:           Tools:         Tools:        Tools:        Tools:
+              Figma MCP        Railway CLI    PostHog       Web search    Vercel CLI
+              Playwright       Convex         Search Console Slack        Railway CLI
+              Vercel CLI       Cubic          Web search                  Error tracking
+              Cubic                                                      Cubic
+              
+              Gates:           Gates:         Gates:        Gates:        Gates:
+              Tests+Cubic      Tests+Cubic    Traffic/      Tone/brand    Uptime
+              +Visual QA       +Load tests    conversion    consistency   Response time
+                                                                         Error rates
+                                         │
+                                  GitHub Issues +
+                                  Project Board
+                                  (shared state)
 ```
+
+Each agent is a separate Claude Code session with its own `.mcp.json` (only the tools it needs), its own tool restrictions, and its own evaluation criteria. Within each agent, the default is single-agent with mode switching — not sub-agents. The commander orchestrates across agents, handles handoffs, and synthesizes investor updates.
 
 ## Decisions Made
 
@@ -42,7 +54,7 @@ User (Slack) <──> Slack Channel MCP <──> Claude Code Session
 | Database | Convex | Serverless, real-time, TypeScript-native |
 | Testing | Vitest (unit) + Playwright (e2e) | TDD strategy: tests first, implement second |
 | Auth | Deferred until harness complete | Skip auth screens during testing for easier Playwright/local dev |
-| Cubic integration | Poll-based via MCP tools (no webhooks) | Cubic has MCP server + Claude Code plugin, not webhook push |
+| Cubic integration | GitHub webhook channel + MCP tools for on-demand queries | Cubic posts as a GitHub App; GitHub webhooks pipe findings to Claude Code in real time via Railway receiver + Convex + local MCP channel. `get_pr_issues` and `/cubic-comments` available as fallback. |
 
 ## Phase 1: Onboarding Skill (`/startup-init`)
 
@@ -191,6 +203,55 @@ Implementation → Tests Pass? ──No──→ Fix → (loop)
                   SHIP ✓
 ```
 
+## Agent Harness Configs
+
+Each agent type gets its own harness configuration. The harness defines: which MCP servers to load, which tools are allowed, which files the agent can modify, budget limits, and evaluation criteria.
+
+### Website Agent
+- **MCP servers**: cubic-channel, Figma, Playwright
+- **Allowed tools**: Read, Edit, Write, Bash, Glob, Grep, WebFetch (for design research)
+- **File scope**: `src/`, `public/`, `e2e/`, `convex/` (frontend schema only)
+- **Forbidden**: Cannot modify `.harness/`, `CLAUDE.md`, CI configs, linter configs
+- **Budget**: 100 turns per feature, 30 min wall-clock
+- **Quality gates**: Vitest pass → Cubic clean → Playwright visual QA against Figma
+- **Modes**: Research → Plan → Build → Verify
+
+### Backend Agent
+- **MCP servers**: cubic-channel, Convex tools
+- **Allowed tools**: Read, Edit, Write, Bash, Glob, Grep
+- **File scope**: `convex/`, `src/app/api/`, backend packages
+- **Forbidden**: Cannot modify frontend components, `.harness/`, CI configs
+- **Budget**: 100 turns per feature, 30 min wall-clock
+- **Quality gates**: Vitest pass → Cubic clean → API response time checks
+- **Modes**: Research → Plan → Build → Verify
+
+### Growth Agent
+- **MCP servers**: PostHog (when available), web search
+- **Allowed tools**: Read, Edit, Write, Bash, WebFetch, WebSearch
+- **File scope**: SEO configs, analytics setup, marketing pages
+- **Forbidden**: Cannot modify core app logic, auth, billing
+- **Budget**: 50 turns per task, 20 min wall-clock
+- **Quality gates**: Traffic metrics, conversion rates, SEO scores
+- **Modes**: Research → Analyze → Implement → Measure
+
+### Writing Agent
+- **MCP servers**: Slack, web search
+- **Allowed tools**: Read, Write, WebFetch, WebSearch
+- **File scope**: Content files, copy, docs, README
+- **Forbidden**: Cannot modify code, configs, infrastructure
+- **Budget**: 30 turns per task, 15 min wall-clock
+- **Quality gates**: Tone/brand consistency, readability score
+- **Modes**: Research → Draft → Write → Review
+
+### Ops Agent
+- **MCP servers**: cubic-channel, Vercel CLI, Railway CLI
+- **Allowed tools**: Read, Bash, Glob, Grep
+- **File scope**: CI/CD configs, monitoring, deploy scripts
+- **Forbidden**: Cannot modify application code (only infra)
+- **Budget**: 50 turns per incident, 20 min wall-clock
+- **Quality gates**: Uptime, response time, error rates
+- **Modes**: Monitor → Diagnose → Fix → Deploy
+
 ## Components to Build
 
 ### 1. Onboarding Skill (`/startup-init`)
@@ -266,7 +327,7 @@ Cubic reviews PR → GitHub webhook fires
 
 ## Resolved Gaps
 
-1. ~~**Cubic specifics**~~: Cubic has a full MCP server + Claude Code plugin. Poll-based via `get_pr_issues` and `/cubic-run-review`. No custom MCP needed.
+1. ~~**Cubic specifics**~~: Cubic posts reviews as a GitHub App. GitHub webhooks deliver findings in real time via the cubic-channel (Railway receiver + Convex + local MCP channel). On-demand queries via `get_pr_issues` and `/cubic-run-review` are also available.
 2. ~~**stacks.yml schema**~~: Defined in `.harness/stacks.yml` — Next.js + Turbopack + TanStack Query + Zustand + Tailwind v4, Convex DB, Vercel + Railway deploy, Vitest + Playwright testing.
 3. ~~**Slack workspace setup**~~: Configured during onboarding. The skill sets up the Slack channel MCP as part of Step 1.
 
