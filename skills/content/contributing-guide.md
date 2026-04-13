@@ -1,35 +1,53 @@
-# contributing-guide
+---
+name: contributing-guide
+description: Auto-generate a CONTRIBUTING.md covering dev setup, coding standards, and PR process
+category: content
+allowed-tools:
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - Bash
+---
 
-**Status:** 🔴 Not started
-**Agent:** unassigned
-**Category:** coding
-**Created:** 2026-04-13
+## Purpose
 
-## Description
+Auto-generate a CONTRIBUTING.md for the startup repository. The guide covers dev environment setup, coding standards, PR process, and how agents interact with the codebase. It is generated from project configuration so it stays in sync with the actual project state.
 
-Auto-generate CONTRIBUTING.md for the startup repo. Covers how to set up the dev environment, coding standards, PR process, Cubic review process, and how agents work on the codebase.
+## Steps
+
+1. Read the project configuration files (package.json, tsconfig, linter configs, etc.) to determine the tech stack, required tools, and coding standards.
+2. Identify prerequisites (Node.js version, package manager, CLI tools, environment variables).
+3. Generate a step-by-step dev environment setup section from the actual project setup process.
+4. Document coding standards by reading linter and formatter configurations.
+5. Define the PR process including branch naming conventions, commit message format, and review expectations.
+6. Document the agent workflow explaining how automated agents modify the codebase.
+7. Write the CONTRIBUTING.md using a template system with project-specific values injected.
+8. Validate that the generated guide matches the current project state (no stale references).
+9. Set up regeneration hooks so CONTRIBUTING.md updates when project config changes.
+
+## Examples
+
+Good:
+- "Prerequisites section lists Node.js >= 20, pnpm 9.x, and the Convex CLI with install commands for each."
+- "PR process section specifies branch format as 'feat/short-description' and requires conventional commit messages."
+- "Dev setup section includes 'pnpm install && pnpm dev' with expected output described."
+
+Bad:
+- "Setup section says 'install dependencies' without specifying the package manager or command."
+- "Contributing guide manually written and already outdated compared to the actual project config."
+- "No mention of how agents interact with the codebase, confusing human contributors."
 
 ## Checklist
 
-- [ ] Dev environment setup — step-by-step instructions for cloning, installing, and running locally
-- [ ] Prerequisites section — list required tools (Node.js, pnpm/yarn, Convex CLI, etc.)
-- [ ] Coding standards — formatting rules, naming conventions, file structure guidelines
-- [ ] PR process — how to create a PR, what to include in the description, review expectations
-- [ ] Cubic review process — how AI-assisted code review works, what reviewers look for
-- [ ] Agent workflow explanation — how agents modify the codebase, what fileScopes mean
-- [ ] Feature checklist process — how features are tracked, how to update checklists
-- [ ] Branch naming conventions — format for feature, fix, and chore branches
-- [ ] Commit message format — conventional commits or project-specific format
-- [ ] Testing requirements — what tests to write, how to run them, coverage expectations
-- [ ] Auto-generation — CONTRIBUTING.md generated from project config, not manually written
-- [ ] Template system — base template with project-specific values injected
-- [ ] Regeneration on config change — update CONTRIBUTING.md when project config changes
-- [ ] Unit tests for template rendering and config injection
-
-## Notes
-
-- The CONTRIBUTING.md should be useful for both human contributors and agents
-- Auto-generation ensures the guide stays in sync with actual project configuration
-- The Cubic review section is unique to harness-built projects — explain how it works clearly
-- Agent workflow section helps human contributors understand why certain patterns exist
-- Keep it concise — a 20-page contributing guide that nobody reads is worse than a 2-page one
+- [ ] Prerequisites section listing all required tools with version requirements
+- [ ] Step-by-step dev environment setup instructions
+- [ ] Coding standards derived from linter and formatter configs
+- [ ] PR process with branch naming, commit format, and review expectations
+- [ ] Agent workflow explanation for how automated agents modify the codebase
+- [ ] Commit message format documented (conventional commits or project-specific)
+- [ ] Testing requirements with commands to run tests and coverage expectations
+- [ ] CONTRIBUTING.md generated from project config, not manually written
+- [ ] Template system with project-specific values injected
+- [ ] Regeneration triggered when project configuration changes
