@@ -1,0 +1,76 @@
+# Agent Categories
+# Ground truth rules that apply to ALL agents within a category.
+# Individual agent harnesses inherit from their category.
+
+coding:
+  description: Any agent that writes, modifies, or reviews code
+  agents:
+    - website
+    - backend
+    - ops
+  ground_truth:
+    - All work goes through feature branches + PRs (never commit to main)
+    - Every PR gets Cubic auto-review — no merge until clean
+    - TDD: write tests first, implement second, never simultaneously
+    - Vitest for unit tests, Playwright for e2e
+    - Check /cubic-comments after each push, fix issues, loop until clean
+    - GitHub Issues track every task — move cards on Project board
+    - Context resets use GitHub Issues as handoff state
+    - GateGuard: must Read before Edit on any file
+    - Cannot modify harness configs, linter configs, CI configs, tsconfig
+  required_mcp:
+    - cubic-channel
+  required_hooks:
+    - gateguard (block Edit without prior Read)
+    - config-protection (block modification of infra files)
+    - budget-enforcer (turn limit + wall-clock timeout)
+
+content:
+  description: Any agent that creates non-code content (copy, marketing, docs, social)
+  agents:
+    - writing
+    - social-media
+  ground_truth:
+    - All content goes through a review draft before publishing
+    - Brand/tone consistency checked against SOUL.md and brand guidelines
+    - Content saved as drafts first, published only after review
+    - Cannot modify code files
+    - Use Slack plugin for publishing and feedback
+  required_mcp: []
+  required_hooks:
+    - scope-restriction (cannot modify code files)
+    - budget-enforcer (turn limit + wall-clock timeout)
+
+growth:
+  description: Any agent focused on metrics, analytics, SEO, user acquisition
+  agents:
+    - growth
+    - analytics
+  ground_truth:
+    - Every action must have a measurable hypothesis (e.g. "this change should increase signup rate by X%")
+    - Changes go through PRs if they touch code (inherits coding ground truth for code changes)
+    - Non-code changes (ad copy, SEO metadata) go through content review
+    - Track before/after metrics for every intervention
+    - Report results in investor updates with actual numbers
+  required_mcp: []
+  required_hooks:
+    - budget-enforcer (turn limit + wall-clock timeout)
+    - metrics-gate (must define measurable hypothesis before acting)
+
+operations:
+  description: Any agent managing infrastructure, deploys, monitoring, incidents
+  agents:
+    - ops
+    - deploy
+  ground_truth:
+    - Inherits coding ground truth (PRs, Cubic, TDD) for infra code changes
+    - Cannot modify application code — only infra, CI/CD, monitoring configs
+    - Incident response follows escalation protocol (diagnose → fix → deploy → verify → post-mortem)
+    - All deploy actions logged as GitHub Issue comments
+    - Rollback plan required before any production deploy
+  required_mcp:
+    - cubic-channel
+  required_hooks:
+    - scope-restriction (cannot modify application code)
+    - deploy-gate (rollback plan required before production deploy)
+    - budget-enforcer (turn limit + wall-clock timeout)
