@@ -17,9 +17,7 @@
     ],
     "readonly": [
       "SOUL.md",
-      ".harness/stacks.yml",
-      "src/**",
-      "app/**"
+      ".harness/stacks.yml"
     ],
     "blocked": [
       "src/**",

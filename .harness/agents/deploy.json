@@ -14,7 +14,7 @@
     }
   },
   "allowedTools": [
-    "Read", "Bash", "Glob", "Grep",
+    "Read", "Edit", "Write", "Bash", "Glob", "Grep",
     "cubic-channel:mark_processed",
     "cubic-channel:mark_all_processed"
   ],

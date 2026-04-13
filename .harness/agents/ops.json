@@ -1,7 +1,7 @@
 {
   "name": "ops",
   "description": "Operations agent — manages infrastructure, CI/CD, monitoring, and incident response",
-  "categories": ["coding", "operations"],
+  "category": ["coding", "operations"],
   "mcpServers": {
     "cubic-channel": {
       "command": "bun",
