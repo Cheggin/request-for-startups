@@ -185,3 +185,147 @@ Key influences: autoagent (fixed boundary, keep/discard), autoresearch (time-bud
 ## License
 
 MIT
+
+## Step-by-Step: How a Startup Gets Built
+
+When you run `harness init`, here's exactly what happens:
+
+### Phase 0: Founder Interview
+The harness asks 6 questions, one at a time:
+- What's your startup idea?
+- What type of company? (B2C, B2B SaaS, devtool, marketplace, hardware, fintech, healthcare, ecommerce)
+- Who are the target users?
+- Business model? (subscription, freemium, commission, etc.)
+- Budget? (bootstrapped, seed-funded, enterprise)
+- Timeline? (weekend, month, quarter)
+
+Saves to `.harness/founder-profile.yml`. This is the only interactive step.
+
+### Phase 1: Service Validation
+Checks that GitHub (`gh auth status`), Vercel (`vercel whoami`), Railway (`railway whoami`), and other services are connected. Blocks if critical services are missing.
+
+### Phase 2: Market Research
+Uses web search to find competitors, market size, target audience pain points, pricing models, and design patterns. Saves `research-report.md`.
+
+### Phase 3: Product Spec
+Generates a comprehensive spec from the idea + research: pages with routes, features with P0/P1/P2 priorities and testable acceptance criteria, data models, API routes, component inventory. Creates GitHub Issues for every feature. Saves `product-spec.md`.
+
+### Phase 4: Design
+Generates Figma designs for each page using the Figma MCP. Saves screenshots for visual QA baseline.
+
+### Phase 5: Repo Setup
+Scaffolds a Next.js 15 project with the canonical stack. Configures CI/CD, hooks (GateGuard, config-protection), Cubic code review pipeline, and the Taskfile. Creates GitHub Project board.
+
+### Phase 6: Feature Decomposition
+Breaks the product spec into individual features ordered by dependency. Each feature becomes a `features/*.md` checklist and a GitHub Issue with acceptance criteria.
+
+### Phase 7: Build (TDD Loop)
+For each feature in dependency order:
+1. Write tests first (Vitest unit + Playwright e2e)
+2. Implement the feature
+3. Run tests until green (max 10 iterations)
+4. Cubic code review until clean (max 5 iterations)
+5. Visual QA against Figma screenshots (max 5 iterations)
+6. All gates pass → merge PR, move Issue to Done
+7. Post investor update to Slack
+
+### Phase 8: Launch Prep
+Legal pages (ToS, Privacy Policy), SEO setup (sitemap, meta tags, structured data), analytics (PostHog), error tracking (Sentry MCP), pre-launch checklist verification.
+
+### Phase 9: Deploy
+`vercel --prod` (frontend) + `npx convex deploy` (database) + `railway up` (backend if needed). Health checks and e2e tests against production URL.
+
+### Phase 10+: Growth & Maintenance (ongoing)
+- **Growth**: SEO content, programmatic pages, blog posts with unique data, A/B testing
+- **Monitoring**: Sentry MCP for errors, uptime checks, performance benchmarks
+- **Maintenance**: Dependency updates, security scans, Cubic codebase scans
+- **Iteration**: User feedback → new features → back to Phase 7
+- **Updates**: Weekly investor updates synthesizing progress across all agents
+
+## File Structure
+
+```
+├── agents/                    10 agent definitions
+│   ├── website.md             Frontend dev (sonnet, level 2)
+│   ├── backend.md             Backend/API dev (sonnet, level 2)
+│   ├── growth.md              Growth/analytics (sonnet, level 2)
+│   ├── writing.md             Content creation (haiku, level 1)
+│   ├── ops.md                 Operations/deploy (sonnet, level 3)
+│   ├── commander.md           Orchestrator (opus, level 4)
+│   ├── researcher.md          Knowledge wiki maintainer (opus, level 3)
+│   ├── harness-researcher.md  Self-improvement researcher (opus, level 3)
+│   ├── docs.md                Devtool documentation (sonnet, level 2)
+│   └── slop-cleaner.md        AI slop detection/removal (sonnet, level 2)
+│
+├── skills/                    57 skills across 5 categories
+│   ├── coding/                23 skills (visual-qa, tdd, convex-*, deploy, security, seo, slop-cleaner)
+│   ├── content/               9 skills (anti-ai-writing, blog, brand, docs, legal, social, data-driven-blog)
+│   ├── growth/                6 skills (analytics, seo-chat, programmatic-seo, landing-page, competitor-research)
+│   ├── operations/            6 skills (ci-cd, uptime, incident-response, log-aggregation, dependency-manager)
+│   └── shared/                13 skills (knowledge, loop-prompt, eval, cost-tracker, investor-updates, stack-extend)
+│
+├── packages/                  26 packages with 590+ tests
+│   ├── cli/                   Harness CLI (12 command groups)
+│   ├── commander/             Orchestrator (dispatcher, monitor, handoff, investor updates)
+│   ├── agent-loop/            Core runtime (mode switching, hooks, plateau detection, self-improvement)
+│   ├── hooks/                 GateGuard (read before edit), config-protection
+│   ├── knowledge/             Karpathy wiki (ingest, query, lint)
+│   ├── eval-framework/        3-tier eval (static, E2E, LLM judge)
+│   ├── implementation-loop/   TDD → Cubic → Visual QA → Ship cycle
+│   ├── spec-generator/        Idea → product spec with startup type detection
+│   ├── feature-decomposer/    Spec → features with dependency graph
+│   ├── repo-setup/            Scaffold repos, configure services, install hooks
+│   ├── service-validator/     Validate all service connections
+│   ├── github-state/          Issues + Project board + audit trail + context rebuild
+│   ├── webhook-receiver/      Universal multi-source webhook receiver
+│   ├── cubic-channel/         Cubic → Convex → Claude Code channel
+│   ├── secret-manager/        Credential storage, sync, detection, rotation
+│   ├── sentry-integration/    Error routing, agent-friendly formatting
+│   ├── config-optimizer/      Auto-tune agent configs from performance data
+│   ├── task-classifier/       Trivial/moderate/complex task routing
+│   ├── fixed-boundary/        Frozen paths enforcement
+│   ├── adaptive-loadout/      Startup type → skill selection
+│   ├── schema-generator/      Spec → Convex schema
+│   ├── api-generator/         Spec → API routes
+│   ├── figma-integration/     Spec → Figma designs
+│   ├── status-dashboard/      Terminal status overview
+│   └── website-template/      Canonical Next.js scaffold
+│
+├── templates/                 Integration templates
+│   ├── stripe/                Embedded Checkout, webhooks, subscription state
+│   ├── auth/                  Clerk middleware, sign-in/up, user management
+│   └── email/                 Resend + React Email (welcome, password reset)
+│
+├── features/                  Checklist-driven development tracking
+├── commands/                  User-facing entry points (startup-init, resume)
+├── test-runs/                 E2E test results
+│   ├── level-1-smoke/         Spec generation test
+│   ├── level-2-scaffold/      Scaffold + build test (counter app)
+│   └── level-5-image-converter/  Full SaaS test (image converter)
+│
+├── .harness/                  Configuration
+│   ├── stacks.yml             Canonical tech stack
+│   ├── agent-categories.yml   Ground truth rules per category
+│   ├── tool-catalog.yml       18 pre-built integration configs
+│   └── knowledge/             Karpathy wiki per category
+│
+├── .claude/                   Claude Code settings + hooks
+├── .claude-plugin/            Plugin manifest for marketplace
+├── SOUL.md                    Project identity, principles, architecture
+├── Taskfile.yml               Task runner (dev, test, build, deploy, features)
+└── README.md                  This file
+```
+
+## Validated Results
+
+The harness has been tested end-to-end across 5 levels:
+
+| Level | Test | Result |
+|-------|------|--------|
+| 1 | Spec generation from idea | **PASS** — 116 lines |
+| 2 | Scaffold + `next build` | **PASS** — 0 errors |
+| 3 | TDD (write test, implement, pass) | **PASS** — 4 tests |
+| 4 | Feature build via agent | **PASS** — component + test + wired |
+| 5 | Full SaaS from one sentence | **PASS** — 24 files, 25 tests, 9 pages |
+
+The Level 5 image converter includes: drag-and-drop upload, format picker, quality slider, conversion engine (Canvas API), pricing page, 6 programmatic SEO pages, and a blog post with 0 AI slop words detected.
