@@ -83,8 +83,8 @@ export async function preTaskLearning(
   const keywords = taskDescription
     .toLowerCase()
     .split(/\s+/)
-    .filter((w) => w.length > 3)
-    .slice(0, 5);
+    .filter((w) => w.length > 2)
+    .slice(0, 8);
 
   const wikiDir = join(categoryDir, "wiki");
   if (existsSync(wikiDir)) {

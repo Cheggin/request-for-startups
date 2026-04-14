@@ -117,8 +117,8 @@ export function extractLearnings(transcript: string): TranscriptAnalysis {
         const insight = match[1].trim();
         if (insight.length < 10) continue; // Skip trivial matches
 
-        // Classify the learning type
-        const type = classifyLearningType(insight);
+        // Classify the learning type (use full line for context)
+        const type = classifyLearningType(line);
 
         // Extract file references from surrounding context
         const relatedFiles = extractFileReferences(transcript, line);
@@ -175,7 +175,7 @@ export function proposeSkillUpdate(
   const isSimplification = checkIsSimplification(currentContent, improvement);
 
   // Compute confidence based on specificity and evidence
-  const confidence = computeProposalConfidence(improvement, currentContent);
+  const confidence = computeLearningConfidence(improvement, []);
 
   return {
     skillPath,
@@ -439,6 +439,17 @@ function areContradictory(a: string, b: string): boolean {
   const aAction = stripPrefix(a);
   const bAction = stripPrefix(b);
 
-  // Fuzzy match: check if one action is a substring of the other
-  return aAction.includes(bAction) || bAction.includes(aAction);
+  // Fuzzy match: substring check or significant word overlap
+  if (aAction.includes(bAction) || bAction.includes(aAction)) {
+    return true;
+  }
+
+  // Word overlap check: if the core verb+object overlap, it is contradictory
+  const aWords = aAction.split(/\s+/).filter((w) => w.length > 3);
+  const bWords = bAction.split(/\s+/).filter((w) => w.length > 3);
+  if (aWords.length === 0 || bWords.length === 0) return false;
+
+  const overlap = aWords.filter((w) => bWords.includes(w));
+  const overlapRatio = overlap.length / Math.min(aWords.length, bWords.length);
+  return overlapRatio >= 0.5;
 }
