@@ -92,12 +92,14 @@ orchestration:
     - researcher
     - harness-researcher
     - alignment
+    - paper-reader
   skill_categories:
     - agent     # 14 skills — loop-prompt, investor-updates, eval-framework, trajectory-logging, etc.
   ground_truth:
     - Commander cannot write or edit code directly (disallowedTools: Write, Edit)
     - Researcher produces research briefs consumed by other agents
     - Harness-researcher only modifies the harness itself
+    - Paper-reader writes to .harness/knowledge/papers/ only — never fabricates citations
     - All dispatch decisions logged to GitHub Issues
   required_mcp: []
   required_hooks: []

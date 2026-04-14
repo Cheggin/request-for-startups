@@ -79,7 +79,7 @@ The harness is a cage that makes it safe to run autonomously: hooks enforce what
 - **Phase 2 (Quality)**: GateGuard, phase-scoped tool restriction, config protection hook, stop-time batching, diff-based eval selection, context reset with structured handoffs
 - **Phase 3 (Scale)**: Tiered memory, in-process MCP tool bus, DAG workflows for complex tasks, task-size classifier, per-session cost tracking
 - **Phase 4 (Evolution)**: Continuous skill learning, GAN-style generator/evaluator sprint contracts, risk scoring, compiled binary distribution
-- Built so far: Cubic webhook channel (Railway receiver + Convex relay + local MCP channel), website scaffold (Next.js + Turbopack + TanStack Query + Zustand + Tailwind v4 + Convex), onboarding skill (`/startup-init`) in progress
+- Built so far: 93 skills across 6 categories (coding, content, growth, operations, orchestration, quality), 27 packages (CLI, agent-loop, commander, hooks, eval-framework, harness-dashboard, and more), 12 domain-specific agents (website, backend, growth, ops, writing, deploy, commander, researcher, harness-researcher, alignment, paper-reader, slop-cleaner), full CLI with 13 command groups, harness dashboard, Cubic webhook channel, structured handoff system, agent-categories with ground-truth enforcement, Level 5 end-to-end validation passing, 639+ test files
 
 ---
 
