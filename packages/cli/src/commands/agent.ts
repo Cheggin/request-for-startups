@@ -8,8 +8,9 @@
  *   logs <name>       — read recent output from agent's tmux pane
  */
 
-import { loadAgents, loadCategories } from "../lib/config.js";
+import { loadAgents } from "../lib/config.js";
 import { loadState, recordAgentActivity } from "../lib/state.js";
+import { generateAgentPrompt } from "../lib/agent-loader.js";
 import {
   listPanes,
   spawnPane,
@@ -128,15 +129,8 @@ function spawnAgent(args: string[]): void {
     systemPrompt = match ? match[1].trim() : content;
   }
 
-  // Load category for this agent to get ground truth rules
-  const categories = loadCategories() as Record<string, { agents?: string[]; ground_truth?: string[] }>;
-  let groundTruth = "";
-  for (const [, cat] of Object.entries(categories)) {
-    if (cat.agents?.includes(name) && cat.ground_truth) {
-      groundTruth = cat.ground_truth.join("\n");
-      break;
-    }
-  }
+  // Generate agent prompt with ground truth + skills as /startup-harness: slash commands
+  const agentPrompt = generateAgentPrompt(name);
 
   ensureSession();
 
@@ -147,11 +141,8 @@ function spawnAgent(args: string[]): void {
     "--model", agent.model,
   ];
 
-  // Build system prompt from agent definition + ground truth
-  const systemParts = [
-    systemPrompt,
-    groundTruth ? `\n<Ground_Truth_Rules>\n${groundTruth}\n</Ground_Truth_Rules>` : "",
-  ].filter(Boolean).join("\n");
+  // Combine agent .md body + generated prompt (ground truth + skills)
+  const systemParts = [systemPrompt, agentPrompt].filter(Boolean).join("\n\n");
 
   if (systemParts) {
     cmdParts.push("--append-system-prompt", systemParts);
