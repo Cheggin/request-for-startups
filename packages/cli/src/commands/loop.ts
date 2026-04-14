@@ -20,6 +20,9 @@ import {
   isTmuxAvailable,
   ensureSession,
   sendKeys,
+  sleepSync,
+  waitForReady,
+  verifyRunning,
 } from "../lib/tmux.js";
 import {
   heading,
@@ -181,16 +184,35 @@ function startLoop(name: string | undefined): void {
   }
 
   console.log(success(`  Started claude for '${name}' (agent: ${loop.agent})`));
-  console.log(muted(`  Waiting ${CLAUDE_LOAD_WAIT_SECONDS}s for Claude Code to load...`));
 
-  // Step 2: Wait for Claude Code to load, then send /loop command
-  const escaped = loopPrompt.replace(/'/g, "'\\''");
-  setTimeout(() => {
-    sendKeys(paneName, `/loop ${loop.interval} ${escaped}`);
-    console.log(success(`  Sent /loop command to '${name}'`));
-    console.log(muted(`  Interval: ${loop.interval} | Skill: ${loop.skill}`));
-    console.log(muted(`  Attach: tmux attach -t harness:${paneName}`));
-  }, CLAUDE_LOAD_WAIT_SECONDS * 1000);
+  // Step 2: Wait for Claude Code to fully load (plugins, MCP servers, etc.)
+  console.log(muted(`  Waiting for Claude Code to load...`));
+  const ready = waitForReady(paneName, CLAUDE_LOAD_WAIT_SECONDS * 1000);
+
+  if (!ready) {
+    console.log(warn(`  Claude Code may not have fully loaded (timed out after ${CLAUDE_LOAD_WAIT_SECONDS}s). Sending prompt anyway.`));
+  }
+
+  // Step 3: Send /loop command (text + Enter are separate calls inside sendKeys)
+  const sent = sendKeys(paneName, `/loop ${loop.interval} ${loopPrompt}`);
+
+  if (!sent) {
+    console.log(error(`  Failed to send /loop command to '${name}'.`));
+    return;
+  }
+
+  // Step 4: Verify the agent started working
+  console.log(muted(`  Verifying agent activity...`));
+  const running = verifyRunning(paneName);
+
+  if (running) {
+    console.log(success(`  Loop '${name}' is running.`));
+  } else {
+    console.log(warn(`  Loop '${name}' may not have started. Check: tmux attach -t harness:${paneName}`));
+  }
+
+  console.log(muted(`  Interval: ${loop.interval} | Skill: ${loop.skill}`));
+  console.log(muted(`  Attach: tmux attach -t harness:${paneName}`));
 }
 
 // ─── stop ──────────────────────────────────────────────────────────────────
@@ -257,21 +279,38 @@ function startAll(): void {
 
   if (spawned.length === 0) return;
 
-  console.log(muted(`  Waiting ${CLAUDE_LOAD_WAIT_SECONDS}s for Claude Code to load...`));
+  // Wait for all Claude Code instances to load
+  console.log(muted(`  Waiting for Claude Code to load...`));
+  for (const name of spawned) {
+    const paneName = `loop-${name}`;
+    waitForReady(paneName, CLAUDE_LOAD_WAIT_SECONDS * 1000);
+  }
 
-  // After load delay, send /loop commands to all spawned panes
-  setTimeout(() => {
-    for (const name of spawned) {
-      const loop = loops[name];
-      const paneName = `loop-${name}`;
-      const loopPrompt = buildLoopPrompt(name, loop);
-      const escaped = loopPrompt.replace(/'/g, "'\\''");
-      sendKeys(paneName, `/loop ${loop.interval} ${escaped}`);
+  // Send /loop commands to all spawned panes
+  for (const name of spawned) {
+    const loop = loops[name];
+    const paneName = `loop-${name}`;
+    const loopPrompt = buildLoopPrompt(name, loop);
+    const sent = sendKeys(paneName, `/loop ${loop.interval} ${loopPrompt}`);
+    if (sent) {
       console.log(success(`  Sent /loop to ${name}`));
+    } else {
+      console.log(error(`  Failed to send /loop to ${name}`));
     }
-    console.log();
-    console.log(muted("  Attach to any: tmux attach -t harness:loop-<name>"));
-  }, CLAUDE_LOAD_WAIT_SECONDS * 1000);
+  }
+
+  // Brief pause then verify
+  sleepSync(3000);
+  for (const name of spawned) {
+    const paneName = `loop-${name}`;
+    const running = verifyRunning(paneName, 1000);
+    if (!running) {
+      console.log(warn(`  ${name} may not have started. Check: tmux attach -t harness:${paneName}`));
+    }
+  }
+
+  console.log();
+  console.log(muted("  Attach to any: tmux attach -t harness:loop-<name>"));
 }
 
 // ─── stop-all ──────────────────────────────────────────────────────────────

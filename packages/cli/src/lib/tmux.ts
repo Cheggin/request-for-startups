@@ -8,6 +8,7 @@
  */
 
 import { execSync } from "child_process";
+import { basename } from "path";
 import { TMUX_SESSION_PREFIX, TMUX_CAPTURE_LINES } from "./constants.js";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -82,10 +83,30 @@ export function listPanes(): TmuxPane[] {
 }
 
 /**
+ * Wrap a command in the user's login shell so PATH, aliases, and tool
+ * managers (nvm, pyenv, etc.) are available inside tmux.
+ *
+ * tmux new-window runs commands in a non-interactive, non-login shell,
+ * so .zshrc / .bashrc are never sourced. This wrapper fixes that.
+ */
+function wrapWithLoginShell(command: string): string {
+  const shell = process.env.SHELL || "/bin/bash";
+  const shellName = basename(shell);
+  const home = process.env.HOME || "";
+  const rcFile = home ? `${home}/.${shellName}rc` : "";
+  const sourcePrefix = rcFile
+    ? `[ -f '${rcFile}' ] && . '${rcFile}'; `
+    : "";
+  // Single-quote the inner command to avoid double-quote escaping issues
+  const escaped = command.replace(/'/g, "'\"'\"'");
+  return `${shell} -lc '${sourcePrefix}${escaped}'`;
+}
+
+/**
  * Spawn a claude session in a new tmux window.
  *
  * @param name - Window name (agent name)
- * @param command - Full command to run (e.g., `claude --model ...`)
+ * @param command - Full command to run (e.g., `cd /path && claude --model ...`)
  * @returns true if spawn succeeded
  */
 export function spawnPane(name: string, command: string): boolean {
@@ -95,9 +116,12 @@ export function spawnPane(name: string, command: string): boolean {
   // Kill existing window with same name if present
   exec(`tmux kill-window -t ${session}:${name} 2>/dev/null`);
 
+  // Wrap in login shell so .zshrc/.bashrc are sourced (makes claude, lfg, etc. available)
+  const wrapped = wrapWithLoginShell(command);
+
   // Create new window with the command
   const result = exec(
-    `tmux new-window -t ${session} -n ${name} "${command.replace(/"/g, '\\"')}" 2>&1 && echo ok`
+    `tmux new-window -t ${session} -n ${name} ${shellQuote(wrapped)} 2>&1 && echo ok`
   );
   return result.includes("ok");
 }
@@ -130,14 +154,93 @@ export function capturePaneOutput(
 }
 
 /**
- * Send keys to an agent's tmux pane.
+ * Shell-quote a string for safe embedding in tmux commands.
+ * Uses single quotes with proper escaping.
+ */
+function shellQuote(value: string): string {
+  return `'${value.replace(/'/g, "'\"'\"'")}'`;
+}
+
+/**
+ * Send text to an agent's tmux pane, then press Enter separately.
+ *
+ * Critical: text and Enter MUST be separate send-keys calls.
+ * Combining them causes the Enter to be appended to the text literal
+ * instead of being interpreted as a keypress, which silently fails
+ * to submit the prompt.
  */
 export function sendKeys(name: string, keys: string): boolean {
   const session = sessionName();
-  const result = exec(
-    `tmux send-keys -t ${session}:${name} "${keys.replace(/"/g, '\\"')}" Enter 2>&1 && echo ok`
+  const target = `${session}:${name}`;
+
+  // Step 1: Send the text content (no Enter)
+  const textResult = exec(
+    `tmux send-keys -t ${target} ${shellQuote(keys)} 2>&1 && echo ok`
   );
-  return result.includes("ok");
+  if (!textResult.includes("ok")) return false;
+
+  // Step 2: Send Enter as a separate keypress
+  const enterResult = exec(
+    `tmux send-keys -t ${target} Enter 2>&1 && echo ok`
+  );
+  return enterResult.includes("ok");
+}
+
+/**
+ * Synchronous sleep. Used to wait for Claude Code to load before
+ * sending prompts. setTimeout doesn't work in CLI tools because
+ * the process exits before the callback fires.
+ */
+export function sleepSync(ms: number): void {
+  execSync(`sleep ${ms / 1000}`, { stdio: "ignore" });
+}
+
+/**
+ * Wait for Claude Code to finish loading in a tmux pane.
+ * Polls capture-pane output looking for the ready indicator.
+ *
+ * @param name - Window name
+ * @param timeoutMs - Max time to wait (default: 30s)
+ * @param pollMs - Poll interval (default: 2s)
+ * @returns true if Claude Code loaded, false if timed out
+ */
+export function waitForReady(
+  name: string,
+  timeoutMs: number = 30000,
+  pollMs: number = 2000
+): boolean {
+  const deadline = Date.now() + timeoutMs;
+  const readyIndicators = [">", "claude>", "Claude Code", "Tips:"];
+
+  while (Date.now() < deadline) {
+    const output = capturePaneOutput(name, 10);
+    if (readyIndicators.some((ind) => output.includes(ind))) {
+      return true;
+    }
+    sleepSync(pollMs);
+  }
+  return false;
+}
+
+/**
+ * Verify an agent is running (not stuck at an idle prompt).
+ * Captures pane output and checks for activity indicators.
+ *
+ * @param name - Window name
+ * @param waitMs - Time to wait before checking (default: 3s)
+ */
+export function verifyRunning(name: string, waitMs: number = 3000): boolean {
+  sleepSync(waitMs);
+  const output = capturePaneOutput(name, 15);
+  // Agent is working if we see tool calls, thinking, or output being generated
+  const activityIndicators = ["Read", "Edit", "Write", "Bash", "Grep", "Glob", "thinking", "searching", "reading"];
+  const idleIndicators = ["Tips:", "Available commands:"];
+
+  // If we see idle indicators and no activity, agent didn't start
+  const isIdle = idleIndicators.some((ind) => output.includes(ind));
+  const hasActivity = activityIndicators.some((ind) => output.includes(ind));
+
+  return hasActivity || !isIdle;
 }
 
 /**

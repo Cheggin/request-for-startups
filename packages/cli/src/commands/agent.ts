@@ -18,6 +18,9 @@ import {
   paneExists,
   isTmuxAvailable,
   ensureSession,
+  sendKeys,
+  waitForReady,
+  verifyRunning,
 } from "../lib/tmux.js";
 import {
   heading,
@@ -144,28 +147,57 @@ function spawnAgent(args: string[]): void {
     "--model", agent.model,
   ];
 
-  // Append system prompt with agent definition + ground truth
-  const fullPrompt = [
+  // Build system prompt from agent definition + ground truth
+  const systemParts = [
     systemPrompt,
     groundTruth ? `\n<Ground_Truth_Rules>\n${groundTruth}\n</Ground_Truth_Rules>` : "",
-    prompt ? `\n<Task>\n${prompt}\n</Task>` : "",
   ].filter(Boolean).join("\n");
 
-  if (fullPrompt) {
-    // Escape for shell: write to a temp file to avoid quoting issues
-    cmdParts.push("--append-system-prompt", `"${fullPrompt.replace(/"/g, '\\"').replace(/\n/g, "\\n")}"`);
+  if (systemParts) {
+    cmdParts.push("--append-system-prompt", systemParts);
   }
 
+  // Step 1: Spawn Claude Code in a new tmux window (no prompt yet)
   const fullCmd = `cd ${ROOT_DIR} && ${cmdParts.join(" ")}`;
   const spawned = spawnPane(name, fullCmd);
 
-  if (spawned) {
-    recordAgentActivity(name, { status: "running", currentTask: prompt || "interactive session" });
-    console.log(success(`  Spawned ${name} (${agent.model}) in tmux pane.`));
-    console.log(muted(`  Attach: tmux attach -t harness:${name}`));
-  } else {
+  if (!spawned) {
     console.log(error(`  Failed to spawn ${name}.`));
+    return;
   }
+
+  console.log(success(`  Spawned ${name} (${agent.model}) in tmux pane.`));
+
+  // Step 2: If there's a task prompt, wait for load then send it
+  if (prompt) {
+    console.log(muted(`  Waiting for Claude Code to load...`));
+    const ready = waitForReady(name, 30000);
+
+    if (!ready) {
+      console.log(warn(`  Claude Code may not have fully loaded. Sending prompt anyway.`));
+    }
+
+    // Step 3: Send the task prompt (text + Enter are separate inside sendKeys)
+    const sent = sendKeys(name, prompt);
+
+    if (!sent) {
+      console.log(error(`  Failed to send prompt to ${name}.`));
+      return;
+    }
+
+    // Step 4: Verify the agent started working
+    console.log(muted(`  Verifying agent activity...`));
+    const running = verifyRunning(name);
+
+    if (running) {
+      console.log(success(`  ${name} is working on task.`));
+    } else {
+      console.log(warn(`  ${name} may not have started. Check: tmux attach -t harness:${name}`));
+    }
+  }
+
+  recordAgentActivity(name, { status: "running", currentTask: prompt || "interactive session" });
+  console.log(muted(`  Attach: tmux attach -t harness:${name}`));
 }
 
 // ─── kill ───────────────────────────────────────────────────────────────────
