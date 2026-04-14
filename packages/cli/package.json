@@ -1,0 +1,16 @@
+{
+  "name": "@harness/cli",
+  "version": "0.1.0",
+  "description": "CLI for the startup harness",
+  "type": "module",
+  "bin": {
+    "harness": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "bun test",
+    "harness": "bun run src/index.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}
