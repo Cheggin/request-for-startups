@@ -1,6 +1,8 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { PRO_PLAN } from "@/lib/stripe";
+import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -137,9 +139,11 @@ export default function PricingPage() {
             ))}
           </ul>
 
-          <Button className="w-full" data-testid="plan-pro-cta">
-            Upgrade to Pro
-          </Button>
+          <Link href={`/checkout?price=${PRO_PLAN.priceId}`}>
+            <Button className="w-full" data-testid="plan-pro-cta">
+              Get Started
+            </Button>
+          </Link>
         </Card>
       </div>
 

@@ -147,20 +147,44 @@
   "hotPaths": [
     {
       "path": "",
-      "accessCount": 8,
-      "lastAccessed": 1776155070788,
+      "accessCount": 13,
+      "lastAccessed": 1776187352594,
       "type": "directory"
     },
     {
       "path": "app/page.tsx",
-      "accessCount": 8,
-      "lastAccessed": 1776187012832,
+      "accessCount": 9,
+      "lastAccessed": 1776187363950,
       "type": "file"
     },
     {
       "path": "app/layout.tsx",
+      "accessCount": 8,
+      "lastAccessed": 1776187347695,
+      "type": "file"
+    },
+    {
+      "path": "app/globals.css",
       "accessCount": 7,
-      "lastAccessed": 1776187012427,
+      "lastAccessed": 1776187395805,
+      "type": "file"
+    },
+    {
+      "path": "components/layout/header.tsx",
+      "accessCount": 6,
+      "lastAccessed": 1776187367198,
+      "type": "file"
+    },
+    {
+      "path": "lib/constants.ts",
+      "accessCount": 6,
+      "lastAccessed": 1776187390051,
+      "type": "file"
+    },
+    {
+      "path": "app/pricing/page.tsx",
+      "accessCount": 6,
+      "lastAccessed": 1776187456921,
       "type": "file"
     },
     {
@@ -170,27 +194,39 @@
       "type": "file"
     },
     {
-      "path": "app/globals.css",
-      "accessCount": 5,
-      "lastAccessed": 1776187018615,
-      "type": "file"
-    },
-    {
-      "path": "components/layout/header.tsx",
-      "accessCount": 5,
-      "lastAccessed": 1776187198130,
-      "type": "file"
-    },
-    {
-      "path": "lib/constants.ts",
-      "accessCount": 4,
-      "lastAccessed": 1776150010805,
-      "type": "file"
-    },
-    {
       "path": "hooks/use-image-converter.ts",
+      "accessCount": 5,
+      "lastAccessed": 1776187366542,
+      "type": "file"
+    },
+    {
+      "path": "package.json",
+      "accessCount": 5,
+      "lastAccessed": 1776187390367,
+      "type": "file"
+    },
+    {
+      "path": "app/api/webhooks/stripe/route.ts",
+      "accessCount": 5,
+      "lastAccessed": 1776187584481,
+      "type": "file"
+    },
+    {
+      "path": "app/convert/[slug]/page.tsx",
       "accessCount": 4,
-      "lastAccessed": 1776150011103,
+      "lastAccessed": 1776187366975,
+      "type": "file"
+    },
+    {
+      "path": "app/checkout/page.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1776187605876,
+      "type": "file"
+    },
+    {
+      "path": "app/checkout/success/page.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1776187611779,
       "type": "file"
     },
     {
@@ -212,33 +248,45 @@
       "type": "file"
     },
     {
-      "path": "app/convert/[slug]/page.tsx",
+      "path": "lib/format-file-size.ts",
       "accessCount": 3,
-      "lastAccessed": 1776155076084,
-      "type": "file"
-    },
-    {
-      "path": "package.json",
-      "accessCount": 3,
-      "lastAccessed": 1776155081152,
-      "type": "file"
-    },
-    {
-      "path": "lib/conversion-engine.ts",
-      "accessCount": 2,
-      "lastAccessed": 1776149960973,
+      "lastAccessed": 1776187350460,
       "type": "file"
     },
     {
       "path": "lib/get-image-dimensions.ts",
-      "accessCount": 2,
-      "lastAccessed": 1776149961674,
+      "accessCount": 3,
+      "lastAccessed": 1776187350689,
       "type": "file"
     },
     {
-      "path": "lib/format-file-size.ts",
-      "accessCount": 2,
-      "lastAccessed": 1776149961863,
+      "path": "lib/conversion-engine.ts",
+      "accessCount": 3,
+      "lastAccessed": 1776187351013,
+      "type": "file"
+    },
+    {
+      "path": "lib/conversion-data.ts",
+      "accessCount": 3,
+      "lastAccessed": 1776187351594,
+      "type": "file"
+    },
+    {
+      "path": "components/ui/button.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1776187395511,
+      "type": "file"
+    },
+    {
+      "path": "lib/stripe.ts",
+      "accessCount": 3,
+      "lastAccessed": 1776187472810,
+      "type": "file"
+    },
+    {
+      "path": "lib/stripe-actions.ts",
+      "accessCount": 3,
+      "lastAccessed": 1776187574027,
       "type": "file"
     },
     {
@@ -266,27 +314,9 @@
       "type": "file"
     },
     {
-      "path": "components/ui/button.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1776149968283,
-      "type": "file"
-    },
-    {
       "path": "components/ui/card.tsx",
       "accessCount": 2,
       "lastAccessed": 1776149968439,
-      "type": "file"
-    },
-    {
-      "path": "app/pricing/page.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1776149968498,
-      "type": "file"
-    },
-    {
-      "path": "lib/conversion-data.ts",
-      "accessCount": 2,
-      "lastAccessed": 1776155076315,
       "type": "file"
     },
     {
@@ -296,33 +326,39 @@
       "type": "file"
     },
     {
-      "path": "postcss.config.mjs",
-      "accessCount": 1,
-      "lastAccessed": 1776139876349,
-      "type": "file"
-    },
-    {
-      "path": "tsconfig.json",
-      "accessCount": 1,
-      "lastAccessed": 1776149971006,
+      "path": "lib/blog-posts.ts",
+      "accessCount": 2,
+      "lastAccessed": 1776187351486,
       "type": "file"
     },
     {
       "path": "next.config.ts",
-      "accessCount": 1,
-      "lastAccessed": 1776149971296,
+      "accessCount": 2,
+      "lastAccessed": 1776187363204,
+      "type": "file"
+    },
+    {
+      "path": "tsconfig.json",
+      "accessCount": 2,
+      "lastAccessed": 1776187363353,
+      "type": "file"
+    },
+    {
+      "path": "postcss.config.mjs",
+      "accessCount": 2,
+      "lastAccessed": 1776187363729,
+      "type": "file"
+    },
+    {
+      "path": "components/converter/route-converter.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1776187364154,
       "type": "file"
     },
     {
       "path": "reagan_plan_seo_pages.md",
       "accessCount": 1,
       "lastAccessed": 1776150054701,
-      "type": "file"
-    },
-    {
-      "path": "components/converter/route-converter.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1776150125198,
       "type": "file"
     },
     {
@@ -350,12 +386,6 @@
       "type": "file"
     },
     {
-      "path": "lib/blog-posts.ts",
-      "accessCount": 1,
-      "lastAccessed": 1776187083327,
-      "type": "file"
-    },
-    {
       "path": "app/blog/page.tsx",
       "accessCount": 1,
       "lastAccessed": 1776187089321,
@@ -365,6 +395,24 @@
       "path": "app/blog/[slug]/page.tsx",
       "accessCount": 1,
       "lastAccessed": 1776187117807,
+      "type": "file"
+    },
+    {
+      "path": "README.md",
+      "accessCount": 1,
+      "lastAccessed": 1776187367446,
+      "type": "file"
+    },
+    {
+      "path": "CLAUDE.md",
+      "accessCount": 1,
+      "lastAccessed": 1776187367814,
+      "type": "file"
+    },
+    {
+      "path": ".env.local",
+      "accessCount": 1,
+      "lastAccessed": 1776187446487,
       "type": "file"
     }
   ],
