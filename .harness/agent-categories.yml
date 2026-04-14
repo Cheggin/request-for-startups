@@ -1,13 +1,25 @@
 # Agent Categories
-# Ground truth rules that apply to ALL agents within a category.
-# Individual agent harnesses inherit from their category.
+# Maps agents → skill categories. Each agent gets specific skills + shared ones.
+# Skills live in skills/<category>/*.md, symlinked to .claude/skills/<name>/SKILL.md.
+
+# ─── Shared skills loaded for ALL agents ────────────────────────────────────
+shared_skills:
+  - agent/context-reset-handler
+  - agent/cost-tracker
+  - agent/avoid-feature-creep
+  - agent/error-classifier
+
+# ─── Agent category definitions ─────────────────────────────────────────────
 
 coding:
   description: Any agent that writes, modifies, or reviews code
   agents:
     - website
     - backend
-    - ops
+  skill_categories:
+    - design    # 17 skills — impeccable, polish, layout, typeset, animate, colorize, bolder, critique, etc.
+    - coding    # 12 skills — website-creation, deploy-pipeline, security-scanner, tdd, visual-qa, etc.
+    - convex    # 13 skills — schema, functions, realtime, migrations, security, etc.
   ground_truth:
     - All work goes through feature branches + PRs (never commit to main)
     - Every PR gets Cubic auto-review — no merge until clean
@@ -21,56 +33,87 @@ coding:
   required_mcp:
     - cubic-channel
   required_hooks:
-    - gateguard (block Edit without prior Read)
-    - config-protection (block modification of infra files)
-    - budget-enforcer (turn limit + wall-clock timeout)
+    - gateguard
+    - config-protection
 
 content:
   description: Any agent that creates non-code content (copy, marketing, docs, social)
   agents:
     - writing
-    - social-media
+    - docs
+  skill_categories:
+    - content   # 9 skills — anti-ai-writing, blog, brand, docs, legal, social, etc.
   ground_truth:
     - All content goes through a review draft before publishing
     - Brand/tone consistency checked against SOUL.md and brand guidelines
     - Content saved as drafts first, published only after review
     - Cannot modify code files
-    - Use Slack plugin for publishing and feedback
   required_mcp: []
   required_hooks:
-    - scope-restriction (cannot modify code files)
-    - budget-enforcer (turn limit + wall-clock timeout)
+    - scope-restriction
 
 growth:
   description: Any agent focused on metrics, analytics, SEO, user acquisition
   agents:
     - growth
-    - analytics
+  skill_categories:
+    - growth    # 7 skills — analytics, competitor-research, social-intelligence, seo-chat, etc.
   ground_truth:
-    - Every action must have a measurable hypothesis (e.g. "this change should increase signup rate by X%")
-    - Changes go through PRs if they touch code (inherits coding ground truth for code changes)
-    - Non-code changes (ad copy, SEO metadata) go through content review
+    - Every action must have a measurable hypothesis
     - Track before/after metrics for every intervention
     - Report results in investor updates with actual numbers
+    - Non-code changes go through content review
   required_mcp: []
   required_hooks:
-    - budget-enforcer (turn limit + wall-clock timeout)
-    - metrics-gate (must define measurable hypothesis before acting)
+    - metrics-gate
 
 operations:
   description: Any agent managing infrastructure, deploys, monitoring, incidents
   agents:
     - ops
-    - deploy
+  skill_categories:
+    - operations  # 6 skills — ci-cd, uptime, incidents, logs, deps, error-tracking
+    - coding      # needs coding skills for infra code changes
   ground_truth:
-    - Inherits coding ground truth (PRs, Cubic, TDD) for infra code changes
     - Cannot modify application code — only infra, CI/CD, monitoring configs
-    - Incident response follows escalation protocol (diagnose → fix → deploy → verify → post-mortem)
+    - Incident response follows escalation protocol
     - All deploy actions logged as GitHub Issue comments
     - Rollback plan required before any production deploy
   required_mcp:
     - cubic-channel
   required_hooks:
-    - scope-restriction (cannot modify application code)
-    - deploy-gate (rollback plan required before production deploy)
-    - budget-enforcer (turn limit + wall-clock timeout)
+    - scope-restriction
+    - deploy-gate
+
+orchestration:
+  description: Agents that coordinate other agents, manage state, research
+  agents:
+    - commander
+    - researcher
+    - harness-researcher
+    - alignment
+  skill_categories:
+    - agent     # 14 skills — loop-prompt, investor-updates, eval-framework, trajectory-logging, etc.
+  ground_truth:
+    - Commander cannot write or edit code directly (disallowedTools: Write, Edit)
+    - Researcher produces research briefs consumed by other agents
+    - Harness-researcher only modifies the harness itself
+    - All dispatch decisions logged to GitHub Issues
+  required_mcp: []
+  required_hooks: []
+
+quality:
+  description: Agents focused on code quality and cleanup
+  agents:
+    - slop-cleaner
+  skill_categories:
+    - coding    # needs slop-cleaner, security-scanner, cubic-codebase-scan
+    - design    # needs audit, critique for visual quality checks
+  ground_truth:
+    - Deletion-first workflow — remove before rewrite
+    - Cannot add new features, only clean existing code
+    - All changes go through PRs
+  required_mcp:
+    - cubic-channel
+  required_hooks:
+    - gateguard
