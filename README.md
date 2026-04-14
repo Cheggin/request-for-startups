@@ -257,12 +257,12 @@ Legal pages (ToS, Privacy Policy), SEO setup (sitemap, meta tags, structured dat
 │   ├── docs.md                Devtool documentation (sonnet, level 2)
 │   └── slop-cleaner.md        AI slop detection/removal (sonnet, level 2)
 │
-├── skills/                    57 skills across 5 categories
-│   ├── coding/                23 skills (visual-qa, tdd, convex-*, deploy, security, seo, slop-cleaner)
+├── skills/                    76 skills across 5 categories
+│   ├── coding/                24 skills (website-creation, visual-qa, tdd, convex-*, deploy, security, seo, slop-cleaner)
 │   ├── content/               9 skills (anti-ai-writing, blog, brand, docs, legal, social, data-driven-blog)
 │   ├── growth/                6 skills (analytics, seo-chat, programmatic-seo, landing-page, competitor-research)
 │   ├── operations/            6 skills (ci-cd, uptime, incident-response, log-aggregation, dependency-manager)
-│   └── shared/                13 skills (knowledge, loop-prompt, eval, cost-tracker, investor-updates, stack-extend)
+│   └── shared/                31 skills (impeccable suite: polish/critique/bolder/layout/typeset/animate/colorize + knowledge, loop-prompt, eval, cost-tracker, investor-updates, stack-extend)
 │
 ├── packages/                  26 packages with 590+ tests
 │   ├── cli/                   Harness CLI (12 command groups)
