@@ -147,20 +147,20 @@
   "hotPaths": [
     {
       "path": "",
-      "accessCount": 6,
-      "lastAccessed": 1776139859913,
+      "accessCount": 8,
+      "lastAccessed": 1776155070788,
       "type": "directory"
     },
     {
       "path": "app/page.tsx",
-      "accessCount": 5,
-      "lastAccessed": 1776150004976,
+      "accessCount": 7,
+      "lastAccessed": 1776155144637,
       "type": "file"
     },
     {
       "path": "app/layout.tsx",
-      "accessCount": 4,
-      "lastAccessed": 1776150005228,
+      "accessCount": 6,
+      "lastAccessed": 1776155126079,
       "type": "file"
     },
     {
@@ -177,8 +177,14 @@
     },
     {
       "path": "app/globals.css",
-      "accessCount": 3,
-      "lastAccessed": 1776149958802,
+      "accessCount": 4,
+      "lastAccessed": 1776155081778,
+      "type": "file"
+    },
+    {
+      "path": "components/layout/footer.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1776155135237,
       "type": "file"
     },
     {
@@ -200,9 +206,15 @@
       "type": "file"
     },
     {
+      "path": "app/convert/[slug]/page.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1776155076084,
+      "type": "file"
+    },
+    {
       "path": "package.json",
-      "accessCount": 2,
-      "lastAccessed": 1776149958007,
+      "accessCount": 3,
+      "lastAccessed": 1776155081152,
       "type": "file"
     },
     {
@@ -272,15 +284,9 @@
       "type": "file"
     },
     {
-      "path": "components/layout/footer.tsx",
+      "path": "lib/conversion-data.ts",
       "accessCount": 2,
-      "lastAccessed": 1776149970792,
-      "type": "file"
-    },
-    {
-      "path": "app/convert/[slug]/page.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1776150178935,
+      "lastAccessed": 1776155076315,
       "type": "file"
     },
     {
@@ -314,12 +320,6 @@
       "type": "file"
     },
     {
-      "path": "lib/conversion-data.ts",
-      "accessCount": 1,
-      "lastAccessed": 1776150106323,
-      "type": "file"
-    },
-    {
       "path": "components/converter/route-converter.tsx",
       "accessCount": 1,
       "lastAccessed": 1776150125198,
@@ -329,6 +329,24 @@
       "path": "app/convert/layout.tsx",
       "accessCount": 1,
       "lastAccessed": 1776150137547,
+      "type": "file"
+    },
+    {
+      "path": "app/legal/terms/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1776155100867,
+      "type": "file"
+    },
+    {
+      "path": "app/legal/privacy/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1776155112994,
+      "type": "file"
+    },
+    {
+      "path": "app/sitemap.ts",
+      "accessCount": 1,
+      "lastAccessed": 1776155116753,
       "type": "file"
     }
   ],

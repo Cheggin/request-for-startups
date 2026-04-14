@@ -128,6 +128,40 @@ export default function HomePage() {
         </div>
       )}
 
+      {/* JSON-LD structured data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            name: "Convertify",
+            description:
+              "Convert images between PNG, JPG, and WebP instantly in your browser. No uploads, no servers — your images never leave your device.",
+            url: "https://convertify.app",
+            applicationCategory: "Multimedia",
+            operatingSystem: "Any",
+            browserRequirements:
+              "Requires a modern web browser with Canvas API support",
+            offers: {
+              "@type": "Offer",
+              price: "0",
+              priceCurrency: "USD",
+            },
+            featureList: [
+              "PNG to JPG conversion",
+              "PNG to WebP conversion",
+              "JPG to PNG conversion",
+              "JPG to WebP conversion",
+              "WebP to PNG conversion",
+              "WebP to JPG conversion",
+              "Adjustable quality settings",
+              "Client-side processing",
+            ],
+          }),
+        }}
+      />
+
       {/* Trust Badges */}
       <div
         className="mt-16 grid gap-6 sm:grid-cols-3"

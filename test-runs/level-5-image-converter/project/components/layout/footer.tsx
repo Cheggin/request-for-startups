@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export function Footer() {
   return (
     <footer
@@ -21,7 +23,13 @@ export function Footer() {
           </svg>
           <span>Your images never leave your browser.</span>
         </div>
-        <div className="flex gap-4">
+        <div className="flex items-center gap-4">
+          <Link href="/legal/terms" className="hover:text-foreground transition-colors">
+            Terms
+          </Link>
+          <Link href="/legal/privacy" className="hover:text-foreground transition-colors">
+            Privacy
+          </Link>
           <span>&copy; {new Date().getFullYear()} Convertify</span>
         </div>
       </div>
