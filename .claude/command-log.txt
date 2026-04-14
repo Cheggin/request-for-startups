@@ -11,3 +11,4 @@ find skills/ -maxdepth 1 -type l -delete 2>/dev/null
 echo "---"
 ls skills/shared/*.md | wc -l && echo "total shared skills"
  git add skills/ .claude/ .harness/knowledge/design/raw/ai-design-antipatterns.md && git commit -m "Add impeccable design skills (17), AI anti-patterns, visual libraries, dangerous command hooks, command logging" && git push origin main 2>&1 | tail -3
+ rm .claude/hooks/block-dangerous.sh && git add .claude/ && git commit -m "Simplify hooks: keep GateGuard + command logging only, remove restrictive blocks" && git push origin main 2>&1 | tail -3
