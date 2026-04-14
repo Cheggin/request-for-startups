@@ -1,6 +1,6 @@
 # figma-design-generator
 
-**Status:** 🟢 Complete
+**Status:** 🟡 In progress
 **Agent:** designer
 **Category:** coding
 **Created:** 2026-04-13

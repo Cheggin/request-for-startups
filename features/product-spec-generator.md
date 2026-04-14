@@ -1,6 +1,6 @@
 # product-spec-generator
 
-**Status:** 🟢 Complete
+**Status:** 🟡 In progress
 **Agent:** planner
 **Category:** operations
 **Created:** 2026-04-13

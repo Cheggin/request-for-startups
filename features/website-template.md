@@ -1,6 +1,6 @@
 # website-template
 
-**Status:** 🟢 Complete
+**Status:** 🟡 In progress
 **Agent:** website-dev
 **Category:** coding
 **Created:** 2026-04-13

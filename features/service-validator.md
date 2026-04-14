@@ -1,6 +1,6 @@
 # service-validator
 
-**Status:** 🟢 Complete
+**Status:** 🟡 In progress
 **Agent:** ops
 **Category:** operations
 **Created:** 2026-04-13

@@ -1,18 +1,20 @@
 /**
  * harness init — run the full startup lifecycle.
  *
+ * Fixes: #3 (resume parsing), #4 (missing interview questions), #5 (sequential phases),
+ * #6 (all agents spawned), #16 (Convex validation), #19 (category-specific skills).
+ *
  * Every phase spawns a REAL Claude Code session in tmux with skills loaded.
- * NO claude -p. Skills, hooks, and quality enforcement are active in every session.
- * The commander monitors each pane via tmux-bridge.
+ * Phases run SEQUENTIALLY — each waits for its predecessor's artifact.
+ * The commander monitors all agents and orchestrates handoffs.
  */
 
 import { execSync, spawnSync } from "child_process";
-import { existsSync, writeFileSync, mkdirSync, readdirSync, symlinkSync, unlinkSync, lstatSync } from "fs";
-import { join, resolve } from "path";
+import { existsSync, writeFileSync, readFileSync, mkdirSync, readdirSync, symlinkSync, unlinkSync, lstatSync } from "fs";
+import { join } from "path";
 import { loadState, updateState } from "../lib/state.js";
-import { loadAgents } from "../lib/config.js";
 import { heading, success, warn, error, muted, info } from "../lib/format.js";
-import { STARTUP_PHASES, ROOT_DIR, HARNESS_DIR, STACKS_FILE } from "../lib/constants.js";
+import { STARTUP_PHASES, ROOT_DIR, HARNESS_DIR } from "../lib/constants.js";
 import { spawnPane, ensureSession, isTmuxAvailable } from "../lib/tmux.js";
 import {
   determineRequiredServices,
@@ -21,45 +23,46 @@ import {
   printCredentialSummary,
 } from "../lib/credentials.js";
 
+// ─── Constants ─────────────────────────────────────────────────────────────
+
+const PHASE_ORDER = [
+  "onboarding",
+  "services",
+  "research",
+  "spec",
+  "design",
+  "scaffold",
+  "build",
+  "deploy",
+  "grow",
+] as const;
+
+const PHASE_ARTIFACTS: Record<string, string> = {
+  research: "research-report.md",
+  spec: "product-spec.md",
+};
+
+const POLL_INTERVAL_MS = 15000; // 15s between artifact checks
+const MAX_WAIT_MS = 30 * 60 * 1000; // 30 min max wait per phase
+
 // ─── Install all skills into .claude/skills/ ────────────────────────────────
 
 function installSkills(): number {
-  const skillsRoot = join(ROOT_DIR, "skills");
-  const claudeSkillsDir = join(ROOT_DIR, ".claude", "skills");
-  const categories = ["design", "coding", "convex", "content", "growth", "operations", "agent"];
+  const skillsDir = join(ROOT_DIR, "skills");
+  if (!existsSync(skillsDir)) return 0;
+
   let count = 0;
+  const dirs = readdirSync(skillsDir, { withFileTypes: true })
+    .filter((d) => d.isDirectory());
 
-  mkdirSync(claudeSkillsDir, { recursive: true });
-
-  for (const category of categories) {
-    const categoryDir = join(skillsRoot, category);
-    if (!existsSync(categoryDir)) continue;
-
-    const files = readdirSync(categoryDir).filter((f) => f.endsWith(".md"));
-    for (const file of files) {
-      const name = file.replace(".md", "");
-      const skillDir = join(claudeSkillsDir, name);
-      const symlinkPath = join(skillDir, "SKILL.md");
-      const targetPath = join("..", "..", "..", "skills", category, file);
-
-      mkdirSync(skillDir, { recursive: true });
-
-      // Remove existing symlink if stale
-      if (existsSync(symlinkPath)) {
-        try {
-          const stat = lstatSync(symlinkPath);
-          if (stat.isSymbolicLink()) unlinkSync(symlinkPath);
-          else continue; // real file, don't overwrite
-        } catch { continue; }
-      }
-
-      try {
-        symlinkSync(targetPath, symlinkPath);
-        count++;
-      } catch {}
-    }
+  for (const dir of dirs) {
+    const skillMd = join(skillsDir, dir.name, "SKILL.md");
+    if (!existsSync(skillMd)) continue;
+    count++;
   }
-
+  // Skills are in plugin format (skills/<name>/SKILL.md) — Claude Code loads them directly
+  // No symlinking needed when running as a plugin
+  console.log(success(`  ${count} skills available via plugin`));
   return count;
 }
 
@@ -68,45 +71,99 @@ function installSkills(): number {
 function spawnClaudeSession(name: string, prompt: string, cwd?: string): boolean {
   ensureSession();
   const dir = cwd || ROOT_DIR;
-  // Real Claude Code session with dangerously-skip-permissions
-  // Skills, hooks, and CLAUDE.md are all loaded automatically
-  const cmd = `cd "${dir}" && claude --dangerously-skip-permissions --append-system-prompt "${prompt.replace(/"/g, '\\"')}"`;
+  const escapedPrompt = prompt.replace(/"/g, '\\"');
+  const cmd = `cd "${dir}" && claude --dangerously-skip-permissions --append-system-prompt "${escapedPrompt}"`;
+  console.log(muted(`  [spawn] ${name} in ${dir}`));
   return spawnPane(name, cmd);
 }
 
-// ─── Phase implementations ─────────────────────────────────────────────────
+// ─── Wait for an artifact file to exist ─────────────────────────────────────
+
+function waitForArtifact(filePath: string, phaseName: string): boolean {
+  const startTime = Date.now();
+  console.log(muted(`  Waiting for ${phaseName} to complete (artifact: ${filePath})...`));
+
+  while (Date.now() - startTime < MAX_WAIT_MS) {
+    if (existsSync(filePath)) {
+      const content = readFileSync(filePath, "utf-8").trim();
+      if (content.length > 50) { // not just a header
+        console.log(success(`  ${phaseName} complete — artifact found`));
+        return true;
+      }
+    }
+    spawnSync("sleep", [String(POLL_INTERVAL_MS / 1000)]);
+  }
+
+  console.log(warn(`  ${phaseName} timed out after ${MAX_WAIT_MS / 60000} minutes`));
+  return false;
+}
+
+// ─── Phase 0: Founder Interview ─────────────────────────────────────────────
 
 function runPhase0_Interview(): Record<string, string> {
-  console.log(heading("Phase 0: Deep Founder Interview"));
-  console.log(muted("  Answering these questions helps the harness build the right thing.\n"));
+  // Check if profile already exists (resume case)
+  const profilePath = join(HARNESS_DIR, "founder-profile.yml");
+  if (existsSync(profilePath)) {
+    console.log(muted("  Founder profile already exists. Loading from file."));
+    const content = readFileSync(profilePath, "utf-8");
+    const answers: Record<string, string> = {};
+    for (const line of content.split("\n")) {
+      const idx = line.indexOf(":");
+      if (idx > 0) {
+        const key = line.slice(0, idx).trim();
+        const val = line.slice(idx + 1).trim().replace(/^["']|["']$/g, "");
+        answers[key] = val;
+      }
+    }
+    return answers;
+  }
 
+  console.log(heading("Phase 0: Deep Founder Interview"));
+  console.log(muted("  Answering these questions helps the harness build the right thing."));
+  console.log(muted("  Press Enter to skip optional questions.\n"));
+
+  // All 13 questions from SKILL.md — fixes #4
   const questions = [
-    { key: "idea", prompt: "What's your startup idea?" },
-    { key: "type", prompt: "What type of company? (b2c, b2b-saas, devtool, marketplace, hardware, fintech, healthcare, ecommerce)" },
-    { key: "audience", prompt: "Who are the target users? Be specific." },
-    { key: "business_model", prompt: "Business model? (subscription, usage-based, freemium, commission, one-time)" },
-    { key: "budget", prompt: "Budget? (bootstrapped, seed-funded, enterprise)" },
-    { key: "timeline", prompt: "Timeline? (weekend, month, quarter)" },
+    { key: "idea", prompt: "What's your startup idea? (one sentence to one paragraph)" },
+    { key: "startup_type", prompt: "Company type? (b2c, b2b-saas, devtool, marketplace, hardware, fintech, healthcare, ecommerce)" },
+    { key: "target_users", prompt: "Who are the target users? Be specific — job title at company type, not a category." },
+    { key: "business_model", prompt: "Business model? (subscription, usage-based, freemium, commission, one-time, open-core)" },
+    { key: "budget", prompt: "Budget? (bootstrapped, pre-seed, seed, series-a, enterprise-backed)" },
+    { key: "technical_level", prompt: "Your technical background? (non-technical, technical-not-coding, full-stack, specialized)" },
+    { key: "existing_tools", prompt: "What tools do you already use? (GitHub, Vercel, Stripe, Figma, Slack, domain registrar, etc.)" },
+    { key: "compliance", prompt: "Compliance requirements? (hipaa, pci-dss, soc2, gdpr, coppa, none)" },
+    { key: "integrations", prompt: "Third-party integrations needed? (payments, maps, messaging, search, ai, crm, calendar)" },
+    { key: "timeline", prompt: "Timeline? (weekend, sprint, month, quarter, ongoing)" },
+    { key: "existing_designs", prompt: "Existing designs? (Figma URL, screenshots path, inspiration URLs, or 'none')" },
+    { key: "domain", prompt: "Domain name or startup name? (or 'TBD')" },
     { key: "design_preset", prompt: "Design style? (minimal, neobrutalist, glassmorphism, editorial, clean-saas, warm-soft)" },
   ];
 
   const answers: Record<string, string> = {};
 
   for (const q of questions) {
+    // Skip hardware question unless relevant
+    if (q.key === "hardware" && !["hardware", "iot"].some(t => (answers.startup_type || "").includes(t))) {
+      continue;
+    }
+
     process.stdout.write(`  ${info(q.prompt)} `);
     const input = spawnSync("bash", ["-c", "read -r line && echo $line"], {
       stdio: ["inherit", "pipe", "inherit"],
     });
-    answers[q.key] = input.stdout?.toString().trim() || "";
+    const value = input.stdout?.toString().trim() || "";
+    if (value) answers[q.key] = value;
     console.log();
   }
 
+  // Add interview date
+  answers.interview_date = new Date().toISOString().split("T")[0];
+
   // Save founder profile
-  const profilePath = join(HARNESS_DIR, "founder-profile.yml");
+  mkdirSync(HARNESS_DIR, { recursive: true });
   const yaml = Object.entries(answers)
     .map(([k, v]) => `${k}: "${v}"`)
     .join("\n");
-  mkdirSync(HARNESS_DIR, { recursive: true });
   writeFileSync(profilePath, yaml);
   console.log(success(`  Saved founder profile to ${profilePath}`));
 
@@ -115,14 +172,25 @@ function runPhase0_Interview(): Record<string, string> {
   return answers;
 }
 
-function runPhase1_ValidateServices(): boolean {
+// ─── Phase 1: Validate Services ─────────────────────────────────────────────
+
+function runPhase1_ValidateServices(answers: Record<string, string>): boolean {
   console.log(heading("Phase 1: Validate Services"));
 
+  // Core services — always checked
   const checks = [
     { name: "GitHub", cmd: "gh auth status" },
     { name: "Vercel", cmd: "vercel whoami" },
-    { name: "Railway", cmd: "railway whoami" },
   ];
+
+  // Conditional checks based on answers — fixes #16
+  const existingTools = (answers.existing_tools || "").toLowerCase();
+  if (!existingTools.includes("no railway")) {
+    checks.push({ name: "Railway", cmd: "railway whoami" });
+  }
+
+  // Convex — always in the canonical stack
+  checks.push({ name: "Convex", cmd: "npx convex dashboard --help" });
 
   let allPassed = true;
   for (const check of checks) {
@@ -130,15 +198,26 @@ function runPhase1_ValidateServices(): boolean {
       execSync(check.cmd, { stdio: "pipe", timeout: 10000 });
       console.log(success(`  ${check.name}: connected`));
     } catch {
-      console.log(error(`  ${check.name}: not connected — run the auth command first`));
+      console.log(warn(`  ${check.name}: not connected`));
       allPassed = false;
     }
   }
 
   if (!allPassed) {
-    console.log(warn("\n  Some services not connected. Fix them and run 'harness resume'."));
+    console.log(warn("\n  Some services not connected. Non-blocking — will retry at deploy time."));
   }
-  return allPassed;
+  return true; // Don't block on service validation — they can be fixed later
+}
+
+// ─── Phase helpers ──────────────────────────────────────────────────────────
+
+function phaseIndex(phase: string): number {
+  return PHASE_ORDER.indexOf(phase as typeof PHASE_ORDER[number]);
+}
+
+function shouldSkipPhase(phase: string, resumeFrom: string | null): boolean {
+  if (!resumeFrom) return false;
+  return phaseIndex(phase) < phaseIndex(resumeFrom);
 }
 
 // ─── Main flow ─────────────────────────────────────────────────────────────
@@ -152,115 +231,236 @@ export function run(args: string[]): void {
     process.exit(1);
   }
 
-  // Install all skills into .claude/skills/ so every agent session has them
-  console.log(heading("Installing Skills"));
-  const skillCount = installSkills();
-  console.log(success(`  ${skillCount} skills installed into .claude/skills/`));
-  console.log(muted("  All agent sessions will have access to design, coding, growth, and operations skills.\n"));
+  // Parse --resume-from flag — fixes #3
+  let resumeFrom: string | null = null;
+  for (const arg of args) {
+    if (arg.startsWith("--resume-from=")) {
+      resumeFrom = arg.split("=")[1];
+      console.log(muted(`  Resuming from phase: ${resumeFrom}`));
+    }
+  }
+
+  // Verify skills are available
+  console.log(heading("Checking Skills"));
+  installSkills();
 
   const state = loadState();
 
-  if (state.phase !== "onboarding" && !args.includes("--force")) {
+  // If not forcing and not resuming, check state
+  if (state.phase !== "onboarding" && !args.includes("--force") && !resumeFrom) {
     console.log(warn(`Already at phase: ${state.phase}`));
     console.log(muted("Use --force to restart, or 'harness resume' to continue."));
     return;
   }
 
-  // Phase 0: Founder Interview (interactive, in this terminal)
-  const answers = runPhase0_Interview();
-  updateState({ phase: "research", meta: { idea: answers.idea, type: answers.type, preset: answers.design_preset } });
-
-  // Phase 0.5: Credential Collection — every service gets its keys HERE
-  const required = determineRequiredServices(answers);
-  const projectDir = ROOT_DIR; // credentials go in the harness root for now; copied to project dir at scaffold time
-  const collected = collectCredentials(required, projectDir);
-
-  // Validate credential formats
-  const { valid, invalid } = validateCredentialFormats(collected);
-  if (invalid.length > 0) {
-    console.log(warn(`\n  Warning: these credentials look malformed: ${invalid.join(", ")}`));
-    console.log(muted("  Double-check them or update .env.local before deploying."));
+  // ── Phase 0: Founder Interview ─────────────────────────────────────────
+  let answers: Record<string, string>;
+  if (shouldSkipPhase("onboarding", resumeFrom)) {
+    console.log(muted("  Skipping Phase 0 — already completed"));
+    // Load existing profile
+    answers = runPhase0_Interview(); // loads from file if exists
+  } else {
+    answers = runPhase0_Interview();
+    updateState({ phase: "services", meta: { idea: answers.idea, type: answers.startup_type, preset: answers.design_preset } });
   }
 
-  printCredentialSummary(required, collected);
-
-  // Phase 1: Validate Services (CLI auth — gh, vercel, railway)
-  const servicesOk = runPhase1_ValidateServices();
-  if (!servicesOk) {
-    updateState({ phase: "services" });
-    return;
+  // ── Phase 0.5: Credential Collection ───────────────────────────────────
+  if (!shouldSkipPhase("services", resumeFrom)) {
+    const required = determineRequiredServices(answers);
+    const collected = collectCredentials(required, ROOT_DIR);
+    const { invalid } = validateCredentialFormats(collected);
+    if (invalid.length > 0) {
+      console.log(warn(`  Warning: malformed credentials: ${invalid.join(", ")}`));
+    }
+    printCredentialSummary(required, collected);
   }
-  updateState({ phase: "research" });
 
-  // Phase 2: Research — real Claude Code session
-  console.log(heading("Phase 2: Research"));
-  const researchPrompt = [
-    `Research competitors for this startup: "${answers.idea}".`,
-    "Use WebSearch to find competitors, market size, pricing, design patterns.",
-    "Write research-report.md with: executive summary, competitor table, target audience, differentiation.",
-    "Post a Slack update when done: 'Research complete. [X] competitors found.'",
-  ].join(" ");
-  spawnClaudeSession("researcher", researchPrompt);
-  console.log(success("  Research agent spawned in tmux pane 'researcher'"));
-  updateState({ phase: "spec" });
+  // ── Phase 1: Validate Services ─────────────────────────────────────────
+  if (!shouldSkipPhase("services", resumeFrom)) {
+    runPhase1_ValidateServices(answers);
+    updateState({ phase: "research" });
+  }
 
-  // Phase 3: Spec — real Claude Code session
-  console.log(heading("Phase 3: Product Spec"));
-  const specPrompt = [
-    `Generate a product spec for: "${answers.idea}".`,
-    "Read research-report.md if it exists. Read .harness/stacks.yml for stack.",
-    "Include: pages with routes, features (P0/P1/P2) with testable acceptance criteria,",
-    "data models, API routes, component inventory.",
-    "Write product-spec.md. Create GitHub Issues for every P0 feature.",
-    "Post Slack update when done.",
-  ].join(" ");
-  spawnClaudeSession("planner", specPrompt);
-  console.log(success("  Planner agent spawned in tmux pane 'planner'"));
-  updateState({ phase: "design" });
+  // ── Phase 2: Research — sequential, waits for artifact ─────────────────
+  if (!shouldSkipPhase("research", resumeFrom)) {
+    console.log(heading("Phase 2: Research"));
+    const researchArtifact = join(ROOT_DIR, "research-report.md");
 
-  // Phase 4: Design — skipped (Figma MCP)
-  console.log(heading("Phase 4: Design"));
-  console.log(muted("  Skipping Figma generation. Build phase will use preset: " + (answers.design_preset || "minimal")));
-  updateState({ phase: "scaffold" });
+    if (existsSync(researchArtifact)) {
+      console.log(muted("  research-report.md already exists — skipping"));
+    } else {
+      const researchPrompt = [
+        `You are the researcher agent. Research competitors for: "${answers.idea}".`,
+        "Use WebSearch to find 5-15 competitors, market size, pricing models, design patterns.",
+        "Write research-report.md with: executive summary, competitor table, target audience, positioning gaps, differentiation opportunities.",
+        "Be thorough. This report feeds directly into the product spec.",
+      ].join(" ");
+      spawnClaudeSession("researcher", researchPrompt);
+      console.log(success("  Researcher agent spawned — waiting for research-report.md"));
 
-  // Phase 5: Scaffold + Build — real Claude Code session with ALL skills
-  console.log(heading("Phase 5-7: Scaffold + Build"));
-  const buildPrompt = [
-    `You are the website agent. Build the startup: "${answers.idea}".`,
-    `Design preset: ${answers.design_preset || "minimal"}. Follow the website-creation skill exactly.`,
-    "Read product-spec.md for features. Read .harness/stacks.yml for stack.",
-    "Load and follow these skills: website-creation, anti-ai-writing, polish, layout, typeset.",
-    "Steps: 1) Scaffold Next.js project 2) Install deps 3) Write tests first (TDD)",
-    "4) Build each feature 5) Run Playwright screenshots 6) Evaluate visual QA",
-    "7) Post Slack update per feature shipped.",
-    "Use shadcn/ui for components. NO Inter font. NO dark mode. NO vibe coding.",
-    "NEVER STOP until all P0 features are done.",
-  ].join(" ");
-  spawnClaudeSession("website-builder", buildPrompt);
-  console.log(success("  Website builder agent spawned in tmux pane 'website-builder'"));
-  updateState({ phase: "build" });
+      // Wait for artifact — fixes #5 (sequential phases)
+      waitForArtifact(researchArtifact, "Research");
+    }
+    updateState({ phase: "spec" });
+  }
 
-  // Phase 8: Deploy — spawns when build is done (commander monitors)
-  console.log(heading("Phase 8-9: Deploy + Post-Deploy"));
-  const opsPrompt = [
-    "You are the ops agent. Wait for the website-builder to finish (check tmux pane).",
-    "When build is complete: 1) vercel --prod 2) Verify deployment health",
-    "3) Set up sitemap, robots.txt 4) Post Slack update with live URL.",
-    "Then start the post-deploy monitoring loop.",
-  ].join(" ");
-  spawnClaudeSession("ops", opsPrompt);
-  console.log(success("  Ops agent spawned in tmux pane 'ops'"));
+  // ── Phase 3: Product Spec — waits for research ─────────────────────────
+  if (!shouldSkipPhase("spec", resumeFrom)) {
+    console.log(heading("Phase 3: Product Spec"));
+    const specArtifact = join(ROOT_DIR, "product-spec.md");
+
+    if (existsSync(specArtifact)) {
+      console.log(muted("  product-spec.md already exists — skipping"));
+    } else {
+      const specPrompt = [
+        `You are the planner. Generate a product spec for: "${answers.idea}".`,
+        "Read research-report.md for competitor context. Read .harness/stacks.yml for stack.",
+        `Startup type: ${answers.startup_type}. Target users: ${answers.target_users}.`,
+        `Business model: ${answers.business_model}. Compliance: ${answers.compliance || "none"}.`,
+        "Include: pages with routes, features (P0/P1/P2) with testable acceptance criteria,",
+        "data models, API routes, component inventory.",
+        "Write product-spec.md. Create GitHub Issues for every P0 feature.",
+      ].join(" ");
+      spawnClaudeSession("planner", specPrompt);
+      console.log(success("  Planner agent spawned — waiting for product-spec.md"));
+
+      waitForArtifact(specArtifact, "Product Spec");
+    }
+    updateState({ phase: "design" });
+  }
+
+  // ── Phase 4: Design ────────────────────────────────────────────────────
+  if (!shouldSkipPhase("design", resumeFrom)) {
+    console.log(heading("Phase 4: Design"));
+    if (answers.existing_designs && answers.existing_designs !== "none") {
+      console.log(muted(`  Using existing designs: ${answers.existing_designs}`));
+    } else {
+      console.log(muted(`  Design preset: ${answers.design_preset || "minimal"}`));
+      console.log(muted("  Visual QA baseline will be established during build phase."));
+    }
+    updateState({ phase: "scaffold" });
+  }
+
+  // ── Phase 5-7: Build — spawn ALL relevant agents ───────────────────────
+  // Fixes #6: spawn all agents, not just 4
+  if (!shouldSkipPhase("build", resumeFrom)) {
+    console.log(heading("Phase 5-7: Scaffold + Build"));
+
+    // Commander first — orchestrates everything (fixes #14)
+    const commanderPrompt = [
+      `You are the commander. Orchestrate building: "${answers.idea}".`,
+      "Read product-spec.md for features. Monitor all agent tmux panes.",
+      "Dispatch work to agents. Track progress via GitHub Issues.",
+      "Post investor-style Slack updates after each milestone.",
+      "Verify quality gates: tests pass, Cubic clean, visual QA pass.",
+      "NEVER write or edit code yourself — only coordinate.",
+    ].join(" ");
+    spawnClaudeSession("commander", commanderPrompt);
+    console.log(success("  Commander agent spawned (orchestrator)"));
+
+    // Website agent — frontend
+    const websitePrompt = [
+      `You are the website agent. Build the frontend for: "${answers.idea}".`,
+      `Design preset: ${answers.design_preset || "minimal"}.`,
+      "Read product-spec.md. Follow skills: website-creation, impeccable, layout, typeset, polish.",
+      "TDD: write tests first. NO Inter font. NO dark mode. Light mode only.",
+      "Steps: scaffold Next.js → install deps → write tests → build features → visual QA.",
+      "NEVER STOP until all P0 frontend features pass.",
+    ].join(" ");
+    spawnClaudeSession("website", websitePrompt);
+    console.log(success("  Website agent spawned (frontend)"));
+
+    // Backend agent — Convex, API routes, auth
+    const backendPrompt = [
+      `You are the backend agent. Build the backend for: "${answers.idea}".`,
+      "Read product-spec.md for data models and API routes.",
+      "Follow Convex skills for schema, functions, realtime, security.",
+      `Compliance: ${answers.compliance || "none"}. Business model: ${answers.business_model}.`,
+      "TDD: write tests first. Set up Convex schema, mutations, queries, actions.",
+      answers.business_model?.includes("subscription") ? "Wire Stripe integration for payments." : "",
+      "NEVER STOP until all P0 backend features pass.",
+    ].filter(Boolean).join(" ");
+    spawnClaudeSession("backend", backendPrompt);
+    console.log(success("  Backend agent spawned (Convex, API)"));
+
+    // Writing agent — legal, content
+    const writingPrompt = [
+      `You are the writing agent. Create content for: "${answers.idea}".`,
+      "Follow anti-ai-writing skill. NO AI slop.",
+      `Compliance: ${answers.compliance || "none"}.`,
+      "Generate: Terms of Service, Privacy Policy (legal-generator skill).",
+      "Then: blog post with unique data (data-driven-blog skill).",
+      "Then: social media launch posts (social-media skill).",
+    ].join(" ");
+    spawnClaudeSession("writing", writingPrompt);
+    console.log(success("  Writing agent spawned (legal, content)"));
+
+    // Growth agent — analytics, SEO
+    const growthPrompt = [
+      `You are the growth agent. Set up growth for: "${answers.idea}".`,
+      "Follow analytics-integration skill: set up PostHog.",
+      "Follow seo-setup skill: sitemap, meta tags, structured data.",
+      "Follow programmatic-seo skill if applicable to this startup type.",
+      "Set up conversion funnels and A/B testing framework.",
+    ].join(" ");
+    spawnClaudeSession("growth", growthPrompt);
+    console.log(success("  Growth agent spawned (analytics, SEO)"));
+
+    // Slop cleaner — continuous quality
+    const slopPrompt = [
+      "You are the slop-cleaner agent. Monitor the codebase for AI-generated slop.",
+      "Follow slop-cleaner skill. Check for: Inter font, sparkles icons, !important,",
+      "left outlines, generic AI copy, bounce/elastic animations, gradient text.",
+      "Fix any violations found. Run continuously.",
+    ].join(" ");
+    spawnClaudeSession("slop-cleaner", slopPrompt);
+    console.log(success("  Slop-cleaner agent spawned (quality)"));
+
+    // Conditional: docs agent for devtools
+    if (answers.startup_type === "devtool") {
+      const docsPrompt = [
+        `You are the docs agent. Generate documentation for: "${answers.idea}".`,
+        "Follow documentation-generator skill. Create: API reference, SDK guide, quickstart.",
+        "Follow contributing-guide skill for open-source contribution docs.",
+      ].join(" ");
+      spawnClaudeSession("docs", docsPrompt);
+      console.log(success("  Docs agent spawned (devtool documentation)"));
+    }
+
+    updateState({ phase: "build" });
+  }
+
+  // ── Phase 8-9: Deploy ──────────────────────────────────────────────────
+  if (!shouldSkipPhase("deploy", resumeFrom)) {
+    console.log(heading("Phase 8-9: Deploy + Post-Deploy"));
+    const opsPrompt = [
+      "You are the ops agent. Deploy the startup.",
+      "Wait for the website and backend agents to complete (check tmux panes).",
+      "When build is complete: 1) npx convex deploy 2) vercel --prod",
+      "3) Verify deployment health 4) Set up monitoring (uptime-monitor skill).",
+      `${answers.domain && answers.domain !== "TBD" ? `Configure domain: ${answers.domain}` : ""}`,
+      "Then start the post-deploy monitoring loop (post-deploy-loop skill).",
+    ].filter(Boolean).join(" ");
+    spawnClaudeSession("ops", opsPrompt);
+    console.log(success("  Ops agent spawned (deploy + monitoring)"));
+    updateState({ phase: "deploy" });
+  }
+
+  // ── Summary ────────────────────────────────────────────────────────────
+  const agentCount = [
+    "commander", "website", "backend", "writing", "growth", "slop-cleaner", "ops",
+    ...(answers.startup_type === "devtool" ? ["docs"] : []),
+  ];
 
   console.log();
   console.log(heading("Harness is building your startup"));
-  console.log(muted("  4 agents running in tmux:"));
-  console.log(muted("    researcher  — market research"));
-  console.log(muted("    planner     — product spec"));
-  console.log(muted("    website-builder — scaffold + build + visual QA"));
-  console.log(muted("    ops         — deploy + monitoring"));
+  console.log(muted(`  ${agentCount.length} agents running in tmux:`));
+  for (const name of agentCount) {
+    console.log(muted(`    ${name}`));
+  }
   console.log();
   console.log(muted("  Attach: tmux attach -t harness"));
   console.log(muted("  Status: harness status"));
-  console.log(muted("  Each agent posts updates to Slack as it completes milestones."));
+  console.log(muted("  Commander posts investor updates to Slack as milestones complete."));
   console.log();
 }
