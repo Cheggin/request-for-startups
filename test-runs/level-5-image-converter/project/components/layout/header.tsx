@@ -45,6 +45,12 @@ export function Header() {
             Converter
           </Link>
           <Link
+            href="/blog"
+            className="text-sm font-medium text-muted hover:text-foreground"
+          >
+            Blog
+          </Link>
+          <Link
             href="/pricing"
             className="text-sm font-medium text-muted hover:text-foreground"
           >
@@ -96,6 +102,13 @@ export function Header() {
             onClick={() => setMobileOpen(false)}
           >
             Converter
+          </Link>
+          <Link
+            href="/blog"
+            className="block rounded-lg px-3 py-2 text-sm font-medium text-muted hover:bg-surface hover:text-foreground"
+            onClick={() => setMobileOpen(false)}
+          >
+            Blog
           </Link>
           <Link
             href="/pricing"

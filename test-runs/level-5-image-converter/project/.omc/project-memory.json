@@ -153,14 +153,32 @@
     },
     {
       "path": "app/page.tsx",
-      "accessCount": 7,
-      "lastAccessed": 1776155144637,
+      "accessCount": 8,
+      "lastAccessed": 1776187012832,
       "type": "file"
     },
     {
       "path": "app/layout.tsx",
-      "accessCount": 6,
-      "lastAccessed": 1776155126079,
+      "accessCount": 7,
+      "lastAccessed": 1776187012427,
+      "type": "file"
+    },
+    {
+      "path": "components/layout/footer.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1776187018019,
+      "type": "file"
+    },
+    {
+      "path": "app/globals.css",
+      "accessCount": 5,
+      "lastAccessed": 1776187018615,
+      "type": "file"
+    },
+    {
+      "path": "components/layout/header.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1776187198130,
       "type": "file"
     },
     {
@@ -173,18 +191,6 @@
       "path": "hooks/use-image-converter.ts",
       "accessCount": 4,
       "lastAccessed": 1776150011103,
-      "type": "file"
-    },
-    {
-      "path": "app/globals.css",
-      "accessCount": 4,
-      "lastAccessed": 1776155081778,
-      "type": "file"
-    },
-    {
-      "path": "components/layout/footer.tsx",
-      "accessCount": 4,
-      "lastAccessed": 1776155135237,
       "type": "file"
     },
     {
@@ -278,27 +284,21 @@
       "type": "file"
     },
     {
-      "path": "components/layout/header.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1776149970623,
-      "type": "file"
-    },
-    {
       "path": "lib/conversion-data.ts",
       "accessCount": 2,
       "lastAccessed": 1776155076315,
       "type": "file"
     },
     {
-      "path": "postcss.config.mjs",
-      "accessCount": 1,
-      "lastAccessed": 1776139876349,
+      "path": "blog-png-vs-webp-2026.md",
+      "accessCount": 2,
+      "lastAccessed": 1776187011920,
       "type": "file"
     },
     {
-      "path": "blog-png-vs-webp-2026.md",
+      "path": "postcss.config.mjs",
       "accessCount": 1,
-      "lastAccessed": 1776139889832,
+      "lastAccessed": 1776139876349,
       "type": "file"
     },
     {
@@ -347,6 +347,24 @@
       "path": "app/sitemap.ts",
       "accessCount": 1,
       "lastAccessed": 1776155116753,
+      "type": "file"
+    },
+    {
+      "path": "lib/blog-posts.ts",
+      "accessCount": 1,
+      "lastAccessed": 1776187083327,
+      "type": "file"
+    },
+    {
+      "path": "app/blog/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1776187089321,
+      "type": "file"
+    },
+    {
+      "path": "app/blog/[slug]/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1776187117807,
       "type": "file"
     }
   ],
