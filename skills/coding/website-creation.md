@@ -1,94 +1,215 @@
 ---
 name: website-creation
-description: Build production-quality SaaS websites with opinionated design presets. Use when creating any startup website. Enforces shadcn/ui components, specific layout patterns, and anti-AI-writing. Must be loaded alongside anti-ai-writing and brand-guidelines skills.
+description: Build production-quality SaaS websites with opinionated design presets. Use when creating any startup website. The user MUST pick a design style before building. Enforces shadcn/ui, Figma design principles, specific CSS values per style, and anti-AI-writing. Load alongside anti-ai-writing skill. LIGHT MODE ONLY.
 ---
 
 # Website Creation
 
-Build SaaS websites that look like they were designed by a senior designer, not vibe-coded by AI.
+Build SaaS websites that look intentionally designed. The user picks a style. The model follows it exactly. No freestyling. No dark mode.
 
-## Design System: shadcn/ui + Tailwind v4
+## Foundational Design Principles (from Figma)
 
-Every website uses shadcn/ui components. No custom CSS for standard elements. Run `npx shadcn@latest init` and add components as needed.
+These apply to EVERY style. They are not optional.
 
-Required components for every SaaS: Button, Card, Badge, Input, Separator, Sheet (mobile nav), Tabs.
+1. **Hierarchy** — the most important element is the biggest, boldest, highest-contrast thing on the page. Hero headline > subtitle > body > nav. Never make everything the same size.
+2. **White space** — more space = more premium. Sections need py-20 minimum. Elements need breathing room. Crowded = cheap.
+3. **Contrast** — CTAs must be the highest-contrast element. If the page is light, the CTA is dark (or saturated). If text blends into the background, fix it.
+4. **Alignment** — use a grid. max-w-7xl mx-auto for content. Left-align text (never center paragraphs). Center only headlines and CTAs.
+5. **Proximity** — related things are close. Unrelated things have space between them. A feature's icon, heading, and description are grouped tightly.
+6. **Consistency** — one font family. One accent color. One border-radius value. One shadow style. Mixing = amateur.
+7. **Movement** — guide the eye: hero → social proof → features → pricing → CTA. Z-pattern or F-pattern.
 
-## Style Presets
+## Rules (all styles)
 
-The user picks ONE preset. Do not mix. Do not freestyle.
+### LIGHT MODE ONLY
+- No dark backgrounds for the page. No dark themes. No dark mode toggle.
+- Cards can have subtle colored or gray backgrounds, but the page background is always light.
 
-### Preset 1: Minimal (like Linear, Vercel)
-- Background: white (#ffffff) / dark (#09090b)
-- Text: near-black (#18181b) / near-white (#fafafa)
-- Accent: one single color (blue-600 or custom brand color)
-- Typography: system-ui, -apple-system. Large headings (text-5xl+), tight tracking (-0.02em)
-- Spacing: generous (py-24 between sections, px-6 content)
-- No gradients. No decorative elements. No background patterns.
-- Hero: headline + one-line subtitle + CTA button + product screenshot. Nothing else.
+### Layout
+- Nav: logo left, links center, CTA right. Max 5 links. Mobile: sheet sidebar.
+- Hero: above fold. Max 10-word headline. Max 20-word subtitle. One CTA. One visual.
+- Social proof: logo bar or metrics immediately below hero.
+- Features: 3-4 max. Icon + heading + one sentence each.
+- Pricing: 2-3 tiers. Highlight recommended. Annual/monthly toggle.
+- CTA repeated at bottom.
+- Footer: organized link columns. Legal links.
 
-### Preset 2: Bold (like Stripe, Clerk)
-- Background: deep navy (#0a0a23) or rich dark
-- Accent: vibrant gradient on CTA only (not background)
-- Typography: bold headings (font-bold text-6xl), normal body
-- Cards with subtle borders and hover states
-- Hero: headline + animated product demo or code snippet
-- Grid-based feature sections (2x2 or 3x3)
+### Components: shadcn/ui
+```bash
+npx shadcn@latest init
+npx shadcn@latest add button card badge input separator sheet tabs
+```
+Override CSS variables per style preset. Do not write custom CSS for standard elements.
 
-### Preset 3: Warm (like Notion, Figma)
-- Background: warm white (#fefce8) or cream
-- Text: warm gray (#44403c)
-- Accent: warm color (amber, orange, or terracotta)
-- Rounded corners everywhere (rounded-2xl)
-- Illustrations or icons (Lucide) over screenshots
-- Hero: conversational headline + illustration + CTA
-- Soft shadows (shadow-sm), no hard borders
+### Typography
+- No Inter. Use system-ui or the style's specified font.
+- Headings: tracking-tight. Large (text-4xl to text-6xl).
+- Body: text-base or text-lg. Leading-relaxed.
+- Never use more than 2 font weights (medium + bold, or regular + semibold).
 
-### Preset 4: Clean SaaS (like Stripe Dashboard)
-- Background: gray-50 (#f9fafb)
-- Cards on white with border
-- Accent: indigo-600
-- Dashboard-forward: hero shows the actual product UI
-- Feature sections use bento grid layout
-- Data-heavy: show numbers, metrics, social proof
+### Content (load anti-ai-writing skill)
+- Headlines: 5-10 words. What it does, not what it is.
+- Subtitles: one sentence benefit.
+- CTAs: action verbs. "Start converting" not "Get started".
+- No fake social proof. No "trusted by" without logos.
+- Specific numbers over vague claims.
 
-## Layout Rules (all presets)
+## Step 0: Pick a style
 
-1. **Navigation**: Logo left, links center, CTA right. Mobile: Sheet sidebar. Max 5 nav links.
-2. **Hero**: Above the fold. One headline (max 10 words), one subtitle (max 20 words), one CTA. No paragraph text in hero.
-3. **Social proof**: Logos, testimonials, or metrics. Below hero. Not optional.
-4. **Features**: 3-4 max. Each: icon + heading + one sentence. No feature walls.
-5. **Pricing**: 2-3 tiers max. Highlight recommended. Annual/monthly toggle.
-6. **CTA**: Repeated at bottom. Same as hero CTA.
-7. **Footer**: Links organized in columns. Legal links. No newsletter form in footer.
+Ask the user. Do NOT proceed without a choice.
 
-## Content Rules
+---
 
-Load the anti-ai-writing skill. Additionally:
-- Headlines: 5-10 words. State what the product does, not what it is.
-  - Good: "Convert images in your browser"
-  - Bad: "The ultimate image conversion platform"
-- Subtitles: state the key benefit in one sentence
-  - Good: "Drag, drop, download. No upload needed — everything runs locally."
-  - Bad: "Our powerful platform leverages cutting-edge technology to deliver seamless image conversion."
-- CTAs: action verbs. "Start converting" not "Get started" not "Learn more"
-- No "trusted by" without actual logos. No fake social proof.
+## Preset 1: Minimal
+*Reference: Linear, Vercel, Resend*
 
-## Technical Rules
+```
+Background: #ffffff
+Text: #18181b
+Accent: single brand color (e.g. #2563eb)
+Border-radius: 0.5rem
+Font: system-ui, -apple-system, sans-serif
+Shadows: none or shadow-sm only
+```
 
-- Install shadcn/ui: `npx shadcn@latest init`
-- Add components individually: `npx shadcn@latest add button card badge`
-- Use CSS variables from shadcn for all colors (--background, --foreground, --primary, etc.)
-- Responsive: mobile-first. Test at 375px, 768px, 1280px.
-- No Inter font. Use system-ui or the preset's specified font.
-- Images: use next/image with proper width/height. No layout shift.
-- Performance: Lighthouse score > 90.
+**Rules:**
+- White background. Lots of white space (py-24+ between sections).
+- Headings: text-5xl font-medium tracking-tight. Let the words do the work.
+- No gradients. No decorative elements. No patterns. No illustrations.
+- Hero: headline left or centered, product screenshot right or below. White bg.
+- Monochrome palette. Accent color appears ONLY on CTAs and links.
+- Cards: border border-gray-200 bg-white. No shadows.
 
-## Anti-Patterns
+---
 
-- Generic hero with gradient background and sparkles
-- "Trusted by 10,000+ users" without any proof
-- Feature walls with 8+ features in a grid
-- Testimonials that sound AI-generated ("This tool has been invaluable...")
-- "In today's fast-paced world..." anywhere
+## Preset 2: Neobrutalist
+*Reference: Gumroad, indie SaaS*
+
+```
+Background: #fef3c7 (warm yellow) or #ffffff
+Text: #000000
+Accent: #000000
+Border: 3px solid #000000
+Shadow: 4px 4px 0 #000000 (hard, zero blur)
+Border-radius: 0 (sharp corners)
+Font: 'Space Mono', monospace (headings); system-ui (body)
+```
+
+**Rules:**
+- Black borders on EVERYTHING. Cards, buttons, inputs, images.
+- Hard drop shadows — `shadow-[4px_4px_0_#000]`. Never blur.
+- Sharp corners. border-radius: 0.
+- Flat colors only. No gradients. No transparency.
+- Bold, oversized typography. Headings text-6xl+ font-black.
+- Buttons: solid fill + hard shadow. On hover: `hover:-translate-y-0.5 hover:shadow-[6px_6px_0_#000]`.
+- High contrast. Playful but structured.
+
+---
+
+## Preset 3: Glassmorphism
+*Reference: Apple Vision, premium SaaS*
+
+```
+Background: linear-gradient(135deg, #667eea, #764ba2) or rich solid color
+Card bg: rgba(255, 255, 255, 0.15)
+Card blur: backdrop-blur-xl
+Card border: border border-white/20
+Card shadow: 0 8px 32px rgba(31, 38, 135, 0.15)
+Border-radius: 1rem (rounded-2xl)
+Font: system-ui
+```
+
+**Rules:**
+- Page background is a rich gradient or vibrant solid — NOT dark. Use saturated purple, blue, or warm tones.
+- Cards: `bg-white/15 backdrop-blur-xl border border-white/20 rounded-2xl`.
+- Text on glass cards must be high contrast (dark text on light glass, or white text with strong blur).
+- Subtle glow on hover: `hover:bg-white/25`.
+- Only use glass effect on cards, modals, nav — not on body text sections.
+- Ensure text is readable over every background. Add scrim layer if needed.
+
+---
+
+## Preset 4: Editorial
+*Reference: Greptile, agency sites*
+
+```
+Background: #f5f5f0 (warm off-white / newsprint)
+Text: #1a1a1a
+Accent: one bold color (e.g. #16a34a green, #dc2626 red)
+Border-radius: 0
+Font heading: Georgia, 'Times New Roman', serif
+Font body: system-ui, sans-serif
+```
+
+**Rules:**
+- Serif headings, sans-serif body. Strong editorial voice.
+- Asymmetric hero: text left, illustration or image right.
+- Grid-based layout. Think newspaper columns.
+- Monochrome + one bold accent (green like Greptile, or red, or orange).
+- Illustrations should be textured, halftone, or hand-drawn style — not generic icons.
+- Dense footer with 4+ columns.
+- No rounded corners. Sharp, editorial feel.
+
+---
+
+## Preset 5: Clean SaaS
+*Reference: Firecrawl, Stripe, Clerk*
+
+```
+Background: #ffffff
+Text: #0f172a
+Accent: #f97316 (orange) or brand color
+Card bg: #f8fafc
+Card border: border border-slate-200
+Border-radius: 0.75rem
+Font: system-ui
+Shadow: shadow-sm
+```
+
+**Rules:**
+- White background. Subtle gray cards with light borders.
+- Interactive product demo in hero (not just a screenshot). Show the tool working.
+- Dot-grid or subtle line pattern behind hero (optional, very light).
+- Logo bar below hero with real company logos.
+- Code snippets shown prominently for devtools.
+- Feature sections: icon (Lucide) + heading + short description. Bento grid for 4+ features.
+- Subtle shadows (shadow-sm). Rounded but not too round (rounded-lg).
+
+---
+
+## Preset 6: Warm Soft
+*Reference: Notion, Cal.com, Figma marketing*
+
+```
+Background: #fffbeb (warm cream) or #fef7f0
+Text: #44403c (warm gray)
+Accent: #d97706 (amber) or #ea580c (orange) or warm brand color
+Border-radius: 1rem (rounded-2xl)
+Font: system-ui
+Shadow: shadow-md with warm tint
+```
+
+**Rules:**
+- Warm cream/ivory background. Never pure white.
+- Everything rounded. Cards rounded-2xl, buttons rounded-full or rounded-xl.
+- Soft shadows with warm tint: `shadow-md shadow-amber-100/50`.
+- Illustrations or icons (Lucide) over screenshots.
+- Conversational headline. Friendly tone.
+- Generous padding. Feels spacious and inviting.
+- Accent colors are warm: amber, orange, terracotta, coral.
+
+---
+
+## Anti-Patterns (all styles)
+
+- Dark mode / dark backgrounds (BANNED)
+- Generic gradient hero backgrounds
+- Sparkles, emoji decorations, or floating shapes
+- Feature walls with 8+ features
 - Stock photos of people at laptops
-- Centered everything with no visual hierarchy
+- "Revolutionary", "game-changing", "cutting-edge"
+- Centered paragraph text (center only headlines + CTAs)
+- Mixing styles (glassmorphism cards on a brutalist page)
+- Inter font
+- !important in CSS
+- Left outline indicators (signal of vibe coding)
