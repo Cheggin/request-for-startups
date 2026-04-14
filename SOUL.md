@@ -111,6 +111,21 @@ The harness is a cage that makes it safe to run autonomously: hooks enforce what
 - **Tiered memory**: Hot (always loaded, small), warm (7-day TTL, on-demand), cold (permanent, explicit load). Without tiering, context fills with stale state within hours of 24/7 operation.
 - **Agent definitions as XML-structured prompts**: Agents have frontmatter (name, description, model, level, disallowedTools) and XML body sections (Role, Success_Criteria, Constraints, Investigation_Protocol, Failure_Modes_To_Avoid, Final_Checklist). Skills are prompt templates injected by hooks, not loaded by agents. This pattern comes from oh-my-claudecode and it's the most battle-tested approach.
 - **Separation of authoring and review**: The executor writes code. The code-reviewer has `disallowedTools: Write, Edit` — mechanically read-only. Never self-approve. The 3-failure circuit breaker escalates to architect after 3 failed attempts.
+- **Tool access by access pattern, not by preference**: One-shot operations (create issue, deploy, query data) use CLI — simpler, debuggable, no auth overhead. Real-time streams (new error alert, build failed, site down) use MCP or webhook → channel — CLI can't stream events. When a service has both (e.g. GitHub: `gh` CLI for commands, webhook for events), use both for their respective strengths. Never poll a CLI in a loop to fake real-time.
+
+---
+
+## Tool Access Architecture
+
+The harness accesses external services through three mechanisms, chosen by access pattern:
+
+| Access pattern | Mechanism | When to use | Examples |
+|---|---|---|---|
+| **One-shot commands** | CLI | Creating, querying, deploying — any request-response operation | `gh issue create`, `vercel deploy`, `railway up`, `cubic-run-review` |
+| **Real-time notifications** | MCP server or webhook → channel | Agent needs to react immediately to external events | Sentry MCP (new errors), Cubic webhook (PR reviewed), uptime webhook (site down) |
+| **Rich bidirectional** | MCP server | Service has no CLI, or agent needs structured tool access | Figma MCP (design generation), Sentry MCP (query + real-time) |
+
+**Decision rule**: If a CLI exists, use it for one-shot work. If the agent needs to be notified in real-time, use MCP or webhook → Convex → local channel. If neither CLI nor webhook exists, use MCP. Never build what a product already provides.
 
 ---
 
