@@ -50,6 +50,7 @@ const PRICING = [
     cta: "Start for free",
     href: "/dashboard",
     highlighted: false,
+    checkout: false,
   },
   {
     name: "Pro",
@@ -65,8 +66,9 @@ const PRICING = [
       "Priority support",
     ],
     cta: "Start Pro trial",
-    href: "/dashboard",
+    href: "/checkout",
     highlighted: true,
+    checkout: true,
   },
 ];
 
@@ -355,8 +357,9 @@ export default function LandingPage() {
             <a href="#features" className="text-sm text-[#64748b] hover:text-[#0f172a] transition-colors">Features</a>
             <a href="#pricing" className="text-sm text-[#64748b] hover:text-[#0f172a] transition-colors">Pricing</a>
             <a href="mailto:hello@pulsecheck.io" className="text-sm text-[#64748b] hover:text-[#0f172a] transition-colors">Contact</a>
-            <a href="#" className="text-sm text-[#64748b] hover:text-[#0f172a] transition-colors">Privacy</a>
-            <a href="#" className="text-sm text-[#64748b] hover:text-[#0f172a] transition-colors">Terms</a>
+            <Link href="/blog" className="text-sm text-[#64748b] hover:text-[#0f172a] transition-colors">Blog</Link>
+            <Link href="/legal/privacy" className="text-sm text-[#64748b] hover:text-[#0f172a] transition-colors">Privacy</Link>
+            <Link href="/legal/terms" className="text-sm text-[#64748b] hover:text-[#0f172a] transition-colors">Terms</Link>
           </nav>
           <p className="text-xs text-[#94a3b8]">2026 PulseCheck. All rights reserved.</p>
         </div>
