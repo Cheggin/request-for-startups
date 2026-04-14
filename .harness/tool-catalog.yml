@@ -1,0 +1,167 @@
+# Known Tool Catalog
+# Pre-built configs for common integrations.
+# The stack-extend skill reads this to install tools correctly.
+# Skills should CONFIGURE these tools, not rebuild them.
+
+auth:
+  clerk:
+    package: "@clerk/nextjs"
+    description: Authentication, user management, OAuth, session handling
+    env_vars: [NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY, CLERK_SECRET_KEY]
+    setup: "npx clerk@latest init"
+    docs: https://clerk.com/docs
+    when: "The startup needs user accounts, login, or signup"
+  better-auth:
+    package: "better-auth"
+    description: Open-source auth library, self-hosted
+    env_vars: [BETTER_AUTH_SECRET]
+    setup: "npx better-auth init"
+    docs: https://better-auth.com/docs
+    when: "The startup needs auth and prefers self-hosted"
+
+analytics:
+  posthog:
+    package: "posthog-js"
+    description: Product analytics, feature flags, session replay, A/B testing
+    env_vars: [NEXT_PUBLIC_POSTHOG_KEY, NEXT_PUBLIC_POSTHOG_HOST]
+    setup: "npm install posthog-js"
+    docs: https://posthog.com/docs
+    when: "Any startup — analytics is always needed"
+
+error-tracking:
+  sentry:
+    package: "@sentry/nextjs"
+    description: Error tracking, performance monitoring, release tracking
+    env_vars: [SENTRY_DSN, SENTRY_AUTH_TOKEN]
+    setup: "npx @sentry/wizard@latest -i nextjs"
+    docs: https://docs.sentry.io/platforms/javascript/guides/nextjs/
+    when: "Any deployed startup — error tracking is always needed"
+
+email:
+  resend:
+    package: "resend"
+    description: Transactional email API
+    env_vars: [RESEND_API_KEY]
+    setup: "npm install resend"
+    docs: https://resend.com/docs
+    when: "The startup sends emails (welcome, reset, notifications)"
+  react-email:
+    package: "react-email"
+    description: Email templates built with React components
+    env_vars: []
+    setup: "npm install react-email @react-email/components"
+    docs: https://react.email/docs
+    when: "Used alongside resend for email templates"
+
+payments:
+  stripe:
+    package: "stripe"
+    description: Payments, subscriptions, billing, invoicing
+    env_vars: [STRIPE_SECRET_KEY, NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY, STRIPE_WEBHOOK_SECRET]
+    setup: "npm install stripe @stripe/stripe-js"
+    docs: https://stripe.com/docs
+    when: "The startup charges money"
+
+monitoring:
+  betteruptime:
+    description: Uptime monitoring + status page (SaaS, no package)
+    env_vars: [BETTERUPTIME_API_KEY]
+    setup: "Configure via API at betteruptime.com"
+    docs: https://betteruptime.com/docs
+    when: "Any deployed startup — uptime monitoring is always needed"
+  openstatus:
+    package: "@openstatus/react"
+    description: Open-source uptime monitoring + status page
+    env_vars: [OPENSTATUS_API_KEY]
+    setup: "npm install @openstatus/react"
+    docs: https://docs.openstatus.dev
+    when: "Prefers open-source monitoring"
+
+cms:
+  sanity:
+    package: "sanity"
+    description: Headless CMS for content-heavy startups
+    env_vars: [NEXT_PUBLIC_SANITY_PROJECT_ID, NEXT_PUBLIC_SANITY_DATASET, SANITY_API_TOKEN]
+    setup: "npm create sanity@latest"
+    docs: https://www.sanity.io/docs
+    when: "The startup has blog, docs, or managed content"
+
+database:
+  convex:
+    package: "convex"
+    description: Serverless real-time database (already in canonical stack)
+    env_vars: [NEXT_PUBLIC_CONVEX_URL]
+    setup: "npx convex dev"
+    docs: https://docs.convex.dev
+    when: "Default — already in the stack"
+
+deployment:
+  vercel:
+    description: Frontend deployment (already in canonical stack)
+    env_vars: [VERCEL_TOKEN]
+    setup: "vercel link"
+    docs: https://vercel.com/docs
+    when: "Default — already in the stack"
+  railway:
+    description: Backend deployment (already in canonical stack)
+    env_vars: [RAILWAY_TOKEN]
+    setup: "railway link"
+    docs: https://docs.railway.app
+    when: "Default — already in the stack"
+
+ai-eval:
+  deepeval:
+    package: "deepeval"
+    description: Open-source LLM eval framework, pytest-like for LLM outputs
+    env_vars: []
+    setup: "pip install deepeval"
+    docs: https://docs.deepeval.com
+    when: "Evaluating our own agent outputs"
+  opik:
+    package: "opik"
+    description: Open-source LLM observability and evaluation platform
+    env_vars: []
+    setup: "pip install opik"
+    docs: https://github.com/comet-ml/opik
+    when: "Monitoring agent behavior in production"
+
+code-review:
+  cubic:
+    description: AI code review via GitHub App (already in stack)
+    env_vars: [CUBIC_API_KEY]
+    setup: "npx @cubic-plugin/cubic-plugin install --to claude"
+    docs: https://docs.cubic.dev
+    when: "Default — already in the stack"
+
+automation:
+  make:
+    description: Workflow automation with 3000+ integrations (SaaS, no package)
+    env_vars: [MAKE_API_KEY]
+    setup: "Configure at make.com"
+    docs: https://www.make.com/en/help
+    when: "Need to connect to services not in our stack"
+  activepieces:
+    package: "@activepieces/sdk"
+    description: Open-source workflow automation, 628+ integrations
+    env_vars: []
+    setup: "npm install @activepieces/sdk"
+    docs: https://www.activepieces.com/docs
+    when: "Prefers open-source automation"
+
+file-storage:
+  uploadthing:
+    package: "uploadthing"
+    description: File uploads for Next.js
+    env_vars: [UPLOADTHING_TOKEN]
+    setup: "npm install uploadthing @uploadthing/react"
+    docs: https://docs.uploadthing.com
+    when: "The startup needs file uploads (images, documents)"
+
+rate-limiting:
+  upstash:
+    package: "@upstash/ratelimit"
+    description: Serverless rate limiting via Redis
+    env_vars: [UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN]
+    setup: "npm install @upstash/ratelimit @upstash/redis"
+    docs: https://upstash.com/docs/redis/sdks/ratelimit-ts
+    when: "API rate limiting needed"
