@@ -1,0 +1,1 @@
+../../skills/seo-setup/SKILL.md

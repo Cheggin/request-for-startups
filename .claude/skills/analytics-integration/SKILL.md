@@ -1,0 +1,1 @@
+../../skills/analytics-integration/SKILL.md

@@ -1,0 +1,1 @@
+../../skills/slop-cleaner/SKILL.md

@@ -50,7 +50,10 @@ const MAX_WAIT_MS = 30 * 60 * 1000; // 30 min max wait per phase
 
 function installSkills(): number {
   const skillsDir = join(ROOT_DIR, "skills");
+  const claudeSkillsDir = join(ROOT_DIR, ".claude", "skills");
   if (!existsSync(skillsDir)) return 0;
+
+  mkdirSync(claudeSkillsDir, { recursive: true });
 
   let count = 0;
   const dirs = readdirSync(skillsDir, { withFileTypes: true })
@@ -59,11 +62,29 @@ function installSkills(): number {
   for (const dir of dirs) {
     const skillMd = join(skillsDir, dir.name, "SKILL.md");
     if (!existsSync(skillMd)) continue;
-    count++;
+
+    const targetDir = join(claudeSkillsDir, dir.name);
+    const symlinkPath = join(targetDir, "SKILL.md");
+    const relativePath = join("..", "..", "skills", dir.name, "SKILL.md");
+
+    mkdirSync(targetDir, { recursive: true });
+
+    // Skip if real file exists (e.g. startup-init)
+    if (existsSync(symlinkPath)) {
+      try {
+        const stat = lstatSync(symlinkPath);
+        if (!stat.isSymbolicLink()) { count++; continue; }
+        unlinkSync(symlinkPath);
+      } catch { count++; continue; }
+    }
+
+    try {
+      symlinkSync(relativePath, symlinkPath);
+      count++;
+    } catch { count++; }
   }
-  // Skills are in plugin format (skills/<name>/SKILL.md) — Claude Code loads them directly
-  // No symlinking needed when running as a plugin
-  console.log(success(`  ${count} skills available via plugin`));
+
+  console.log(success(`  ${count} skills symlinked to .claude/skills/`));
   return count;
 }
 

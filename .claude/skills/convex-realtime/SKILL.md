@@ -1,0 +1,1 @@
+../../skills/convex-realtime/SKILL.md

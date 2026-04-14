@@ -1,0 +1,1 @@
+../../skills/accessibility-checker/SKILL.md

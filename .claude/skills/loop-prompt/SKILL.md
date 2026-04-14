@@ -1,0 +1,1 @@
+../../skills/loop-prompt/SKILL.md

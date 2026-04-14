@@ -1,0 +1,1 @@
+../../skills/stack-extend/SKILL.md

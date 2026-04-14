@@ -1,0 +1,1 @@
+../../skills/competitor-research/SKILL.md

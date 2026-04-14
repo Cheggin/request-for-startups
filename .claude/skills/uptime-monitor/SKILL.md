@@ -1,0 +1,1 @@
+../../skills/uptime-monitor/SKILL.md

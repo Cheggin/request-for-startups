@@ -1,0 +1,1 @@
+../../skills/seo-chat/SKILL.md

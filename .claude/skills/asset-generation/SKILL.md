@@ -1,0 +1,1 @@
+../../skills/asset-generation/SKILL.md

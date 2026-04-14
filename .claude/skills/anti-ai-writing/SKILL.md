@@ -1,0 +1,1 @@
+../../skills/anti-ai-writing/SKILL.md
