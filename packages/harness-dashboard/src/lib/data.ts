@@ -35,11 +35,33 @@ export interface RealStartup {
   deployUrl?: string;
 }
 
+export interface RealLoop {
+  name: string;
+  agent: string;
+  loopType: string;
+  description: string;
+  interval: string;
+  skill: string;
+  status: "running" | "stopped";
+  createsIssues: boolean;
+}
+
 export interface RealDeployment {
   name: string;
   url: string;
   state: string;
   createdAt: string;
+}
+
+export interface GitHubIssue {
+  number: number;
+  title: string;
+  url: string;
+  severity: "P0" | "P1" | "P2" | "P3" | "unknown";
+  type: string;
+  author: string;
+  createdAt: string;
+  state: string;
 }
 
 // ─── Agents: Read from tmux ────────────────────────────────────────────────
@@ -213,6 +235,85 @@ export function getCosts(projectPath: string): { agent: string; cost: number }[]
   }
 }
 
+// ─── Loops: Read from .harness/loops.yml + cross-ref tmux ─────────────────
+
+const LOOPS_YML_PATH = "/Users/reagan/Documents/GitHub/request-for-startups/.harness/loops.yml";
+
+export function getLoops(): RealLoop[] {
+  if (!existsSync(LOOPS_YML_PATH)) {
+    console.log("[getLoops] loops.yml not found at", LOOPS_YML_PATH);
+    return [];
+  }
+
+  try {
+    const raw = readFileSync(LOOPS_YML_PATH, "utf-8");
+    const loops: RealLoop[] = [];
+
+    // Get running tmux sessions to cross-reference status
+    let tmuxSessions: string[] = [];
+    try {
+      const tmuxRaw = execSync(
+        'tmux list-sessions -F "#{session_name}" 2>/dev/null',
+        { encoding: "utf-8", timeout: 5000 }
+      ).trim();
+      tmuxSessions = tmuxRaw ? tmuxRaw.split("\n").filter(Boolean) : [];
+    } catch {
+      console.log("[getLoops] tmux not available or no sessions");
+    }
+
+    // Parse YAML blocks — each top-level key (not indented, not a comment) is a loop name
+    let currentName = "";
+    let currentBlock: Record<string, string> = {};
+
+    const flushBlock = () => {
+      if (currentName && Object.keys(currentBlock).length > 0) {
+        const isRunning = tmuxSessions.some(
+          (s) => s === currentName || s.includes(currentName)
+        );
+        loops.push({
+          name: currentName,
+          agent: currentBlock.agent || "",
+          loopType: currentBlock.loop_type || "custom",
+          description: currentBlock.description || "",
+          interval: currentBlock.interval || "",
+          skill: currentBlock.skill || "",
+          status: isRunning ? "running" : "stopped",
+          createsIssues: currentBlock.creates_issues === "true",
+        });
+      }
+    };
+
+    for (const line of raw.split("\n")) {
+      // Skip comments and blank lines
+      if (line.startsWith("#") || line.trim() === "") continue;
+      // Skip lines that are part of multi-line prompt blocks
+      if (line.startsWith("    ")) continue;
+
+      // Top-level key (no leading whitespace, ends with colon)
+      const topMatch = line.match(/^([a-z][a-z0-9_-]*):\s*$/);
+      if (topMatch) {
+        flushBlock();
+        currentName = topMatch[1];
+        currentBlock = {};
+        continue;
+      }
+
+      // Indented key-value pair
+      const kvMatch = line.match(/^\s{2}([a-z_]+):\s*(.+)/);
+      if (kvMatch && currentName) {
+        currentBlock[kvMatch[1]] = kvMatch[2].replace(/^["']|["']$/g, "");
+      }
+    }
+    flushBlock();
+
+    console.log("[getLoops] Parsed", loops.length, "loops from loops.yml");
+    return loops;
+  } catch (e) {
+    console.error("[getLoops] Failed to parse loops.yml:", e);
+    return [];
+  }
+}
+
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
 function parseSimpleYaml(content: string): Record<string, string> {
@@ -226,6 +327,47 @@ function parseSimpleYaml(content: string): Record<string, string> {
     }
   }
   return result;
+}
+
+// ─── GitHub Issues: Read from gh CLI ──────────────────────────────────────
+
+export function getGitHubIssues(): GitHubIssue[] {
+  try {
+    const raw = execSync(
+      'gh issue list --state open --json number,title,url,author,createdAt,body,state --limit 100 2>/dev/null',
+      { encoding: "utf-8", timeout: 15000 }
+    );
+    const data = JSON.parse(raw);
+    if (!Array.isArray(data)) return [];
+
+    return data.map((issue: any) => {
+      const body = issue.body || "";
+
+      // Extract severity from body: ## Severity\nP0|P1|P2|P3
+      const severityMatch = body.match(/##\s*Severity\s*\n\s*(P[0-3])/i);
+      const severity = severityMatch
+        ? (severityMatch[1] as GitHubIssue["severity"])
+        : "unknown";
+
+      // Extract type from body: ## Type\nfeat|fix|refactor|etc
+      const typeMatch = body.match(/##\s*Type\s*\n\s*(\w+)/i);
+      const type = typeMatch ? typeMatch[1] : "unknown";
+
+      return {
+        number: issue.number,
+        title: issue.title,
+        url: issue.url,
+        severity,
+        type,
+        author: issue.author?.login || "unknown",
+        createdAt: issue.createdAt,
+        state: issue.state || "OPEN",
+      };
+    });
+  } catch (e) {
+    console.error("[getGitHubIssues] Failed to fetch issues from gh CLI:", e);
+    return [];
+  }
 }
 
 function getVercelUrl(projectName: string): string | undefined {
