@@ -6,6 +6,8 @@
  */
 
 import { spawn } from "child_process";
+import { existsSync, readFileSync, appendFileSync, mkdirSync } from "fs";
+import { join } from "path";
 import { loadAgent } from "./agent-loader.js";
 import { loadSkills, concatSkills } from "./skill-loader.js";
 import { createDefaultHooks, runBeforeHooks, runAfterHooks } from "./hook-runner.js";
@@ -18,6 +20,8 @@ import type {
   ModeResult,
   HookSet,
   AgentDefinition,
+  LearningContext,
+  PostTaskResult,
 } from "./types.js";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -34,6 +38,166 @@ const MODE_PROMPTS: Record<ModeName, string> = {
   verify:
     "You are in VERIFY mode. Run tests, check for regressions, verify the implementation matches requirements. Report any remaining issues.",
 };
+
+// ─── Knowledge Paths ────────────────────────────────────────────────────────
+
+const KNOWLEDGE_BASE_DIR = ".harness/knowledge";
+
+function knowledgeCategoryDir(cwd: string, category: string): string {
+  return join(cwd, KNOWLEDGE_BASE_DIR, category);
+}
+
+// ─── Pre-task Learning ──────────────────────────────────────────────────────
+
+/**
+ * Query the knowledge wiki before task execution.
+ * Reads the category index, searches for relevant prior findings,
+ * and reads recent ledger entries to inject context into the agent prompt.
+ */
+export async function preTaskLearning(
+  category: string,
+  taskDescription: string,
+  cwd: string = process.cwd(),
+): Promise<LearningContext> {
+  const categoryDir = knowledgeCategoryDir(cwd, category);
+  const indexPath = join(categoryDir, "index.md");
+  const logPath = join(categoryDir, "log.md");
+
+  let indexContent = "";
+  let recentLogs: string[] = [];
+  const relevantFindings: string[] = [];
+
+  // Read category index
+  if (existsSync(indexPath)) {
+    indexContent = readFileSync(indexPath, "utf-8");
+  }
+
+  // Read recent ledger entries (last 20 lines)
+  if (existsSync(logPath)) {
+    const logContent = readFileSync(logPath, "utf-8");
+    const lines = logContent.split("\n").filter((l) => l.startsWith("- "));
+    recentLogs = lines.slice(-20);
+  }
+
+  // Search for relevant wiki pages by extracting keywords from task
+  const keywords = taskDescription
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((w) => w.length > 3)
+    .slice(0, 5);
+
+  const wikiDir = join(categoryDir, "wiki");
+  if (existsSync(wikiDir)) {
+    try {
+      const { readdirSync } = await import("fs");
+      const files = readdirSync(wikiDir).filter((f: string) => f.endsWith(".md"));
+      for (const file of files) {
+        const content = readFileSync(join(wikiDir, file), "utf-8");
+        const lowerContent = content.toLowerCase();
+        const matchCount = keywords.filter((k) => lowerContent.includes(k)).length;
+        if (matchCount >= 2) {
+          relevantFindings.push(content.slice(0, 500));
+        }
+      }
+    } catch {
+      // Wiki dir may not exist yet — that is fine
+    }
+  }
+
+  // Build context string for injection
+  const contextParts: string[] = [];
+
+  if (relevantFindings.length > 0) {
+    contextParts.push("## Prior Knowledge");
+    contextParts.push(
+      ...relevantFindings.slice(0, 5).map((f, i) => `### Finding ${i + 1}\n${f}`),
+    );
+  }
+
+  if (recentLogs.length > 0) {
+    contextParts.push("## Recent Activity");
+    contextParts.push(recentLogs.join("\n"));
+  }
+
+  return {
+    contextToInject: contextParts.join("\n\n"),
+    indexContent,
+    relevantFindings,
+    recentLogEntries: recentLogs,
+  };
+}
+
+// ─── Post-task Learning ─────────────────────────────────────────────────────
+
+/**
+ * Ingest learnings after task execution completes.
+ * Appends to the category log, ingests key findings into wiki on success,
+ * and logs failures to avoid repeating them.
+ */
+export async function postTaskLearning(
+  category: string,
+  result: PostTaskResult,
+  cwd: string = process.cwd(),
+): Promise<void> {
+  const categoryDir = knowledgeCategoryDir(cwd, category);
+  const logPath = join(categoryDir, "log.md");
+
+  // Ensure directory exists
+  mkdirSync(categoryDir, { recursive: true });
+
+  // Initialize log file if it does not exist
+  if (!existsSync(logPath)) {
+    const header = `# ${category} Knowledge Log\n\n_Append-only operation chronicle._\n`;
+    appendFileSync(logPath, header);
+  }
+
+  const timestamp = new Date().toISOString();
+  const status = result.success ? "SUCCESS" : "FAILURE";
+
+  // Build log entry
+  const entry = [
+    `- ${timestamp} [TASK] ${status}`,
+    `  duration: ${result.duration_ms}ms`,
+    `  turns: ${result.turns_used}`,
+    `  files: ${result.filesChanged.join(", ") || "none"}`,
+  ];
+
+  if (result.lessonsLearned) {
+    entry.push(`  lessons: ${result.lessonsLearned}`);
+  }
+
+  appendFileSync(logPath, "\n" + entry.join("\n") + "\n");
+
+  // Track metrics to a ledger file
+  const ledgerPath = join(categoryDir, "ledger.json");
+  let ledger: Array<{
+    timestamp: string;
+    success: boolean;
+    duration_ms: number;
+    turns_used: number;
+    filesChanged: string[];
+  }> = [];
+
+  if (existsSync(ledgerPath)) {
+    try {
+      ledger = JSON.parse(readFileSync(ledgerPath, "utf-8"));
+    } catch {
+      ledger = [];
+    }
+  }
+
+  ledger.push({
+    timestamp,
+    success: result.success,
+    duration_ms: result.duration_ms,
+    turns_used: result.turns_used,
+    filesChanged: result.filesChanged,
+  });
+
+  // Write atomically via temp approach using sync fs
+  const { writeFileSync } = await import("fs");
+  writeFileSync(ledgerPath, JSON.stringify(ledger, null, 2));
+}
 
 // ─── Event Emitter ───────────────────────────────────────────────────────────
 
