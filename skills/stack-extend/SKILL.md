@@ -1,6 +1,7 @@
 ---
 name: stack-extend
 description: Add a new tool to the project stack at runtime. Reads the tool catalog for known configs, installs the package, updates stacks.yml and .env, generates boilerplate, creates a tracking Issue, and posts an investor update. Use when an agent discovers it needs a new integration (analytics, payments, auth, email, monitoring, etc.) or when the user requests adding a tool.
+user-invocable: true
 ---
 
 # Stack Extend

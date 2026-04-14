@@ -1,6 +1,7 @@
 ---
 name: incident-response
 description: Automated incident lifecycle from detection through diagnosis, fix, deploy, verification, and post-mortem with budget-guarded escalation.
+user-invocable: true
 ---
 
 # Incident Response

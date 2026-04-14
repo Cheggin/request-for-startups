@@ -2,6 +2,7 @@
 name: convex-cron-jobs
 displayName: Convex Cron Jobs
 description: Scheduled function patterns for background tasks including interval scheduling, cron expressions, job monitoring, retry strategies, and best practices for long-running tasks
+user-invocable: true
 version: 1.0.0
 author: Convex
 tags: [convex, cron, scheduling, background-jobs, automation]

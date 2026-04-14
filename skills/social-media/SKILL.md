@@ -1,6 +1,7 @@
 ---
 name: social-media
 description: Generate and schedule platform-adapted social media posts with brand-consistent voice. Use when the user needs social media content for Twitter/X or LinkedIn, wants to promote product announcements or blog posts on social platforms, needs a consistent posting cadence, or wants to track and analyze social engagement metrics.
+user-invocable: true
 ---
 
 # Social Media Content Generator

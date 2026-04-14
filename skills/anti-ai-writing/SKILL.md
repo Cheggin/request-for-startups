@@ -1,6 +1,7 @@
 ---
 name: anti-ai-writing
 description: Detect and eliminate signs of AI-generated writing. Use when producing any user-facing text — blog posts, landing pages, docs, emails, social media, README, marketing copy. Enforces human-quality prose by flagging Wikipedia's documented AI writing tells.
+user-invocable: true
 ---
 
 # Anti-AI Writing

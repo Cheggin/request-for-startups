@@ -1,6 +1,7 @@
 ---
 name: blog-scaffolder
 description: Scaffold SEO-optimized blog post systems derived from product specs and competitor research. Use when the user needs a blog section for their startup website, wants to generate blog content from product specs, needs SEO-optimized posts with proper metadata and heading structure, or wants a complete blog infrastructure with RSS, sitemap, and pagination.
+user-invocable: true
 ---
 
 # Blog Scaffolder
@@ -33,6 +34,7 @@ For each blog post, create a markdown file with:
 ---
 title: "Keyword-optimized title"
 description: "Meta description under 160 characters"
+user-invocable: true
 date: "YYYY-MM-DD"
 author: "Author Name"
 tags: ["relevant", "keywords"]

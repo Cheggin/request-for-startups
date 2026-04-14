@@ -1,6 +1,7 @@
 ---
 name: seo-chat
 description: Query SEO Chat API for sourced SEO answers, URL audits, and content strategy. Use when optimizing pages for search, planning content, auditing URLs, or researching SEO best practices. Backed by 500+ curated SEO sources with inline citations.
+user-invocable: true
 ---
 
 # SEO Chat

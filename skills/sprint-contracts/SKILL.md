@@ -1,6 +1,7 @@
 ---
 name: sprint-contracts
 description: Negotiate structured success criteria contracts between generator and evaluator agents before each implementation sprint. Use when defining acceptance criteria for a feature sprint, establishing machine-verifiable success conditions, setting up generator-evaluator negotiation loops, or tracking contract iteration history for audit.
+user-invocable: true
 ---
 
 # Sprint Contracts

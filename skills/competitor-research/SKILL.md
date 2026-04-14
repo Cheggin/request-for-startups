@@ -1,6 +1,7 @@
 ---
 name: competitor-research
 description: Research competitors in a target market using web search and produce a structured report with feature comparison matrix, pricing analysis, market map, and positioning gaps. Use when analyzing a competitive landscape, comparing features across competitors, or identifying market opportunities before product planning.
+user-invocable: true
 ---
 
 # Competitor Research

@@ -1,6 +1,7 @@
 ---
 name: trajectory-logging
 description: ATIF trajectory serialization with ring buffer for post-hoc debugging, eval dataset construction, and regression detection.
+user-invocable: true
 ---
 
 # Trajectory Logging

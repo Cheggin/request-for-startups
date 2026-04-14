@@ -2,6 +2,7 @@
 name: convex-http-actions
 displayName: Convex HTTP Actions
 description: External API integration and webhook handling including HTTP endpoint routing, request/response handling, authentication, CORS configuration, and webhook signature validation
+user-invocable: true
 version: 1.0.0
 author: Convex
 tags: [convex, http, actions, webhooks, api, endpoints]

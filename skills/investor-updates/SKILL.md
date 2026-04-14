@@ -1,6 +1,7 @@
 ---
 name: investor-updates
 description: Structured milestone progress reports posted to Slack with metrics from GitHub, CI, and cost telemetry.
+user-invocable: true
 ---
 
 # Investor Updates

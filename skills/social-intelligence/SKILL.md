@@ -1,6 +1,7 @@
 ---
 name: social-intelligence
 description: Monitor social media platforms (Reddit, Twitter/X, LinkedIn, Hacker News) for startup mentions, competitor activity, and market sentiment using Browser Use API for authenticated scraping.
+user-invocable: true
 ---
 
 # Social Intelligence

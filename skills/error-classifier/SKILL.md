@@ -1,6 +1,7 @@
 ---
 name: error-classifier
 description: Classify errors as FATAL, TRANSIENT, or UNKNOWN and transform raw stack traces into actionable agent instructions.
+user-invocable: true
 ---
 
 # Error Classifier

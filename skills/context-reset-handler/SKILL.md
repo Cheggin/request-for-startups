@@ -1,6 +1,7 @@
 ---
 name: context-reset-handler
 description: Detect context window limits and perform clean resets with structured handoff documents for session continuity.
+user-invocable: true
 ---
 
 # Context Reset Handler

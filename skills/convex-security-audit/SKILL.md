@@ -2,6 +2,7 @@
 name: convex-security-audit
 displayName: Convex Security Audit
 description: Deep security review patterns for authorization logic, data access boundaries, action isolation, rate limiting, and protecting sensitive operations
+user-invocable: true
 version: 1.0.0
 author: Convex
 tags: [convex, security, audit, authorization, rate-limiting, protection]

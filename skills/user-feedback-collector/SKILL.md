@@ -1,6 +1,7 @@
 ---
 name: user-feedback-collector
 description: Build an in-app feedback widget that collects user feedback, categorizes it by type (bug, feature request, general), routes it to appropriate agents, and converts feature requests into GitHub Issues. Use when adding feedback collection, building feedback widgets, setting up user feedback routing, or aggregating feedback trends.
+user-invocable: true
 ---
 
 # User Feedback Collector

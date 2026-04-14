@@ -1,6 +1,7 @@
 ---
 name: readme-generator
 description: Auto-generate a README.md with product overview, tech stack, setup instructions, and architecture. Use when the user needs a README for their startup repository, wants to document the project for new developers, or needs to keep the README in sync with the actual project state.
+user-invocable: true
 ---
 
 # README Generator

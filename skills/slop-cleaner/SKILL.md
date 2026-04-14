@@ -1,6 +1,7 @@
 ---
 name: slop-cleaner
 description: Clean AI-generated code slop with a regression-safe, deletion-first workflow
+user-invocable: true
 triggers:
   - slop
   - deslop

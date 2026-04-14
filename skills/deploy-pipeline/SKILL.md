@@ -1,6 +1,7 @@
 ---
 name: deploy-pipeline
 description: Automated deploy pipeline for Vercel (frontend), Railway (backend), and Convex (database) with pre/post checks and rollback. Use when deploying services to production, configuring deploy ordering and health checks, setting up rollback procedures, or gating deploys on test and security audit results.
+user-invocable: true
 ---
 
 # Deploy Pipeline

@@ -2,6 +2,7 @@
 name: convex-schema-validator
 displayName: Convex Schema Validator
 description: Defining and validating database schemas with proper typing, index configuration, optional fields, unions, and migration strategies for schema changes
+user-invocable: true
 version: 1.0.0
 author: Convex
 tags: [convex, schema, validation, typescript, indexes, migrations]

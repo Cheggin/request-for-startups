@@ -1,6 +1,7 @@
 ---
 name: agent-creator
 description: Create new agent definitions with specific instruction sets, skill assignments, and behavioral rules. Use when the user wants a new type of agent (e.g., research-papers agent, customer-support agent, data-pipeline agent) or wants to modify an existing agent's behavior.
+user-invocable: true
 ---
 
 # Agent Creator
@@ -41,6 +42,7 @@ Write the agent file to `agents/<name>.md`:
 ---
 name: <agent-name>
 description: <one-line description>
+user-invocable: true
 model: <claude-sonnet-4-6 | claude-opus-4-6 | claude-haiku-4-5>
 level: <1-4>
 maxTurns: <number>

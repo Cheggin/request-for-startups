@@ -1,6 +1,7 @@
 ---
 name: cubic-codebase-scan
 description: Run periodic full-codebase security and quality scans via Cubic with automated GitHub Issue creation. Use when setting up scheduled codebase-wide scanning, detecting architectural drift or accumulated tech debt, catching cross-cutting security vulnerabilities, or configuring automated issue triage from scan findings.
+user-invocable: true
 ---
 
 # Cubic Codebase Scan

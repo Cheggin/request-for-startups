@@ -1,6 +1,7 @@
 ---
 name: data-driven-blog
 description: Create blog posts powered by unique data the SaaS generates. Use instead of generic AI content. Posts include proprietary benchmarks, user-aggregated insights, and original analysis that no competitor can replicate. Query SEO Chat API for topic validation.
+user-invocable: true
 ---
 
 # Data-Driven Blog Content

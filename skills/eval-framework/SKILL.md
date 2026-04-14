@@ -1,6 +1,7 @@
 ---
 name: eval-framework
 description: Evaluation framework using pass@k metrics to measure agent reliability with diff-based eval selection.
+user-invocable: true
 ---
 
 # Eval Framework

@@ -1,6 +1,7 @@
 ---
 name: tiered-memory
 description: Three-tier memory system (hot, warm, cold) to prevent context pollution with stale state and preserve knowledge across resets.
+user-invocable: true
 ---
 
 # Tiered Memory

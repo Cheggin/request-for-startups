@@ -1,6 +1,7 @@
 ---
 name: brand-guidelines
 description: Extract and codify brand guidelines from design assets into a reusable brand configuration. Use when the user needs to establish brand consistency, extract color palettes and typography from design tokens or CSS, document voice and tone guidelines, create a brand configuration file for other agents to reference, or audit existing content for brand compliance.
+user-invocable: true
 ---
 
 # Brand Guidelines Generator

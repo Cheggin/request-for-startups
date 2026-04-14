@@ -1,6 +1,7 @@
 ---
 name: visual-qa-pipeline
 description: Screenshot every page with Playwright, feed to visual QA agent for design evaluation, report results to Slack. Use after every build phase to verify UI matches the chosen design preset. Integrates with the Playwright skill and the website-creation preset system.
+user-invocable: true
 ---
 
 # Visual QA Pipeline

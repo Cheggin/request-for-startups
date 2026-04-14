@@ -2,6 +2,7 @@
 name: convex
 displayName: Convex Development
 description: Umbrella skill for all Convex development patterns. Routes to specific skills like convex-functions, convex-realtime, convex-agents, etc.
+user-invocable: true
 version: 1.0.0
 author: Convex
 tags: [convex, backend, database, realtime]

@@ -1,6 +1,7 @@
 ---
 name: uptime-monitor
 description: Continuous health check polling with failure detection, consecutive-failure thresholds, Slack alerts, incident triggering, and rolling uptime tracking.
+user-invocable: true
 ---
 
 # Uptime Monitor
