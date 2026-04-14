@@ -1,0 +1,14 @@
+{
+  "name": "@harness/config-optimizer",
+  "version": "0.1.0",
+  "description": "Analyzes agent performance data and suggests config changes to auto-tune the harness",
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.0",
+    "typescript": "^5.7.0"
+  }
+}
