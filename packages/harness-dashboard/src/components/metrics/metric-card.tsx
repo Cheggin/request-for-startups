@@ -9,24 +9,20 @@ interface MetricCardProps {
   color?: string;
 }
 
-/**
- * Metric card — shows a label, value, and optional sparkline.
- * Sparkline ONLY renders if real data is provided. Never generates fake data.
- */
 export function MetricCard({ label, value, sparklineData, color }: MetricCardProps) {
   return (
-    <div className="bg-surface border border-border-subtle rounded-xl px-4 py-3.5 hover:border-border transition-colors">
+    <div className="border border-border-subtle rounded-md px-4 py-3 hover:bg-surface-hover transition-colors">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-[12px] font-medium text-muted mb-1">{label}</p>
-          <p className="text-2xl font-semibold tracking-tight text-foreground">{value}</p>
+          <p className="text-[11px] font-medium text-text-tertiary uppercase tracking-wide mb-1">{label}</p>
+          <p className="text-[20px] font-semibold tabular text-text-primary leading-tight">{value}</p>
         </div>
         {sparklineData && sparklineData.length >= 2 && (
           <Sparkline
             data={sparklineData}
             width={72}
             height={32}
-            color={color || "var(--foreground)"}
+            color={color || "var(--text-primary)"}
           />
         )}
       </div>

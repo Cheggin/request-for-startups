@@ -9,9 +9,6 @@ interface Deployment {
   createdAt: string;
 }
 
-/**
- * Deploy page — reads real deployment data from Vercel CLI via API route.
- */
 export default function DeployPage() {
   const [deployments, setDeployments] = useState<Deployment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,65 +32,65 @@ export default function DeployPage() {
   }, []);
 
   return (
-    <div className="px-6 py-5 space-y-5 max-w-6xl">
-      <h1 className="text-lg font-semibold text-foreground">Deployment Health</h1>
+    <div className="px-6 py-5 max-w-5xl">
+      <h1 className="text-[18px] font-semibold text-text-primary leading-tight mb-6">Deployment Health</h1>
 
       {loading ? (
-        <p className="text-[12px] text-muted-foreground">Querying Vercel CLI...</p>
+        <p className="text-[13px] text-text-tertiary">Querying Vercel CLI...</p>
       ) : error ? (
-        <div className="bg-surface border border-border-subtle rounded-xl px-4 py-8 text-center">
-          <p className="text-[13px] text-muted">Deployment data unavailable</p>
-          <p className="text-[12px] text-muted-foreground mt-1">
-            Ensure <code className="bg-background px-1.5 py-0.5 rounded">vercel</code> CLI is authenticated.
-            Run <code className="bg-background px-1.5 py-0.5 rounded">vercel login</code> to connect.
+        <div className="border border-border-subtle rounded-md px-4 py-5">
+          <p className="text-[13px] text-text-secondary">Deployment data unavailable.</p>
+          <p className="text-[12px] text-text-tertiary mt-1">
+            Ensure <code className="font-mono text-[12px] text-text-secondary bg-bg px-1 py-0.5 rounded">vercel</code> CLI is authenticated.
+            Run <code className="font-mono text-[12px] text-text-secondary bg-bg px-1 py-0.5 rounded">vercel login</code> to connect.
           </p>
         </div>
       ) : deployments.length === 0 ? (
-        <div className="bg-surface border border-border-subtle rounded-xl px-4 py-8 text-center">
-          <p className="text-[13px] text-muted">No deployments found</p>
-          <p className="text-[12px] text-muted-foreground mt-1">
-            Deploy a startup with <code className="bg-background px-1.5 py-0.5 rounded">vercel --prod</code> to see deployment data here.
+        <div className="border border-border-subtle rounded-md px-4 py-5">
+          <p className="text-[13px] text-text-secondary">No deployments found.</p>
+          <p className="text-[12px] text-text-tertiary mt-1">
+            Deploy a startup with <code className="font-mono text-[12px] text-text-secondary bg-bg px-1 py-0.5 rounded">vercel --prod</code> to see deployment data here.
           </p>
         </div>
       ) : (
-        <div className="bg-surface border border-border-subtle rounded-xl overflow-hidden">
+        <div className="border border-border-subtle rounded-md overflow-hidden">
           <table className="w-full">
             <thead>
               <tr className="border-b border-border text-left">
-                <th className="px-4 py-2.5 text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Project</th>
-                <th className="px-4 py-2.5 text-[11px] font-medium text-muted-foreground uppercase tracking-wider">URL</th>
-                <th className="px-4 py-2.5 text-[11px] font-medium text-muted-foreground uppercase tracking-wider">State</th>
-                <th className="px-4 py-2.5 text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Created</th>
+                <th className="px-4 py-2 text-[11px] font-medium text-text-tertiary uppercase tracking-wider">Project</th>
+                <th className="px-4 py-2 text-[11px] font-medium text-text-tertiary uppercase tracking-wider">URL</th>
+                <th className="px-4 py-2 text-[11px] font-medium text-text-tertiary uppercase tracking-wider">State</th>
+                <th className="px-4 py-2 text-[11px] font-medium text-text-tertiary uppercase tracking-wider">Created</th>
               </tr>
             </thead>
             <tbody>
               {deployments.map((d, i) => (
-                <tr key={i} className="border-b border-border-subtle last:border-0 hover:bg-surface-hover/50 transition-colors">
-                  <td className="px-4 py-3 text-[13px] font-medium text-foreground">{d.name}</td>
-                  <td className="px-4 py-3">
+                <tr key={i} className="border-b border-border-subtle last:border-0 hover:bg-surface-hover transition-colors">
+                  <td className="px-4 py-2.5 text-[13px] font-medium text-text-primary">{d.name}</td>
+                  <td className="px-4 py-2.5">
                     {d.url ? (
                       <a
                         href={`https://${d.url}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[12px] text-muted hover:text-foreground transition-colors font-mono"
+                        className="text-[12px] text-text-secondary hover:text-text-primary transition-colors font-mono"
                       >
                         {d.url}
                       </a>
                     ) : (
-                      <span className="text-[12px] text-muted-foreground">—</span>
+                      <span className="text-[12px] text-text-tertiary">&mdash;</span>
                     )}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-2.5">
                     <span className={`text-[12px] font-medium ${
-                      d.state === "READY" ? "text-emerald-600" :
-                      d.state === "ERROR" ? "text-red-500" : "text-muted"
+                      d.state === "READY" ? "text-positive" :
+                      d.state === "ERROR" ? "text-negative" : "text-text-tertiary"
                     }`}>
                       {d.state}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-[12px] text-muted-foreground">
-                    {d.createdAt ? new Date(d.createdAt).toLocaleDateString() : "—"}
+                  <td className="px-4 py-2.5 text-[12px] text-text-tertiary tabular">
+                    {d.createdAt ? new Date(d.createdAt).toLocaleDateString() : "&mdash;"}
                   </td>
                 </tr>
               ))}

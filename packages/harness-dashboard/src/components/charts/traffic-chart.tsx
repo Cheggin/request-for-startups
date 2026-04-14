@@ -78,8 +78,8 @@ function Chart({ width, height, data }: { width: number; height: number; data: D
       <svg width={width} height={height}>
         <LinearGradient
           id={gradientId}
-          from="var(--foreground)"
-          to="var(--foreground)"
+          from="var(--text-primary)"
+          to="var(--text-primary)"
           fromOpacity={0.06}
           toOpacity={0}
         />
@@ -104,7 +104,7 @@ function Chart({ width, height, data }: { width: number; height: number; data: D
             x={(d) => xScale(getDate(d)) ?? 0}
             y={(d) => yScale(getValue(d)) ?? 0}
             curve={curveMonotoneX}
-            stroke="var(--foreground)"
+            stroke="var(--text-primary)"
             strokeWidth={1.5}
             strokeLinecap="round"
           />
@@ -124,7 +124,7 @@ function Chart({ width, height, data }: { width: number; height: number; data: D
                 cy={yScale(getValue(tooltipData))}
                 r={4}
                 fill="var(--surface)"
-                stroke="var(--foreground)"
+                stroke="var(--text-primary)"
                 strokeWidth={2}
               />
             </>
@@ -140,7 +140,7 @@ function Chart({ width, height, data }: { width: number; height: number; data: D
             stroke="var(--border-subtle)"
             tickStroke="transparent"
             tickLabelProps={() => ({
-              fill: "var(--muted)",
+              fill: "var(--text-tertiary)",
               fontSize: 11,
               textAnchor: "middle" as const,
               dy: 4,
@@ -152,14 +152,13 @@ function Chart({ width, height, data }: { width: number; height: number; data: D
             stroke="transparent"
             tickStroke="transparent"
             tickLabelProps={() => ({
-              fill: "var(--muted)",
+              fill: "var(--text-tertiary)",
               fontSize: 11,
               textAnchor: "end" as const,
               dx: -6,
               dy: 4,
             })}
           />
-          {/* Invisible overlay for mouse events */}
           <rect
             width={innerWidth}
             height={innerHeight}
@@ -175,10 +174,18 @@ function Chart({ width, height, data }: { width: number; height: number; data: D
         <TooltipWithBounds
           left={tooltipLeft}
           top={tooltipTop}
-          className="!bg-foreground !text-background !rounded-lg !shadow-lg !px-2.5 !py-1.5 !text-[12px] !font-medium"
+          style={{
+            background: "var(--text-primary)",
+            color: "var(--bg)",
+            borderRadius: 6,
+            padding: "6px 10px",
+            fontSize: 12,
+            fontWeight: 500,
+            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+          }}
         >
           <div>{getValue(tooltipData)} visitors</div>
-          <div className="text-[10px] opacity-60">
+          <div style={{ fontSize: 10, opacity: 0.6 }}>
             {getDate(tooltipData).toLocaleDateString("en-US", {
               month: "short",
               day: "numeric",
@@ -191,16 +198,12 @@ function Chart({ width, height, data }: { width: number; height: number; data: D
   );
 }
 
-/**
- * TrafficChart — renders a line chart with area fill.
- * Requires REAL data passed via props. Never generates fake data.
- */
-export function TrafficChart({ data, title = "Traffic", subtitle = "Daily visitors", valueLabel = "visitors" }: TrafficChartProps) {
+export function TrafficChart({ data, title = "Traffic", subtitle = "Daily visitors" }: TrafficChartProps) {
   if (!data || data.length < 2) {
     return (
-      <div className="bg-surface border border-border-subtle rounded-xl px-4 py-8 text-center">
-        <p className="text-[13px] text-muted">No {title.toLowerCase()} data</p>
-        <p className="text-[12px] text-muted-foreground mt-1">
+      <div className="border border-border-subtle rounded-md px-4 py-5">
+        <p className="text-[13px] text-text-secondary">No {title.toLowerCase()} data.</p>
+        <p className="text-[12px] text-text-tertiary mt-1">
           Connect a data source to see the chart.
         </p>
       </div>
@@ -208,10 +211,10 @@ export function TrafficChart({ data, title = "Traffic", subtitle = "Daily visito
   }
 
   return (
-    <div className="bg-surface border border-border-subtle rounded-xl p-4">
+    <div className="border border-border-subtle rounded-md p-4">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-[13px] font-semibold text-foreground">{title}</h3>
-        <span className="text-[11px] text-muted-foreground">{subtitle}</span>
+        <h3 className="text-[13px] font-semibold text-text-primary">{title}</h3>
+        <span className="text-[11px] text-text-tertiary">{subtitle}</span>
       </div>
       <div style={{ height: 240 }}>
         <ParentSize debounceTime={10}>
