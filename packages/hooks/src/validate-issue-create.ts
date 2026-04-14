@@ -1,0 +1,151 @@
+/**
+ * Issue creation validator hook.
+ * Runs as a PreToolUse hook on Bash commands containing "gh issue create".
+ * Validates that the issue body follows the schema in .harness/issue-schema.md.
+ *
+ * Exit 0 = allow, Exit 2 = block with message.
+ */
+
+const VALID_TYPES = [
+  "feat",
+  "fix",
+  "refactor",
+  "test",
+  "docs",
+  "chore",
+  "perf",
+  "ci",
+] as const;
+
+const VALID_SEVERITIES = ["P0", "P1", "P2", "P3"] as const;
+
+const TITLE_PATTERN = /^\[(feat|fix|refactor|test|docs|chore|perf|ci)\] .+/;
+
+interface HookInput {
+  tool_name: string;
+  tool_input: {
+    command?: string;
+  };
+}
+
+function extractTitle(command: string): string | null {
+  const match = command.match(/--title\s+["']([^"']+)["']/);
+  return match ? match[1] : null;
+}
+
+function extractBody(command: string): string | null {
+  // Simple --body "..." or --body '...'
+  const simpleMatch = command.match(/--body\s+["']([^"']+)["']/);
+  if (simpleMatch) return simpleMatch[1];
+
+  // Heredoc: --body "$(cat <<'EOF'\n...\nEOF\n)"
+  const heredocMatch = command.match(
+    /--body\s+"\$\(cat <<['"]?EOF['"]?\n([\s\S]*?)\nEOF/
+  );
+  if (heredocMatch) return heredocMatch[1];
+
+  return null;
+}
+
+function validateIssue(title: string | null, body: string | null): string[] {
+  const errors: string[] = [];
+
+  // Validate title format
+  if (!title) {
+    errors.push("Missing --title flag");
+    return errors;
+  }
+
+  if (!TITLE_PATTERN.test(title)) {
+    const typeStr = VALID_TYPES.join(", ");
+    errors.push(
+      `Title must match: [type] description\n` +
+        `   Valid types: ${typeStr}\n` +
+        `   Got: "${title}"`
+    );
+  }
+
+  if (!body) {
+    errors.push("Missing --body flag. Issues require a body with type, severity, description, and acceptance criteria.");
+    return errors;
+  }
+
+  // Check required sections in body
+  const bodyLower = body.toLowerCase();
+
+  // Check for type section
+  const hasType = VALID_TYPES.some(
+    (t) => bodyLower.includes(`## type`) || bodyLower.includes(`type: ${t}`) || bodyLower.includes(`**type:** ${t}`)
+  );
+  if (!hasType && !bodyLower.includes("## type")) {
+    errors.push("Body missing '## Type' section (feat, fix, refactor, test, docs, chore, perf, ci)");
+  }
+
+  // Check for severity
+  const hasSeverity = VALID_SEVERITIES.some(
+    (s) => body.includes(s)
+  );
+  if (!hasSeverity) {
+    errors.push("Body missing severity (P0, P1, P2, or P3)");
+  }
+
+  // Check for description
+  if (!bodyLower.includes("## description") && !bodyLower.includes("**description:**")) {
+    errors.push("Body missing '## Description' section");
+  }
+
+  // Check for acceptance criteria
+  if (!bodyLower.includes("## acceptance criteria") && !bodyLower.includes("acceptance criteria")) {
+    errors.push("Body missing '## Acceptance Criteria' section");
+  }
+
+  // Check that acceptance criteria has at least one checkbox
+  if (!body.includes("- [ ]") && !body.includes("- [x]")) {
+    errors.push("Acceptance criteria must include at least one checklist item (- [ ])");
+  }
+
+  // Check for verification steps
+  if (!bodyLower.includes("## verification") && !bodyLower.includes("verification steps")) {
+    errors.push("Body missing '## Verification Steps' section");
+  }
+
+  return errors;
+}
+
+function main() {
+  const input = process.env.CLAUDE_TOOL_INPUT;
+  if (!input) {
+    process.exit(0);
+  }
+
+  let parsed: HookInput;
+  try {
+    parsed = JSON.parse(input);
+  } catch {
+    process.exit(0);
+  }
+
+  const command = parsed.tool_input?.command || "";
+
+  // Only validate gh issue create commands
+  if (!command.includes("gh issue create")) {
+    process.exit(0);
+  }
+
+  const title = extractTitle(command);
+  const body = extractBody(command);
+  const errors = validateIssue(title, body);
+
+  if (errors.length > 0) {
+    console.error("[IssueLint] Issue does not follow the required schema:");
+    for (const error of errors) {
+      console.error(`  - ${error}`);
+    }
+    console.error("\nSee .harness/issue-schema.md for the full specification.");
+    process.exit(2);
+  }
+
+  process.exit(0);
+}
+
+main();
