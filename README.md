@@ -42,17 +42,13 @@ The `harness init` command walks you through a founder interview, validates your
 
 ```
 commands/          Entry points (startup-init, resume)
-agents/            10 agent definitions (website, backend, growth, writing, ops, commander, researcher, docs, slop-cleaner, harness-researcher)
-skills/
-  coding/          9 skills (visual-qa, tdd, security, deploy, etc.)
-  content/         6 skills (blog, social, docs, brand, etc.)
-  growth/          4 skills (analytics, landing-page, feedback, research)
-  operations/      6 skills (uptime, errors, logs, incidents, CI/CD, deps)
-  shared/          11 skills (eval, cost, context-reset, knowledge, loop-prompt, etc.)
+agents/            11 agent definitions (website, backend, growth, writing, ops, commander, researcher, docs, slop-cleaner, harness-researcher, alignment)
+skills/            78 skills as Claude Code plugin format (skills/<name>/SKILL.md)
 templates/         Integration templates (Stripe, Clerk auth, Resend email)
-packages/          22 packages with 590+ tests
+packages/          27 packages with 590+ tests (includes harness-dashboard)
 features/          Checklist-driven development tracking
 .harness/          Configuration (stacks, agent categories, tool catalog, knowledge wiki)
+.claude-plugin/    Plugin manifest — registers as Claude Code marketplace plugin
 ```
 
 ## How It Works
@@ -61,7 +57,9 @@ features/          Checklist-driven development tracking
 
 **Commands** are entry points. **Agents** are loop runners with mode switching. **Skills** are reusable capabilities loaded per agent category.
 
-An agent is a blank Claude Code session. Its identity comes entirely from which skills are loaded. A "website agent" is just: coding ground truth + website skills + shared skills.
+An agent is a blank Claude Code session. Its identity comes entirely from which skills are loaded. A "website agent" is just: coding ground truth + design skills + coding skills + convex skills. Agent-to-skill mapping is defined in `.harness/agent-categories.yml`.
+
+The harness is a **Claude Code plugin**. Install it and all 78 skills are available as `/startup-harness:<skill-name>` in any Claude Code session. Skills auto-update when the repo is pushed.
 
 ### Mechanical Enforcement
 
@@ -245,27 +243,39 @@ Legal pages (ToS, Privacy Policy), SEO setup (sitemap, meta tags, structured dat
 ## File Structure
 
 ```
-├── agents/                    10 agent definitions
-│   ├── website.md             Frontend dev (sonnet, level 2)
-│   ├── backend.md             Backend/API dev (sonnet, level 2)
-│   ├── growth.md              Growth/analytics (sonnet, level 2)
-│   ├── writing.md             Content creation (haiku, level 1)
-│   ├── ops.md                 Operations/deploy (sonnet, level 3)
-│   ├── commander.md           Orchestrator (opus, level 4)
-│   ├── researcher.md          Knowledge wiki maintainer (opus, level 3)
-│   ├── harness-researcher.md  Self-improvement researcher (opus, level 3)
-│   ├── docs.md                Devtool documentation (sonnet, level 2)
-│   └── slop-cleaner.md        AI slop detection/removal (sonnet, level 2)
+├── agents/                    11 agent definitions across 6 categories
+│   ├── website.md             Frontend dev (sonnet, level 2) → coding category
+│   ├── backend.md             Backend/API dev (sonnet, level 2) → coding category
+│   ├── growth.md              Growth/analytics (sonnet, level 2) → growth category
+│   ├── writing.md             Content creation (haiku, level 1) → content category
+│   ├── docs.md                Devtool documentation (sonnet, level 2) → content category
+│   ├── ops.md                 Operations/deploy (sonnet, level 3) → operations category
+│   ├── commander.md           Orchestrator (opus, level 4) → orchestration category
+│   ├── researcher.md          Knowledge wiki maintainer (opus, level 3) → orchestration category
+│   ├── harness-researcher.md  Self-improvement researcher (opus, level 3) → orchestration category
+│   ├── alignment.md           Repo structure auditor (sonnet, level 2) → orchestration category
+│   └── slop-cleaner.md        AI slop detection/removal (sonnet, level 2) → quality category
 │
-├── skills/                    76 skills across 5 categories
-│   ├── coding/                24 skills (website-creation, visual-qa, tdd, convex-*, deploy, security, seo, slop-cleaner)
-│   ├── content/               9 skills (anti-ai-writing, blog, brand, docs, legal, social, data-driven-blog)
-│   ├── growth/                6 skills (analytics, seo-chat, programmatic-seo, landing-page, competitor-research)
-│   ├── operations/            6 skills (ci-cd, uptime, incident-response, log-aggregation, dependency-manager)
-│   └── shared/                31 skills (impeccable suite: polish/critique/bolder/layout/typeset/animate/colorize + knowledge, loop-prompt, eval, cost-tracker, investor-updates, stack-extend)
+├── skills/                    78 skills in Claude Code plugin format (skills/<name>/SKILL.md)
+│   │                          Each agent category loads specific skills:
+│   │                          coding agents → design + coding + convex skills
+│   │                          content agents → content skills
+│   │                          growth agents → growth skills
+│   │                          operations agents → operations + coding skills
+│   │                          orchestration agents → agent skills
+│   │                          quality agents → coding + design skills
+│   │
+│   ├── Design (17)            impeccable, polish, layout, typeset, animate, colorize, bolder, critique, adapt, audit, clarify, delight, distill, optimize, overdrive, quieter, shape
+│   ├── Coding (12)            website-creation, visual-qa-pipeline, test-generator, deploy-pipeline, security-scanner, accessibility-checker, performance-benchmark, seo-setup, slop-cleaner, cubic-codebase-scan, sprint-contracts, asset-generation
+│   ├── Convex (13)            convex, convex-functions, convex-realtime, convex-agents, convex-schema-validator, convex-best-practices, convex-security-audit, convex-security-check, convex-component-authoring, convex-cron-jobs, convex-file-storage, convex-http-actions, convex-migrations
+│   ├── Content (9)            anti-ai-writing, blog-scaffolder, brand-guidelines, contributing-guide, data-driven-blog, documentation-generator, legal-generator, readme-generator, social-media
+│   ├── Growth (7)             analytics-integration, competitor-research, landing-page-optimizer, programmatic-seo, seo-chat, social-intelligence, user-feedback-collector
+│   ├── Operations (6)         ci-cd-pipeline, dependency-manager, error-tracking, incident-response, log-aggregation, uptime-monitor
+│   └── Agent (14)             loop-prompt, context-reset-handler, cost-tracker, error-classifier, eval-framework, trajectory-logging, tiered-memory, investor-updates, github-state-manager, slack-course-correction, stack-extend, post-deploy-loop, research, avoid-feature-creep
 │
-├── packages/                  26 packages with 590+ tests
+├── packages/                  27 packages with 590+ tests
 │   ├── cli/                   Harness CLI (12 command groups)
+│   ├── harness-dashboard/     Web dashboard — agent monitoring, growth intel, deploy health (Next.js + visx)
 │   ├── commander/             Orchestrator (dispatcher, monitor, handoff, investor updates)
 │   ├── agent-loop/            Core runtime (mode switching, hooks, plateau detection, self-improvement)
 │   ├── hooks/                 GateGuard (read before edit), config-protection
