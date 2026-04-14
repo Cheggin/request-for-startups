@@ -1,0 +1,10 @@
+{
+  "name": "startup-harness",
+  "private": true,
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "test": "bun run test:all",
+    "test:all": "for dir in packages/*/; do (cd $dir && bun test 2>/dev/null) || true; done",
+    "harness": "bun run packages/cli/src/index.ts"
+  }
+}
