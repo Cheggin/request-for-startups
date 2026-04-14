@@ -22,15 +22,6 @@
             "command": "bun run packages/hooks/src/run-config-protection.ts"
           }
         ]
-      },
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bun run packages/hooks/src/run-budget-enforcer.ts"
-          }
-        ]
       }
     ]
   }
