@@ -1,0 +1,37 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun run packages/hooks/src/run-gateguard.ts"
+          },
+          {
+            "type": "command",
+            "command": "bun run packages/hooks/src/run-config-protection.ts"
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun run packages/hooks/src/run-config-protection.ts"
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun run packages/hooks/src/run-budget-enforcer.ts"
+          }
+        ]
+      }
+    ]
+  }
+}
