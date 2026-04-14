@@ -1,0 +1,13 @@
+{
+  "name": "@rfs/hooks",
+  "version": "1.0.0",
+  "description": "Claude Code hook implementations: GateGuard, config-protection, budget-enforcer",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "vitest": "^3.1.1"
+  }
+}
