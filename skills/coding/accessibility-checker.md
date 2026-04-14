@@ -1,61 +1,38 @@
 ---
 name: accessibility-checker
-description: Automated WCAG 2.1 AA accessibility audits using axe-core via Playwright
-category: coding
-allowed-tools:
-  - Bash
-  - Read
-  - Write
-  - Edit
-  - Grep
-  - Glob
+description: Run automated WCAG 2.1 AA accessibility audits using axe-core via Playwright. Use when implementing or reviewing UI features to enforce accessibility compliance, catch color contrast failures, validate keyboard navigation, check screen reader landmarks, verify alt text and ARIA attributes, or gate feature completion on accessibility standards.
 ---
 
 # Accessibility Checker
 
-## Purpose
+## Setup
 
-Run automated accessibility audits on every UI feature using axe-core via Playwright. Enforce WCAG 2.1 AA compliance as a minimum standard. Report violations with actionable fix suggestions so the coding agent can remediate immediately. Integrates into the quality gate pipeline alongside visual QA and performance benchmarks.
+Install `@axe-core/playwright` as a devDependency if not already present.
 
-## Steps
+## Audit Workflow
 
-1. Install axe-core integration via `@axe-core/playwright` if not already present in devDependencies.
-2. Identify all pages and components that need auditing based on the current feature scope.
-3. Launch headless Playwright browser and navigate to each target page or render each target component.
-4. Run axe-core scan with WCAG 2.1 AA ruleset on each page or component.
-5. Collect all violations and categorize by severity (critical, serious, moderate, minor).
-6. For each violation, generate a fix suggestion with the specific element selector, rule violated, and remediation code snippet.
-7. Block feature completion if any critical or serious violations are found.
-8. Log moderate and minor violations as warnings without blocking.
-9. Validate color contrast for all custom theme colors against WCAG AA thresholds.
-10. Audit keyboard navigation: verify tab order, focus management, and skip links.
-11. Validate screen reader landmarks (header, main, nav, footer) are present and correct.
-12. Check all images for alt text presence and ARIA attribute correctness.
-13. Output a structured violation report with severity, element, rule, and fix per issue.
+1. Identify all pages and components in scope for the current UI feature.
+2. Launch headless Playwright and navigate to each target page or render each component.
+3. Run axe-core with the WCAG 2.1 AA ruleset on each target.
+4. Categorize violations by severity: critical, serious, moderate, minor.
+5. For each violation, output the element selector, rule violated, and a remediation code snippet.
+6. Block feature completion on any critical or serious violations.
+7. Log moderate and minor violations as warnings without blocking.
 
-## Examples
+## Additional Checks
 
-Good:
-- "Run accessibility audit on the signup page and dashboard, flag critical issues, and provide fix code for each violation."
-- "Check color contrast for our custom brand colors against WCAG AA and report failures with suggested replacements."
+- **Color contrast**: Validate all custom theme colors against WCAG AA thresholds (4.5:1 normal text, 3:1 large text).
+- **Keyboard navigation**: Verify logical tab order, focus management, and skip links.
+- **Screen reader landmarks**: Confirm presence of header, main, nav, and footer landmarks.
+- **Images**: Check all images for meaningful alt text.
+- **ARIA**: Validate ARIA roles, states, and properties for correctness.
 
-Bad:
-- "Make the site accessible." (Too vague, no specific scope or standard.)
-- "Fix all accessibility issues." (No audit step, no severity triage, no specific pages targeted.)
+## Output
 
-## Checklist
+Generate a structured violation report per page/component:
 
-- [ ] axe-core integration via @axe-core/playwright installed
-- [ ] Axe scans run on every page and component after UI feature implementation
-- [ ] WCAG 2.1 AA set as minimum compliance level
-- [ ] Violation report includes severity, element, rule, and fix suggestion per issue
-- [ ] Critical and serious violations block feature completion
-- [ ] Warning-level violations logged but not blocking
-- [ ] Page-level and component-level scan modes supported
-- [ ] Color contrast checker validates custom theme colors
-- [ ] Keyboard navigation audited for tab order, focus management, skip links
-- [ ] Screen reader landmark validation covers header, main, nav, footer
-- [ ] Alt text presence checked on all images
-- [ ] ARIA attribute correctness validated
-- [ ] CI integration runs in GitHub Actions with headless Playwright
-- [ ] Fix suggestion generator provides code-level remediation for each violation
+```
+Page/Component | Severity | Element | Rule | Fix
+```
+
+Integrate into CI via GitHub Actions with headless Playwright for automated runs on every PR.
