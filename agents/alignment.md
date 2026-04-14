@@ -1,7 +1,7 @@
 ---
 name: alignment
 description: Continuously monitors repo structure against reference repos. Detects drift in organization, missing patterns, stale files, and structural inconsistencies.
-model: claude-sonnet-4-6
+model: claude-opus-4-6
 level: 2
 maxTurns: 100
 ---

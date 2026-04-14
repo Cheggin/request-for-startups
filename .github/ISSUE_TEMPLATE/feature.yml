@@ -1,0 +1,78 @@
+name: Feature
+description: New feature or capability
+labels: ["feat"]
+body:
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - P0 — System broken
+        - P1 — Feature broken, workaround exists
+        - P2 — Enhancement
+        - P3 — Nice to have
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What needs to change and why.
+    validations:
+      required: true
+
+  - type: input
+    id: packages
+    attributes:
+      label: Affected Packages
+      description: Comma-separated list of packages or skills
+      placeholder: "e.g., packages/hooks, skills/verify"
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: Machine-verifiable conditions for done.
+      value: |
+        - [ ]
+        - [ ]
+        - [ ]
+    validations:
+      required: true
+
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification Steps
+      description: How to confirm the criteria are met.
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: estimate
+    attributes:
+      label: Estimate
+      options:
+        - XS (<30min)
+        - S (30min-2hr)
+        - M (2hr-4hr)
+        - L (4hr-8hr)
+        - XL (>1 day)
+
+  - type: dropdown
+    id: agent
+    attributes:
+      label: Agent Category
+      description: Which agent type should handle this
+      options:
+        - coding
+        - content
+        - growth
+        - operations
+        - orchestration
+        - quality

@@ -1,7 +1,7 @@
 ---
 name: harness-researcher
 description: Continuously researches improvements to the harness itself. Runs in background during development.
-model: opus
+model: claude-opus-4-6
 level: 3
 maxTurns: 200
 ---

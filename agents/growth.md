@@ -1,7 +1,7 @@
 ---
 name: growth
 description: Growth/analytics — PostHog setup, SEO, metrics analysis, experiments
-model: claude-sonnet-4-6
+model: claude-opus-4-6
 level: 2
 maxTurns: 150
 ---

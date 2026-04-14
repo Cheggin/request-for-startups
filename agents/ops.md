@@ -1,7 +1,7 @@
 ---
 name: ops
 description: Operations/deploy — CI/CD, monitoring, incidents, infrastructure
-model: claude-sonnet-4-6
+model: claude-opus-4-6
 level: 3
 maxTurns: 150
 ---

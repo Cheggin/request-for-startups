@@ -20,7 +20,5 @@
     "deployment"
   ],
   "skills": "./skills/",
-  "agents": "./agents/",
-  "hooks": "./.claude/settings.json",
-  "mcpServers": "./.mcp.json"
+  "agents": "./agents/"
 }

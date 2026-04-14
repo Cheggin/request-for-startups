@@ -137,11 +137,10 @@ function spawnAgent(args: string[]): void {
 
   ensureSession();
 
-  // Build claude command with full config
+  // Build lfg command (alias for claude --dangerously-skip-permissions)
   const cmdParts = [
-    "claude",
+    "lfg",
     "--model", agent.model,
-    "--dangerously-skip-permissions",
   ];
 
   // Append system prompt with agent definition + ground truth

@@ -1,7 +1,7 @@
 ---
 name: backend
 description: Backend developer — builds Convex schema, API routes, server logic
-model: claude-sonnet-4-6
+model: claude-opus-4-6
 level: 2
 maxTurns: 200
 ---

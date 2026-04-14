@@ -48,6 +48,10 @@
           {
             "type": "command",
             "command": ".claude/hooks/log-commands.sh"
+          },
+          {
+            "type": "command",
+            "command": "bun run packages/hooks/src/validate-commit-msg.ts"
           }
         ]
       }

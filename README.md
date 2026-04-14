@@ -38,17 +38,28 @@ bun run harness init
 
 The `harness init` command walks you through a founder interview, validates your service connections, and then autonomously builds your startup.
 
+## Install as Plugin
+
+The harness is a **Claude Code plugin**. Install it in any project:
+
+```bash
+claude plugins add Cheggin/request-for-startups
+```
+
+All 93 skills become available as `/startup-harness:<skill-name>` in any Claude Code session. Skills auto-update when the repo is pushed.
+
 ## Architecture
 
 ```
 commands/          Entry points (startup-init, resume)
-agents/            11 agent definitions (website, backend, growth, writing, ops, commander, researcher, docs, slop-cleaner, harness-researcher, alignment)
-skills/            78 skills as Claude Code plugin format (skills/<name>/SKILL.md)
+agents/            12 agent definitions (website, backend, growth, writing, ops, commander, researcher, docs, slop-cleaner, harness-researcher, alignment, paper-reader)
+skills/            93 skills as Claude Code plugin format (skills/<name>/SKILL.md)
 templates/         Integration templates (Stripe, Clerk auth, Resend email)
 packages/          27 packages with 590+ tests (includes harness-dashboard)
 features/          Checklist-driven development tracking
-.harness/          Configuration (stacks, agent categories, tool catalog, knowledge wiki)
+.harness/          Configuration (stacks, agent categories, tool catalog, knowledge wiki, commit schema, issue schema)
 .claude-plugin/    Plugin manifest — registers as Claude Code marketplace plugin
+.github/           Issue templates (feature, bug) with normalized fields
 ```
 
 ## How It Works
@@ -59,7 +70,7 @@ features/          Checklist-driven development tracking
 
 An agent is a blank Claude Code session. Its identity comes entirely from which skills are loaded. A "website agent" is just: coding ground truth + design skills + coding skills + convex skills. Agent-to-skill mapping is defined in `.harness/agent-categories.yml`.
 
-The harness is a **Claude Code plugin**. Install it and all 78 skills are available as `/startup-harness:<skill-name>` in any Claude Code session. Skills auto-update when the repo is pushed.
+The harness is a **Claude Code plugin**. Install it and all 93 skills are available as `/startup-harness:<skill-name>` in any Claude Code session. Skills auto-update when the repo is pushed.
 
 ### Mechanical Enforcement
 
@@ -67,6 +78,7 @@ Hooks are laws. Prompts are suggestions. LLMs forget ~20% of instructions, so ev
 
 - **GateGuard** — must Read before Edit (blocks uninformed changes)
 - **Config Protection** — agents cannot weaken linters, tsconfig, CI configs
+- **CommitLint** — validates all commit messages follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
 - **Budget Enforcer** — turn limits and wall-clock timeouts per agent
 - **Fixed Boundary** — harness code is frozen to agents
 
@@ -180,6 +192,22 @@ Built by analyzing 15+ reference repos and 3 Anthropic engineering articles. Eve
 
 Key influences: autoagent (fixed boundary, keep/discard), autoresearch (time-budgeted experiments), ui-loop (plateau detection), gstack (3-tier eval pyramid), pi-mono (hook architecture), oh-my-claudecode (agent definitions), Archon (DAG workflows), get-shit-done (advance guard), everything-claude-code (GateGuard), Karpathy skills (4 principles).
 
+## Conventions
+
+### Commit Messages
+
+All commits follow [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/). Enforced by a PreToolUse hook — non-conforming commits are blocked before execution.
+
+```
+<type>(<scope>): <description>
+```
+
+Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`. Full spec in `.harness/commit-schema.md`.
+
+### Issue Creation
+
+All GitHub Issues follow a normalized schema with required fields: type, severity (P0-P3), description, acceptance criteria, and verification steps. Templates enforced via `.github/ISSUE_TEMPLATE/`. Full spec in `.harness/issue-schema.md`.
+
 ## License
 
 MIT
@@ -243,7 +271,7 @@ Legal pages (ToS, Privacy Policy), SEO setup (sitemap, meta tags, structured dat
 ## File Structure
 
 ```
-├── agents/                    11 agent definitions across 6 categories
+├── agents/                    12 agent definitions across 6 categories
 │   ├── website.md             Frontend dev (sonnet, level 2) → coding category
 │   ├── backend.md             Backend/API dev (sonnet, level 2) → coding category
 │   ├── growth.md              Growth/analytics (sonnet, level 2) → growth category
@@ -256,7 +284,7 @@ Legal pages (ToS, Privacy Policy), SEO setup (sitemap, meta tags, structured dat
 │   ├── alignment.md           Repo structure auditor (sonnet, level 2) → orchestration category
 │   └── slop-cleaner.md        AI slop detection/removal (sonnet, level 2) → quality category
 │
-├── skills/                    78 skills in Claude Code plugin format (skills/<name>/SKILL.md)
+├── skills/                    93 skills in Claude Code plugin format (skills/<name>/SKILL.md)
 │   │                          Each agent category loads specific skills:
 │   │                          coding agents → design + coding + convex skills
 │   │                          content agents → content skills
@@ -265,12 +293,14 @@ Legal pages (ToS, Privacy Policy), SEO setup (sitemap, meta tags, structured dat
 │   │                          orchestration agents → agent skills
 │   │                          quality agents → coding + design skills
 │   │
+│   ├── Init (1)               startup-init
 │   ├── Design (17)            impeccable, polish, layout, typeset, animate, colorize, bolder, critique, adapt, audit, clarify, delight, distill, optimize, overdrive, quieter, shape
 │   ├── Coding (12)            website-creation, visual-qa-pipeline, test-generator, deploy-pipeline, security-scanner, accessibility-checker, performance-benchmark, seo-setup, slop-cleaner, cubic-codebase-scan, sprint-contracts, asset-generation
 │   ├── Convex (13)            convex, convex-functions, convex-realtime, convex-agents, convex-schema-validator, convex-best-practices, convex-security-audit, convex-security-check, convex-component-authoring, convex-cron-jobs, convex-file-storage, convex-http-actions, convex-migrations
 │   ├── Content (9)            anti-ai-writing, blog-scaffolder, brand-guidelines, contributing-guide, data-driven-blog, documentation-generator, legal-generator, readme-generator, social-media
 │   ├── Growth (7)             analytics-integration, competitor-research, landing-page-optimizer, programmatic-seo, seo-chat, social-intelligence, user-feedback-collector
 │   ├── Operations (6)         ci-cd-pipeline, dependency-manager, error-tracking, incident-response, log-aggregation, uptime-monitor
+│   ├── Orchestration (14)     autopilot, ralph, team, ultrawork, ultraqa, plan, deep-interview, deep-dive, cancel, trace, debug, self-improve, verify, agent-creator
 │   └── Agent (14)             loop-prompt, context-reset-handler, cost-tracker, error-classifier, eval-framework, trajectory-logging, tiered-memory, investor-updates, github-state-manager, slack-course-correction, stack-extend, post-deploy-loop, research, avoid-feature-creep
 │
 ├── packages/                  27 packages with 590+ tests
@@ -317,8 +347,11 @@ Legal pages (ToS, Privacy Policy), SEO setup (sitemap, meta tags, structured dat
 │   ├── stacks.yml             Canonical tech stack
 │   ├── agent-categories.yml   Ground truth rules per category
 │   ├── tool-catalog.yml       18 pre-built integration configs
+│   ├── commit-schema.md       Conventional Commits specification
+│   ├── issue-schema.md        Normalized issue creation format
 │   └── knowledge/             Karpathy wiki per category
 │
+├── .github/                   Issue templates (feature, bug) with normalized fields
 ├── .claude/                   Claude Code settings + hooks
 ├── .claude-plugin/            Plugin manifest for marketplace
 ├── SOUL.md                    Project identity, principles, architecture

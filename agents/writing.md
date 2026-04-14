@@ -1,7 +1,7 @@
 ---
 name: writing
 description: Content creator — docs, blog posts, social media, README
-model: claude-haiku-4-5
+model: claude-opus-4-6
 level: 1
 disallowedTools: Edit
 maxTurns: 100

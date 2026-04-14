@@ -1,7 +1,7 @@
 ---
 name: website
 description: Frontend developer — builds UI from Figma designs, runs visual QA
-model: claude-sonnet-4-6
+model: claude-opus-4-6
 level: 2
 maxTurns: 200
 ---

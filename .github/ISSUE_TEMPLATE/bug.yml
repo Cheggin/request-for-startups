@@ -1,0 +1,62 @@
+name: Bug
+description: Something is broken
+labels: ["fix"]
+body:
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - P0 — System broken
+        - P1 — Feature broken, workaround exists
+        - P2 — Enhancement
+        - P3 — Nice to have
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened
+      description: Describe the bug. Include error messages, logs, or screenshots.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should have happened instead.
+    validations:
+      required: true
+
+  - type: input
+    id: packages
+    attributes:
+      label: Affected Packages
+      description: Comma-separated list
+      placeholder: "e.g., packages/hooks"
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: Machine-verifiable conditions for fixed.
+      value: |
+        - [ ] Bug no longer reproduces
+        - [ ] Regression test added
+        - [ ]
+    validations:
+      required: true
+
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification Steps
+      description: How to confirm it's fixed.
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true

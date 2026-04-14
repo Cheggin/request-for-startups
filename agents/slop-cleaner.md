@@ -1,7 +1,7 @@
 ---
 name: slop-cleaner
 description: Continuously monitors and cleans AI-generated slop from the codebase
-model: claude-sonnet-4-6
+model: claude-opus-4-6
 level: 2
 disallowedTools: WebFetch, WebSearch
 maxTurns: 50
