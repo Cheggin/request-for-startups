@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"git add packages/eval-framework/src/llm-judge.ts packages/eval-framework/tests/llm-judge.test.ts packages/eval-framework/package.json && git commit -m \\\"Replace Anthropic SDK with claude -...",
-  "error": "Exit code 128\nwarning: could not open directory 'packages/eval-framework/packages/eval-framework/': No such file or directory\nfatal: pathspec 'packages/eval-framework/src/llm-judge.ts' did not match any files\n[rerun: b208]",
-  "timestamp": "2026-04-13T23:47:23.090Z",
-  "retry_count": 2
+  "tool_input_preview": "{\"command\":\"for f in packages/eval-framework/evals/operations/*.test.ts; do sed -i '' '/allowed-tools/d' \\\"$f\\\" 2>/dev/null; done && cd packages/eval-framework && bun test 2>&1 | tail -5\",\"description...",
+  "error": "Exit code 1\n(eval):1: no matches found: packages/eval-framework/evals/operations/*.test.ts\n[rerun: b182]",
+  "timestamp": "2026-04-14T08:30:31.014Z",
+  "retry_count": 1
 }
