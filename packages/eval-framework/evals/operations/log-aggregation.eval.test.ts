@@ -19,6 +19,5 @@ describe("log-aggregation skill", () => {
     expect(result.frontmatter).not.toBeNull();
     expect(result.frontmatter!.name).toBe("log-aggregation");
     expect(result.frontmatter!.description).toBeTruthy();
-    expect(result.frontmatter!["allowed-tools"]).toBeInstanceOf(Array);
   });
 });

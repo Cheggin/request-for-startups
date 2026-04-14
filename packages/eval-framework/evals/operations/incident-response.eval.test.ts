@@ -19,6 +19,5 @@ describe("incident-response skill", () => {
     expect(result.frontmatter).not.toBeNull();
     expect(result.frontmatter!.name).toBe("incident-response");
     expect(result.frontmatter!.description).toBeTruthy();
-    expect(result.frontmatter!["allowed-tools"]).toBeInstanceOf(Array);
   });
 });

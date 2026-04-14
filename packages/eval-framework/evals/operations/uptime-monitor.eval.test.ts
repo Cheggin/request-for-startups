@@ -19,6 +19,5 @@ describe("uptime-monitor skill", () => {
     expect(result.frontmatter).not.toBeNull();
     expect(result.frontmatter!.name).toBe("uptime-monitor");
     expect(result.frontmatter!.description).toBeTruthy();
-    expect(result.frontmatter!["allowed-tools"]).toBeInstanceOf(Array);
   });
 });

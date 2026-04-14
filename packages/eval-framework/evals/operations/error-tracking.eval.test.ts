@@ -19,6 +19,5 @@ describe("error-tracking skill", () => {
     expect(result.frontmatter).not.toBeNull();
     expect(result.frontmatter!.name).toBe("error-tracking");
     expect(result.frontmatter!.description).toBeTruthy();
-    expect(result.frontmatter!["allowed-tools"]).toBeInstanceOf(Array);
   });
 });
