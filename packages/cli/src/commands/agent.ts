@@ -137,9 +137,10 @@ function spawnAgent(args: string[]): void {
 
   ensureSession();
 
-  // Build lfg command (alias for claude --dangerously-skip-permissions)
+  // Build claude command with full permissions bypass (lfg alias unavailable in tmux)
   const cmdParts = [
-    "lfg",
+    "claude",
+    "--dangerously-skip-permissions",
     "--model", agent.model,
   ];
 

@@ -3,7 +3,7 @@
  *
  * Subcommands:
  *   list              — all defined loops with status
- *   start <name>      — spawn a loop in a tmux pane via lfg
+ *   start <name>      — spawn a loop in a tmux pane
  *   stop <name>       — kill a loop's tmux pane
  *   start-all         — spawn all loops
  *   stop-all          — kill all loop panes
@@ -172,15 +172,15 @@ function startLoop(name: string | undefined): void {
   const paneName = `loop-${name}`;
   const loopPrompt = buildLoopPrompt(name, loop);
 
-  // Step 1: Spawn lfg in a new tmux window
-  const spawned = spawnPane(paneName, `cd ${ROOT_DIR} && lfg --model claude-opus-4-6`);
+  // Step 1: Spawn claude in a new tmux window
+  const spawned = spawnPane(paneName, `cd ${ROOT_DIR} && claude --dangerously-skip-permissions --model claude-opus-4-6`);
 
   if (!spawned) {
     console.log(error(`  Failed to start loop '${name}'.`));
     return;
   }
 
-  console.log(success(`  Started lfg for '${name}' (agent: ${loop.agent})`));
+  console.log(success(`  Started claude for '${name}' (agent: ${loop.agent})`));
   console.log(muted(`  Waiting ${CLAUDE_LOAD_WAIT_SECONDS}s for Claude Code to load...`));
 
   // Step 2: Wait for Claude Code to load, then send /loop command
@@ -240,12 +240,12 @@ function startAll(): void {
   console.log(heading(`Starting ${names.length} loops`));
   ensureSession();
 
-  // Spawn all lfg sessions first
+  // Spawn all claude sessions first
   const spawned: string[] = [];
   for (const name of names) {
     const loop = loops[name];
     const paneName = `loop-${name}`;
-    const ok = spawnPane(paneName, `cd ${ROOT_DIR} && lfg --model claude-opus-4-6`);
+    const ok = spawnPane(paneName, `cd ${ROOT_DIR} && claude --dangerously-skip-permissions --model claude-opus-4-6`);
 
     if (ok) {
       spawned.push(name);
