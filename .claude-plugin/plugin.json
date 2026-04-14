@@ -1,0 +1,26 @@
+{
+  "name": "startup-harness",
+  "version": "0.1.0",
+  "description": "Autonomous startup builder — takes an idea and builds the entire company: research, design, code, deploy, grow. Multi-agent orchestration with 10 specialized agents, 34 skills, and mechanical quality enforcement.",
+  "author": {
+    "name": "Reagan Hsu"
+  },
+  "repository": "https://github.com/Cheggin/request-for-startups",
+  "homepage": "https://github.com/Cheggin/request-for-startups",
+  "license": "MIT",
+  "keywords": [
+    "startup",
+    "automation",
+    "multi-agent",
+    "harness",
+    "claude-code",
+    "plugin",
+    "autonomous",
+    "tdd",
+    "deployment"
+  ],
+  "skills": "./skills/",
+  "agents": "./agents/",
+  "hooks": "./.claude/settings.json",
+  "mcpServers": "./.mcp.json"
+}
