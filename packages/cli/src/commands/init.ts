@@ -22,6 +22,7 @@ import {
   validateCredentialFormats,
   printCredentialSummary,
 } from "../lib/credentials.js";
+import { generateAgentPrompt, writeAgentConfigs } from "../lib/agent-loader.js";
 
 // ─── Constants ─────────────────────────────────────────────────────────────
 
@@ -240,9 +241,11 @@ export function run(args: string[]): void {
     }
   }
 
-  // Verify skills are available
-  console.log(heading("Checking Skills"));
+  // Verify skills are available and generate per-agent configs
+  console.log(heading("Checking Skills & Agent Configs"));
   installSkills();
+  const agentConfigCount = writeAgentConfigs();
+  console.log(success(`  ${agentConfigCount} agent configs written to .harness/agents/`));
 
   const state = loadState();
 
@@ -347,8 +350,10 @@ export function run(args: string[]): void {
     console.log(heading("Phase 5-7: Scaffold + Build"));
 
     // Commander first — orchestrates everything (fixes #14)
+    const commanderRules = generateAgentPrompt("commander");
     const commanderPrompt = [
-      `You are the commander. Orchestrate building: "${answers.idea}".`,
+      commanderRules,
+      `Orchestrate building: "${answers.idea}".`,
       "Read product-spec.md for features. Monitor all agent tmux panes.",
       "Dispatch work to agents. Track progress via GitHub Issues.",
       "Post investor-style Slack updates after each milestone.",
@@ -359,8 +364,10 @@ export function run(args: string[]): void {
     console.log(success("  Commander agent spawned (orchestrator)"));
 
     // Website agent — frontend
+    const websiteRules = generateAgentPrompt("website");
     const websitePrompt = [
-      `You are the website agent. Build the frontend for: "${answers.idea}".`,
+      websiteRules,
+      `Build the frontend for: "${answers.idea}".`,
       `Design preset: ${answers.design_preset || "minimal"}.`,
       "Read product-spec.md. Follow skills: website-creation, impeccable, layout, typeset, polish.",
       "TDD: write tests first. NO Inter font. NO dark mode. Light mode only.",
@@ -371,8 +378,10 @@ export function run(args: string[]): void {
     console.log(success("  Website agent spawned (frontend)"));
 
     // Backend agent — Convex, API routes, auth
+    const backendRules = generateAgentPrompt("backend");
     const backendPrompt = [
-      `You are the backend agent. Build the backend for: "${answers.idea}".`,
+      backendRules,
+      `Build the backend for: "${answers.idea}".`,
       "Read product-spec.md for data models and API routes.",
       "Follow Convex skills for schema, functions, realtime, security.",
       `Compliance: ${answers.compliance || "none"}. Business model: ${answers.business_model}.`,
@@ -384,8 +393,10 @@ export function run(args: string[]): void {
     console.log(success("  Backend agent spawned (Convex, API)"));
 
     // Writing agent — legal, content
+    const writingRules = generateAgentPrompt("writing");
     const writingPrompt = [
-      `You are the writing agent. Create content for: "${answers.idea}".`,
+      writingRules,
+      `Create content for: "${answers.idea}".`,
       "Follow anti-ai-writing skill. NO AI slop.",
       `Compliance: ${answers.compliance || "none"}.`,
       "Generate: Terms of Service, Privacy Policy (legal-generator skill).",
@@ -396,8 +407,10 @@ export function run(args: string[]): void {
     console.log(success("  Writing agent spawned (legal, content)"));
 
     // Growth agent — analytics, SEO
+    const growthRules = generateAgentPrompt("growth");
     const growthPrompt = [
-      `You are the growth agent. Set up growth for: "${answers.idea}".`,
+      growthRules,
+      `Set up growth for: "${answers.idea}".`,
       "Follow analytics-integration skill: set up PostHog.",
       "Follow seo-setup skill: sitemap, meta tags, structured data.",
       "Follow programmatic-seo skill if applicable to this startup type.",
@@ -407,8 +420,10 @@ export function run(args: string[]): void {
     console.log(success("  Growth agent spawned (analytics, SEO)"));
 
     // Slop cleaner — continuous quality
+    const slopRules = generateAgentPrompt("slop-cleaner");
     const slopPrompt = [
-      "You are the slop-cleaner agent. Monitor the codebase for AI-generated slop.",
+      slopRules,
+      "Monitor the codebase for AI-generated slop.",
       "Follow slop-cleaner skill. Check for: Inter font, sparkles icons, !important,",
       "left outlines, generic AI copy, bounce/elastic animations, gradient text.",
       "Fix any violations found. Run continuously.",
@@ -418,8 +433,10 @@ export function run(args: string[]): void {
 
     // Conditional: docs agent for devtools
     if (answers.startup_type === "devtool") {
+      const docsRules = generateAgentPrompt("docs");
       const docsPrompt = [
-        `You are the docs agent. Generate documentation for: "${answers.idea}".`,
+        docsRules,
+        `Generate documentation for: "${answers.idea}".`,
         "Follow documentation-generator skill. Create: API reference, SDK guide, quickstart.",
         "Follow contributing-guide skill for open-source contribution docs.",
       ].join(" ");
@@ -433,8 +450,10 @@ export function run(args: string[]): void {
   // ── Phase 8-9: Deploy ──────────────────────────────────────────────────
   if (!shouldSkipPhase("deploy", resumeFrom)) {
     console.log(heading("Phase 8-9: Deploy + Post-Deploy"));
+    const opsRules = generateAgentPrompt("ops");
     const opsPrompt = [
-      "You are the ops agent. Deploy the startup.",
+      opsRules,
+      "Deploy the startup.",
       "Wait for the website and backend agents to complete (check tmux panes).",
       "When build is complete: 1) npx convex deploy 2) vercel --prod",
       "3) Verify deployment health 4) Set up monitoring (uptime-monitor skill).",
