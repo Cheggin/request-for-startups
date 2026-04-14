@@ -1,186 +1,147 @@
 /**
- * harness stack — view and extend the tech stack.
+ * harness stack — manage the tech stack.
  *
- * Reads .harness/stacks.yml.
+ * Subcommands:
+ *   show              — current stack from stacks.yml
+ *   extend <tool>     — add tool from catalog, install deps, configure
+ *   catalog           — show all available tools from tool-catalog.yml
  */
 
-import type { ParsedArgs } from "../index";
-import { join } from "node:path";
+import { loadStacks, loadToolCatalog } from "../lib/config.js";
+import { heading, subheading, table, success, error, muted, info, warn } from "../lib/format.js";
+import { execSync } from "child_process";
+import { ROOT_DIR } from "../lib/constants.js";
 
-// ---------------------------------------------------------------------------
-// Known tool catalog for `stack extend`
-// ---------------------------------------------------------------------------
-
-export const TOOL_CATALOG: Record<string, { category: string; key: string; description: string }> = {
-  // Databases
-  postgres: { category: "backend", key: "database", description: "PostgreSQL relational database" },
-  supabase: { category: "backend", key: "database", description: "Supabase (Postgres + auth + realtime)" },
-  redis: { category: "backend", key: "cache", description: "Redis in-memory cache" },
-  // Auth
-  clerk: { category: "backend", key: "authentication", description: "Clerk authentication" },
-  "next-auth": { category: "backend", key: "authentication", description: "NextAuth.js authentication" },
-  // Monitoring
-  sentry: { category: "quality", key: "error_tracking", description: "Sentry error tracking" },
-  posthog: { category: "quality", key: "analytics", description: "PostHog product analytics" },
-  // Styling
-  "shadcn-ui": { category: "website", key: "component_library", description: "shadcn/ui component library" },
-  radix: { category: "website", key: "component_library", description: "Radix UI primitives" },
-  // Communication
-  resend: { category: "communication", key: "email", description: "Resend transactional email" },
-  // Payments
-  lemonsqueezy: { category: "backend", key: "payments", description: "LemonSqueezy payments" },
-};
-
-// ---------------------------------------------------------------------------
-// Parse stacks YAML (simple line-based, no yaml lib)
-// ---------------------------------------------------------------------------
-
-export interface StackEntry {
-  key: string;
-  value: string;
-  indent: number;
-}
-
-export function parseStacksYaml(content: string): StackEntry[] {
-  const entries: StackEntry[] = [];
-  for (const line of content.split("\n")) {
-    if (line.startsWith("#") || !line.trim()) continue;
-    const indent = line.length - line.trimStart().length;
-    const match = line.trim().match(/^(\S+):\s*(.*)$/);
-    if (match) {
-      entries.push({ key: match[1], value: match[2].replace(/#.*$/, "").trim(), indent });
-    }
-  }
-  return entries;
-}
-
-// ---------------------------------------------------------------------------
-// Commands
-// ---------------------------------------------------------------------------
-
-async function stackShow(root: string): Promise<void> {
-  const stackPath = join(root, ".harness", "stacks.yml");
-  const file = Bun.file(stackPath);
-  const exists = await file.exists();
-
-  if (!exists) {
-    console.error("No .harness/stacks.yml found. Run harness init first.");
-    process.exit(1);
-  }
-
-  const content = await file.text();
-  const entries = parseStacksYaml(content);
-
-  console.log("=== Tech Stack ===\n");
-
-  let currentSection = "";
-  for (const entry of entries) {
-    if (entry.indent === 0) {
-      currentSection = entry.key;
-      console.log(`\x1b[1m${entry.key}\x1b[0m`);
-    } else {
-      const val = entry.value || "(not set)";
-      console.log(`  ${entry.key.padEnd(22)} ${val}`);
-    }
+export function run(args: string[]): void {
+  const sub = args[0];
+  switch (sub) {
+    case "show":
+      return stackShow();
+    case "extend":
+      return stackExtend(args.slice(1));
+    case "catalog":
+      return stackCatalog();
+    default:
+      console.log(heading("harness stack"));
+      console.log("  Usage:");
+      console.log("    harness stack show           — current tech stack");
+      console.log("    harness stack extend <tool>   — add tool from catalog");
+      console.log("    harness stack catalog         — show available tools");
+      console.log();
   }
 }
 
-async function stackExtend(root: string, tool: string): Promise<void> {
-  const info = TOOL_CATALOG[tool.toLowerCase()];
-  if (!info) {
-    console.error(`Unknown tool: "${tool}"`);
-    console.error("\nAvailable tools:");
-    for (const [name, meta] of Object.entries(TOOL_CATALOG)) {
-      console.error(`  ${name.padEnd(18)} ${meta.description}`);
-    }
-    process.exit(1);
-  }
+function stackShow(): void {
+  console.log(heading("harness stack show"));
 
-  const stackPath = join(root, ".harness", "stacks.yml");
-  const file = Bun.file(stackPath);
-  const exists = await file.exists();
-
-  if (!exists) {
-    console.error("No .harness/stacks.yml found. Run harness init first.");
-    process.exit(1);
-  }
-
-  const content = await file.text();
-
-  // Check if already present
-  if (content.includes(`${info.key}: ${tool}`)) {
-    console.log(`"${tool}" is already in the stack under ${info.category}.${info.key}`);
+  const stacks = loadStacks();
+  if (Object.keys(stacks).length === 0) {
+    console.log(muted("  No stacks.yml found. Run 'harness init' first."));
     return;
   }
 
-  // Find the section and key, replace or append
-  const lines = content.split("\n");
-  let inSection = false;
-  let inserted = false;
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    if (line.match(new RegExp(`^${info.category}:`))) {
-      inSection = true;
-      continue;
-    }
-    if (inSection && line.match(/^\S/) && !line.startsWith("#")) {
-      // Left the section without finding the key — insert before this line
-      lines.splice(i, 0, `  ${info.key}: ${tool}`);
-      inserted = true;
-      break;
-    }
-    if (inSection && line.trim().startsWith(`${info.key}:`)) {
-      // Replace existing value
-      const indent = line.length - line.trimStart().length;
-      lines[i] = `${" ".repeat(indent)}${info.key}: ${tool}`;
-      inserted = true;
-      break;
-    }
-  }
-
-  if (!inserted) {
-    // Append to end of file under the section
-    lines.push(`  ${info.key}: ${tool}`);
-  }
-
-  await Bun.write(stackPath, lines.join("\n"));
-  console.log(`Added "${tool}" to stack: ${info.category}.${info.key}`);
-  console.log(`Description: ${info.description}`);
-}
-
-// ---------------------------------------------------------------------------
-// Router
-// ---------------------------------------------------------------------------
-
-function printStackUsage(): void {
-  console.log(`harness stack — view and extend the tech stack
-
-Commands:
-  show              Display current stacks.yml
-  extend <tool>     Add a tool to the stack`);
-}
-
-export async function runStack(parsed: ParsedArgs, root: string): Promise<void> {
-  switch (parsed.command) {
-    case "show":
-      await stackShow(root);
-      break;
-    case "extend": {
-      const tool = parsed.positional[0];
-      if (!tool) {
-        console.error("Usage: harness stack extend <tool>");
-        console.error("\nAvailable tools:");
-        for (const [name, meta] of Object.entries(TOOL_CATALOG)) {
-          console.error(`  ${name.padEnd(18)} ${meta.description}`);
-        }
-        process.exit(1);
+  for (const [section, config] of Object.entries(stacks)) {
+    console.log(`  ${subheading(section)}:`);
+    if (typeof config === "object" && config !== null) {
+      for (const [key, value] of Object.entries(config as Record<string, unknown>)) {
+        const display = value === null ? muted("not set") : String(value);
+        console.log(`    ${key}: ${display}`);
       }
-      await stackExtend(root, tool);
-      break;
+    } else {
+      console.log(`    ${String(config)}`);
     }
-    default:
-      printStackUsage();
-      break;
+    console.log();
+  }
+}
+
+function stackExtend(args: string[]): void {
+  const toolName = args[0];
+  if (!toolName) {
+    console.log(error("  Usage: harness stack extend <tool>"));
+    console.log(muted("  Run 'harness stack catalog' to see available tools."));
+    return;
+  }
+
+  const catalog = loadToolCatalog();
+
+  // Search for the tool across all categories
+  let found: Record<string, unknown> | null = null;
+  let foundCategory = "";
+  let foundName = "";
+
+  for (const [category, tools] of Object.entries(catalog)) {
+    if (typeof tools === "object" && tools !== null) {
+      for (const [name, config] of Object.entries(tools as Record<string, unknown>)) {
+        if (name === toolName || name.includes(toolName)) {
+          found = config as Record<string, unknown>;
+          foundCategory = category;
+          foundName = name;
+          break;
+        }
+      }
+    }
+    if (found) break;
+  }
+
+  if (!found) {
+    console.log(error(`  Tool '${toolName}' not found in catalog.`));
+    console.log(muted("  Run 'harness stack catalog' to see available tools."));
+    return;
+  }
+
+  console.log(heading(`harness stack extend: ${foundName}`));
+  console.log(`  Category:    ${foundCategory}`);
+  console.log(`  Description: ${found.description ?? "N/A"}`);
+  console.log(`  Package:     ${found.package ?? muted("N/A (SaaS)")}`);
+  console.log();
+
+  // Show required env vars
+  const envVars = found.env_vars as string[] | undefined;
+  if (envVars && envVars.length > 0) {
+    console.log(warn("  Required environment variables:"));
+    for (const v of envVars) {
+      console.log(`    - ${v}`);
+    }
+    console.log();
+  }
+
+  // Run setup command if available
+  const setup = found.setup as string | undefined;
+  if (setup) {
+    console.log(info(`  Running: ${setup}`));
+    try {
+      execSync(`cd ${ROOT_DIR} && ${setup}`, { stdio: "inherit", timeout: 60000 });
+      console.log(success("  Setup complete."));
+    } catch {
+      console.log(error("  Setup failed. Run manually: " + setup));
+    }
+  }
+
+  // Show docs link
+  if (found.docs) {
+    console.log(muted(`  Docs: ${found.docs}`));
+  }
+}
+
+function stackCatalog(): void {
+  console.log(heading("harness stack catalog"));
+
+  const catalog = loadToolCatalog();
+  if (Object.keys(catalog).length === 0) {
+    console.log(muted("  No tool-catalog.yml found."));
+    return;
+  }
+
+  for (const [category, tools] of Object.entries(catalog)) {
+    if (typeof tools !== "object" || tools === null) continue;
+
+    console.log(`  ${info(category)}:`);
+    for (const [name, config] of Object.entries(tools as Record<string, unknown>)) {
+      const c = config as Record<string, unknown>;
+      const desc = (c.description as string) ?? "";
+      const pkg = (c.package as string) ?? "SaaS";
+      console.log(`    ${name.padEnd(18)} ${desc.slice(0, 50).padEnd(52)} [${pkg}]`);
+    }
+    console.log();
   }
 }

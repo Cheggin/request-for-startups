@@ -19,16 +19,25 @@
     },
     "packages/cli": {
       "name": "@harness/cli",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "bin": {
         "harness": "./src/index.ts",
       },
       "dependencies": {
         "@harness/agent-loop": "workspace:*",
+        "@harness/commander": "workspace:*",
+        "@harness/eval-framework": "workspace:*",
+        "@harness/feature-decomposer": "workspace:*",
+        "@harness/spec-generator": "workspace:*",
+        "@rfs/hooks": "workspace:*",
+        "@rfs/repo-setup": "workspace:*",
+        "@rfs/service-validator": "workspace:*",
         "@startup-harness/github-state": "workspace:*",
+        "yaml": "^2.7.0",
       },
       "devDependencies": {
         "@types/bun": "latest",
+        "typescript": "^5.7.0",
       },
     },
     "packages/commander": {
@@ -70,6 +79,14 @@
         "typescript": "^5.7.0",
       },
     },
+    "packages/fixed-boundary": {
+      "name": "@rfs/fixed-boundary",
+      "version": "0.1.0",
+      "devDependencies": {
+        "@types/bun": "^1.2.0",
+        "typescript": "^5.7.0",
+      },
+    },
     "packages/github-state": {
       "name": "@startup-harness/github-state",
       "version": "0.0.1",
@@ -84,12 +101,48 @@
         "vitest": "^3.1.1",
       },
     },
+    "packages/implementation-loop": {
+      "name": "@rfs/implementation-loop",
+      "version": "0.1.0",
+      "dependencies": {
+        "@harness/agent-loop": "workspace:*",
+        "@rfs/hooks": "workspace:*",
+      },
+      "devDependencies": {
+        "@types/bun": "^1.2.0",
+        "typescript": "^5.7.0",
+      },
+    },
+    "packages/knowledge": {
+      "name": "@harness/knowledge",
+      "version": "0.1.0",
+      "devDependencies": {
+        "@types/bun": "latest",
+        "typescript": "^5.7.0",
+      },
+    },
     "packages/repo-setup": {
       "name": "@rfs/repo-setup",
       "version": "1.0.0",
       "devDependencies": {
         "typescript": "^5.7.0",
         "vitest": "^3.1.1",
+      },
+    },
+    "packages/secret-manager": {
+      "name": "@harness/secret-manager",
+      "version": "0.1.0",
+      "devDependencies": {
+        "@types/bun": "^1.2.0",
+        "typescript": "^5.7.0",
+      },
+    },
+    "packages/sentry-integration": {
+      "name": "@harness/sentry-integration",
+      "version": "0.1.0",
+      "devDependencies": {
+        "@types/bun": "^1.2.0",
+        "typescript": "^5.7.0",
       },
     },
     "packages/service-validator": {
@@ -102,6 +155,14 @@
     },
     "packages/spec-generator": {
       "name": "@harness/spec-generator",
+      "version": "0.1.0",
+      "devDependencies": {
+        "@types/bun": "^1.2.0",
+        "typescript": "^5.7.0",
+      },
+    },
+    "packages/task-classifier": {
+      "name": "@rfs/task-classifier",
       "version": "0.1.0",
       "devDependencies": {
         "@types/bun": "^1.2.0",
@@ -273,6 +334,12 @@
 
     "@harness/feature-decomposer": ["@harness/feature-decomposer@workspace:packages/feature-decomposer"],
 
+    "@harness/knowledge": ["@harness/knowledge@workspace:packages/knowledge"],
+
+    "@harness/secret-manager": ["@harness/secret-manager@workspace:packages/secret-manager"],
+
+    "@harness/sentry-integration": ["@harness/sentry-integration@workspace:packages/sentry-integration"],
+
     "@harness/spec-generator": ["@harness/spec-generator@workspace:packages/spec-generator"],
 
     "@hono/node-server": ["@hono/node-server@1.19.14", "", { "peerDependencies": { "hono": "^4" } }, "sha512-GwtvgtXxnWsucXvbQXkRgqksiH2Qed37H9xHZocE5sA3N8O8O8/8FA3uclQXxXVzc9XBZuEOMK7+r02FmSpHtw=="],
@@ -379,11 +446,17 @@
 
     "@playwright/test": ["@playwright/test@1.59.1", "", { "dependencies": { "playwright": "1.59.1" }, "bin": { "playwright": "cli.js" } }, "sha512-PG6q63nQg5c9rIi4/Z5lR5IVF7yU5MqmKaPOe0HSc0O2cX1fPi96sUQu5j7eo4gKCkB2AnNGoWt7y4/Xx3Kcqg=="],
 
+    "@rfs/fixed-boundary": ["@rfs/fixed-boundary@workspace:packages/fixed-boundary"],
+
     "@rfs/hooks": ["@rfs/hooks@workspace:packages/hooks"],
+
+    "@rfs/implementation-loop": ["@rfs/implementation-loop@workspace:packages/implementation-loop"],
 
     "@rfs/repo-setup": ["@rfs/repo-setup@workspace:packages/repo-setup"],
 
     "@rfs/service-validator": ["@rfs/service-validator@workspace:packages/service-validator"],
+
+    "@rfs/task-classifier": ["@rfs/task-classifier@workspace:packages/task-classifier"],
 
     "@rolldown/pluginutils": ["@rolldown/pluginutils@1.0.0-beta.27", "", {}, "sha512-+d0F4MKMCbeVUJwG96uQ4SgAznZNSq93I3V+9NHA4OpvqG8mRCpGdKmK8l/dl02h2CCDHwW2FqilnTyDcAnqjA=="],
 
@@ -1336,6 +1409,8 @@
     "ws": ["ws@8.18.0", "", { "peerDependencies": { "bufferutil": "^4.0.1", "utf-8-validate": ">=5.0.2" }, "optionalPeers": ["bufferutil", "utf-8-validate"] }, "sha512-8VbfWfHLbbwu3+N6OKsOMpBdT4kXPDDB9cJk2bJ6mh9ucxdlnNvH1e+roYkKmN9Nxw2yjz7VzeO9oOz2zJ04Pw=="],
 
     "yallist": ["yallist@3.1.1", "", {}, "sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g=="],
+
+    "yaml": ["yaml@2.8.3", "", { "bin": { "yaml": "bin.mjs" } }, "sha512-AvbaCLOO2Otw/lW5bmh9d/WEdcDFdQp2Z2ZUH3pX9U2ihyUY0nvLv7J6TrWowklRGPYbB/IuIMfYgxaCPg5Bpg=="],
 
     "yocto-queue": ["yocto-queue@0.1.0", "", {}, "sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q=="],
 

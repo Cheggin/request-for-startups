@@ -1,130 +1,174 @@
 #!/usr/bin/env bun
 /**
- * harness CLI — manage agents, features, skills, and stack.
+ * harness — single entry point for the entire startup harness.
  *
- * No heavy CLI framework. process.argv parsing, switch/case routing.
- * Karpathy: simplest thing that works.
+ * Usage: harness <command> [subcommand] [args...]
+ *
+ * No heavy CLI framework. process.argv parsing like gstack.
+ * Fast startup, minimal dependencies, comprehensive commands.
  */
 
-import { runAgent } from "./commands/agent";
-import { runFeature } from "./commands/feature";
-import { runSkill } from "./commands/skill";
-import { runStack } from "./commands/stack";
-import { runStatus } from "./commands/status";
+import { COLORS } from "./lib/constants.js";
 
-// ---------------------------------------------------------------------------
-// Argv parser
-// ---------------------------------------------------------------------------
+const { reset, bold, dim, cyan, yellow, green, gray } = COLORS;
 
-export interface ParsedArgs {
-  group: string;
-  command: string;
-  positional: string[];
-  flags: Record<string, string | boolean>;
+// ─── Arg Parsing ────────────────────────────────────────────────────────────
+
+const rawArgs = process.argv.slice(2);
+const command = rawArgs[0];
+const commandArgs = rawArgs.slice(1);
+
+// ─── Help ───────────────────────────────────────────────────────────────────
+
+function printHelp(): void {
+  console.log(`
+${bold}${cyan}harness${reset} — single entry point for the startup harness
+
+${bold}Core:${reset}
+  ${green}init${reset}                              Run full startup-init flow
+  ${green}resume${reset}                            Resume from where we left off
+  ${green}status${reset}                            Comprehensive overview
+
+${bold}Agents:${reset}
+  ${green}agent list${reset}                        All agents with status
+  ${green}agent spawn${reset} <name> <prompt>       Spawn agent in tmux pane
+  ${green}agent kill${reset} <name>                 Kill agent pane
+  ${green}agent logs${reset} <name>                 Read agent output
+
+${bold}Teams:${reset}
+  ${green}team start${reset} <n> <prompt>           Spawn n coordinated agents
+  ${green}team status${reset}                       Show team members
+  ${green}team stop${reset}                         Stop all team members
+
+${bold}Features:${reset}
+  ${green}feature list${reset} [--done|--todo|...]  List with counts
+  ${green}feature new${reset} <name>                Create feature
+  ${green}feature status${reset} <name>             Detailed view
+  ${green}feature assign${reset} <name> <agent>     Assign to agent
+
+${bold}Skills:${reset}
+  ${green}skill list${reset} [--category <cat>]     List by category
+  ${green}skill run${reset} <name>                  Invoke skill
+  ${green}skill eval${reset} <name>                 Eval one skill
+  ${green}skill eval-all${reset}                    Eval all skills
+
+${bold}Stack:${reset}
+  ${green}stack show${reset}                        Current tech stack
+  ${green}stack extend${reset} <tool>               Add tool from catalog
+  ${green}stack catalog${reset}                     Available tools
+
+${bold}Hooks:${reset}
+  ${green}hook list${reset}                         Registered hooks
+  ${green}hook test${reset} <name>                  Test a hook
+
+${bold}Evals:${reset}
+  ${green}eval static${reset}                       Tier 1: static validation
+  ${green}eval e2e${reset}                          Tier 2: E2E tests
+  ${green}eval judge${reset}                        Tier 3: LLM judge
+  ${green}eval all${reset}                          Run all tiers
+
+${bold}Deploy:${reset}
+  ${green}deploy staging${reset}                    Deploy to staging
+  ${green}deploy production${reset}                 Deploy to production
+  ${green}deploy status${reset}                     Check deployment status
+
+${bold}Updates:${reset}
+  ${green}update post${reset}                       Post investor update
+  ${green}update history${reset}                    Show recent updates
+
+${dim}Version 0.2.0 — bun run packages/cli/src/index.ts${reset}
+`);
 }
 
-export function parseArgs(argv: string[]): ParsedArgs {
-  const args = argv.slice(2); // skip bun/node + script path
+// ─── Version ────────────────────────────────────────────────────────────────
 
-  const group = args[0] ?? "";
-  const command = args[1] ?? "";
-  const positional: string[] = [];
-  const flags: Record<string, string | boolean> = {};
-
-  for (let i = 2; i < args.length; i++) {
-    const arg = args[i];
-    if (arg.startsWith("--")) {
-      const key = arg.slice(2);
-      const next = args[i + 1];
-      if (next && !next.startsWith("--")) {
-        flags[key] = next;
-        i++;
-      } else {
-        flags[key] = true;
-      }
-    } else {
-      positional.push(arg);
-    }
-  }
-
-  return { group, command, positional, flags };
+function printVersion(): void {
+  console.log("harness v0.2.0");
 }
 
-// ---------------------------------------------------------------------------
-// Project root resolution
-// ---------------------------------------------------------------------------
-
-export function resolveRoot(): string {
-  // Walk up from cwd looking for SOUL.md (project marker)
-  let dir = process.cwd();
-  while (dir !== "/") {
-    if (Bun.file(`${dir}/SOUL.md`).size) return dir;
-    dir = dir.substring(0, dir.lastIndexOf("/")) || "/";
-  }
-  // Fallback: cwd
-  return process.cwd();
-}
-
-// ---------------------------------------------------------------------------
-// Usage
-// ---------------------------------------------------------------------------
-
-function printUsage(): void {
-  console.log(`harness — CLI for the startup harness
-
-Usage: harness <group> <command> [args] [flags]
-
-Groups:
-  agent    Manage agent definitions and running sessions
-  feature  Manage feature checklists
-  skill    Browse and run skills
-  stack    View and extend the tech stack
-  status   Overview of the entire harness
-
-Run 'harness <group>' for group-specific help.`);
-}
-
-// ---------------------------------------------------------------------------
-// Main
-// ---------------------------------------------------------------------------
+// ─── Command Routing ────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
-  const parsed = parseArgs(process.argv);
-
-  if (!parsed.group || parsed.group === "help" || parsed.flags["help"]) {
-    printUsage();
-    process.exit(0);
+  if (!command || command === "help" || command === "--help" || command === "-h") {
+    printHelp();
+    return;
   }
 
-  const root = resolveRoot();
+  if (command === "version" || command === "--version" || command === "-v") {
+    printVersion();
+    return;
+  }
 
-  switch (parsed.group) {
-    case "agent":
-      await runAgent(parsed, root);
+  // Dynamic imports to keep startup fast — only load the command that's needed
+  switch (command) {
+    case "init": {
+      const mod = await import("./commands/init.js");
+      mod.run(commandArgs);
       break;
-    case "feature":
-      await runFeature(parsed, root);
+    }
+    case "resume": {
+      const mod = await import("./commands/resume.js");
+      mod.run(commandArgs);
       break;
-    case "skill":
-      await runSkill(parsed, root);
+    }
+    case "status": {
+      const mod = await import("./commands/status.js");
+      mod.run(commandArgs);
       break;
-    case "stack":
-      await runStack(parsed, root);
+    }
+    case "agent": {
+      const mod = await import("./commands/agent.js");
+      mod.run(commandArgs);
       break;
-    case "status":
-      await runStatus(parsed, root);
+    }
+    case "team": {
+      const mod = await import("./commands/team.js");
+      mod.run(commandArgs);
       break;
+    }
+    case "feature": {
+      const mod = await import("./commands/feature.js");
+      mod.run(commandArgs);
+      break;
+    }
+    case "skill": {
+      const mod = await import("./commands/skill.js");
+      mod.run(commandArgs);
+      break;
+    }
+    case "stack": {
+      const mod = await import("./commands/stack.js");
+      mod.run(commandArgs);
+      break;
+    }
+    case "hook": {
+      const mod = await import("./commands/hook.js");
+      mod.run(commandArgs);
+      break;
+    }
+    case "eval": {
+      const mod = await import("./commands/eval.js");
+      mod.run(commandArgs);
+      break;
+    }
+    case "deploy": {
+      const mod = await import("./commands/deploy.js");
+      mod.run(commandArgs);
+      break;
+    }
+    case "update": {
+      const mod = await import("./commands/update.js");
+      mod.run(commandArgs);
+      break;
+    }
     default:
-      console.error(`Unknown group: ${parsed.group}`);
-      printUsage();
+      console.log(`${yellow}Unknown command: ${command}${reset}`);
+      console.log(`${dim}Run 'harness help' for available commands.${reset}`);
       process.exit(1);
   }
 }
 
-// Only run main when this file is the entry point (not when imported by tests)
-if (import.meta.main) {
-  main().catch((err) => {
-    console.error(err.message || err);
-    process.exit(1);
-  });
-}
+main().catch((err) => {
+  console.error(`${COLORS.red}Fatal error: ${err.message}${COLORS.reset}`);
+  process.exit(1);
+});

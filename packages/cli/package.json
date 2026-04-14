@@ -1,20 +1,30 @@
 {
   "name": "@harness/cli",
-  "version": "0.1.0",
-  "description": "CLI for the startup harness",
+  "version": "0.2.0",
+  "description": "Single entry point for the startup harness — agents, features, evals, deploys, everything",
   "type": "module",
   "bin": {
     "harness": "./src/index.ts"
   },
   "scripts": {
     "test": "bun test",
-    "harness": "bun run src/index.ts"
+    "harness": "bun run src/index.ts",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@harness/agent-loop": "workspace:*",
-    "@startup-harness/github-state": "workspace:*"
+    "@harness/commander": "workspace:*",
+    "@harness/eval-framework": "workspace:*",
+    "@harness/feature-decomposer": "workspace:*",
+    "@harness/spec-generator": "workspace:*",
+    "@rfs/hooks": "workspace:*",
+    "@rfs/repo-setup": "workspace:*",
+    "@rfs/service-validator": "workspace:*",
+    "@startup-harness/github-state": "workspace:*",
+    "yaml": "^2.7.0"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "typescript": "^5.7.0"
   }
 }

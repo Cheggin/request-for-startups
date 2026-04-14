@@ -1,85 +1,120 @@
 /**
- * harness status — overview of running agents, feature progress, stack.
+ * harness status — comprehensive overview of everything.
+ *
+ * Shows: phase, agents, features, costs, running processes, recent updates.
  */
 
-import type { ParsedArgs } from "../index";
-import { loadAgents, getRunningPanes } from "./agent";
-import { loadFeatures } from "./feature";
-import { loadSkills } from "./skill";
+import { loadState } from "../lib/state.js";
+import { loadAgents } from "../lib/config.js";
+import { listPanes, isTmuxAvailable } from "../lib/tmux.js";
+import {
+  heading,
+  subheading,
+  phaseLabel,
+  statusDot,
+  table,
+  count,
+  formatCost,
+  timeAgo,
+  muted,
+  success,
+  warn,
+} from "../lib/format.js";
 
-export async function runStatus(parsed: ParsedArgs, root: string): Promise<void> {
-  // Run all loads in parallel
-  const [agents, features, skills, panes] = await Promise.all([
-    loadAgents(root),
-    loadFeatures(root),
-    loadSkills(root),
-    getRunningPanes(),
-  ]);
+export function run(_args: string[]): void {
+  console.log(heading("harness status"));
 
-  console.log("=== Harness Status ===\n");
+  const state = loadState();
+  const agents = loadAgents();
 
-  // Agents section
-  console.log(`\x1b[1mAgents\x1b[0m (${agents.length} defined)`);
-  if (agents.length > 0) {
-    for (const a of agents) {
-      const running = panes.has(a.name);
-      const status = running ? "\x1b[32m running\x1b[0m" : "\x1b[90m idle\x1b[0m";
-      console.log(`  ${a.name.padEnd(15)} L${a.level} ${a.model.padEnd(20)}${status}`);
+  // ─── Phase ──────────────────────────────────────────────────────────────
+  console.log(`  Phase:          ${phaseLabel(state.phase)}`);
+  console.log(`  Initialized:    ${timeAgo(state.initializedAt)}`);
+  console.log(`  Last activity:  ${timeAgo(state.lastActivityAt)}`);
+  console.log(`  Total cost:     ${formatCost(state.totalCostUsd)}`);
+  console.log(`  Completed loops: ${state.completedLoops}`);
+  console.log();
+
+  // ─── Running Agents ─────────────────────────────────────────────────────
+  console.log(subheading("  Running Agents"));
+  if (isTmuxAvailable()) {
+    const panes = listPanes();
+    if (panes.length === 0) {
+      console.log(muted("  No agents currently running in tmux.\n"));
+    } else {
+      const rows = panes.map((p) => [
+        `  ${statusDot(p.active ? "running" : "idle")} ${p.name}`,
+        p.active ? success("running") : muted("idle"),
+        `pid:${p.pid}`,
+      ]);
+      console.log(table(rows));
+      console.log();
     }
   } else {
-    console.log("  (none)");
+    console.log(muted("  tmux not available — cannot show running agents.\n"));
   }
 
-  // Features section
-  console.log(`\n\x1b[1mFeatures\x1b[0m (${features.length} total)`);
-  if (features.length > 0) {
-    let doneCount = 0;
-    let progressCount = 0;
-    let todoCount = 0;
-    let blockedCount = 0;
-
-    for (const f of features) {
-      const s = f.status.toLowerCase();
-      if (s.includes("complete") || s.includes("done")) doneCount++;
-      else if (s.includes("in progress")) progressCount++;
-      else if (s.includes("blocked")) blockedCount++;
-      else todoCount++;
-    }
-
-    console.log(`  Done:        ${doneCount}`);
-    console.log(`  In progress: ${progressCount}`);
-    console.log(`  Blocked:     ${blockedCount}`);
-    console.log(`  Not started: ${todoCount}`);
-
-    // Overall progress
-    let totalItems = 0;
-    let doneItems = 0;
-    for (const f of features) {
-      totalItems += f.totalItems;
-      doneItems += f.doneItems;
-    }
-    const pct = totalItems > 0 ? Math.round((doneItems / totalItems) * 100) : 0;
-    console.log(`\n  Checklist progress: ${doneItems}/${totalItems} (${pct}%)`);
+  // ─── Agent Definitions ──────────────────────────────────────────────────
+  console.log(subheading("  Agent Catalog"));
+  if (agents.length === 0) {
+    console.log(muted("  No agent definitions found.\n"));
   } else {
-    console.log("  (none)");
+    const agentRows = agents.map((a) => {
+      const stateAgent = state.agents.find((sa) => sa.name === a.name);
+      const status = stateAgent?.status ?? "idle";
+      const task = stateAgent?.currentTask ?? "-";
+      return [
+        `  ${statusDot(status)} ${a.name}`,
+        a.model,
+        `L${a.level}`,
+        task.length > 40 ? task.slice(0, 37) + "..." : task,
+      ];
+    });
+    console.log(table(agentRows, ["  Agent", "Model", "Level", "Current Task"]));
+    console.log();
   }
 
-  // Skills section
-  console.log(`\n\x1b[1mSkills\x1b[0m (${skills.length} total)`);
-  const categories = new Set(skills.map((s) => s.category));
-  for (const cat of categories) {
-    const count = skills.filter((s) => s.category === cat).length;
-    console.log(`  ${cat.padEnd(15)} ${count} skills`);
-  }
-
-  // Running panes
-  const runningPanes = Array.from(panes.keys());
-  console.log(`\n\x1b[1mTmux Panes\x1b[0m (${runningPanes.length} running)`);
-  if (runningPanes.length > 0) {
-    for (const name of runningPanes) {
-      console.log(`  ${name}`);
-    }
+  // ─── Features ───────────────────────────────────────────────────────────
+  console.log(subheading("  Features"));
+  if (state.features.length === 0) {
+    console.log(muted("  No features tracked yet.\n"));
   } else {
-    console.log("  (none — run 'task panes:start' to create harness session)");
+    const statusCounts: Record<string, number> = {};
+    for (const f of state.features) {
+      statusCounts[f.status] = (statusCounts[f.status] ?? 0) + 1;
+    }
+    const summary = Object.entries(statusCounts)
+      .map(([s, c]) => `${c} ${s}`)
+      .join(", ");
+    console.log(`  ${count(state.features.length, "feature")}: ${summary}`);
+
+    const featureRows = state.features.slice(0, 10).map((f) => [
+      `  ${statusDot(f.status)} ${f.name}`,
+      f.status,
+      f.assignee ?? muted("unassigned"),
+      timeAgo(f.updatedAt),
+    ]);
+    console.log(
+      table(featureRows, ["  Feature", "Status", "Assignee", "Updated"])
+    );
+    if (state.features.length > 10) {
+      console.log(muted(`  ... and ${state.features.length - 10} more`));
+    }
+    console.log();
+  }
+
+  // ─── Cost Breakdown ─────────────────────────────────────────────────────
+  if (state.agents.some((a) => a.totalCostUsd > 0)) {
+    console.log(subheading("  Cost Breakdown"));
+    const costRows = state.agents
+      .filter((a) => a.totalCostUsd > 0)
+      .sort((a, b) => b.totalCostUsd - a.totalCostUsd)
+      .map((a) => [
+        `  ${a.name}`,
+        formatCost(a.totalCostUsd),
+        `${a.totalTurns} turns`,
+      ]);
+    console.log(table(costRows, ["  Agent", "Cost", "Turns"]));
+    console.log();
   }
 }

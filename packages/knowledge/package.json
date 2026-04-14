@@ -1,0 +1,14 @@
+{
+  "name": "@harness/knowledge",
+  "version": "0.1.0",
+  "description": "Karpathy-style LLM wiki knowledge system — persistent, compounding markdown knowledge bases",
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.7.0"
+  }
+}

@@ -1,187 +1,189 @@
 /**
- * harness skill — list and run skills.
+ * harness skill — manage and invoke skills.
  *
- * Reads skill definitions from skills/<category>/*.md.
+ * Subcommands:
+ *   list [--category <cat>] — grouped by category
+ *   run <name>             — invoke skill in current session
+ *   eval <name>            — run eval for a specific skill
+ *   eval-all               — run all evals
  */
 
-import type { ParsedArgs } from "../index";
-import { readdir } from "node:fs/promises";
-import { join } from "node:path";
+import { readdirSync, existsSync, readFileSync } from "fs";
+import { join } from "path";
+import { execSync } from "child_process";
+import { SKILLS_DIR, ROOT_DIR } from "../lib/constants.js";
+import { loadCategories } from "../lib/config.js";
+import { heading, table, success, error, muted, warn, info } from "../lib/format.js";
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-export interface SkillInfo {
-  name: string;
-  description: string;
-  category: string;
-  file: string;
-}
-
-// ---------------------------------------------------------------------------
-// Parse skill frontmatter
-// ---------------------------------------------------------------------------
-
-export function parseSkillFrontmatter(content: string, filename: string, category: string): SkillInfo {
-  const match = content.match(/^---\n([\s\S]*?)\n---/);
-  const name = filename.replace(".md", "");
-
-  if (!match) {
-    return { name, description: "", category, file: filename };
+export function run(args: string[]): void {
+  const sub = args[0];
+  switch (sub) {
+    case "list":
+      return skillList(args.slice(1));
+    case "run":
+      return skillRun(args.slice(1));
+    case "eval":
+      return skillEval(args.slice(1));
+    case "eval-all":
+      return skillEvalAll();
+    default:
+      console.log(heading("harness skill"));
+      console.log("  Usage:");
+      console.log("    harness skill list [--category <cat>]  — list skills");
+      console.log("    harness skill run <name>               — invoke skill");
+      console.log("    harness skill eval <name>              — eval one skill");
+      console.log("    harness skill eval-all                 — eval all skills");
+      console.log();
   }
-
-  const yaml = match[1];
-  const descMatch = yaml.match(/^description:\s*(.+)$/m);
-
-  return {
-    name,
-    description: descMatch ? descMatch[1].trim() : "",
-    category,
-    file: filename,
-  };
 }
 
-// ---------------------------------------------------------------------------
-// Load all skills
-// ---------------------------------------------------------------------------
+interface SkillInfo {
+  name: string;
+  category: string;
+  path: string;
+}
 
-export const SKILL_CATEGORIES = ["coding", "content", "growth", "operations", "shared"];
-
-export async function loadSkills(root: string): Promise<SkillInfo[]> {
-  const skillsDir = join(root, "skills");
+function discoverSkills(): SkillInfo[] {
   const skills: SkillInfo[] = [];
 
-  for (const category of SKILL_CATEGORIES) {
-    const catDir = join(skillsDir, category);
-    let files: string[];
-    try {
-      files = await readdir(catDir);
-    } catch {
-      continue;
-    }
+  if (!existsSync(SKILLS_DIR)) return skills;
 
-    for (const f of files) {
-      if (!f.endsWith(".md")) continue;
-      const content = await Bun.file(join(catDir, f)).text();
-      skills.push(parseSkillFrontmatter(content, f, category));
+  const entries = readdirSync(SKILLS_DIR, { withFileTypes: true });
+  for (const entry of entries) {
+    if (entry.isDirectory()) {
+      // Category directory — skills inside
+      const catDir = join(SKILLS_DIR, entry.name);
+      const catEntries = readdirSync(catDir).filter((f) => f.endsWith(".md"));
+      for (const file of catEntries) {
+        skills.push({
+          name: file.replace(".md", ""),
+          category: entry.name,
+          path: join(catDir, file),
+        });
+      }
+    } else if (entry.name.endsWith(".md")) {
+      // Top-level skill
+      skills.push({
+        name: entry.name.replace(".md", ""),
+        category: "shared",
+        path: join(SKILLS_DIR, entry.name),
+      });
     }
   }
 
   return skills;
 }
 
-// ---------------------------------------------------------------------------
-// Fuzzy match helper
-// ---------------------------------------------------------------------------
+function skillList(args: string[]): void {
+  console.log(heading("harness skill list"));
 
-function fuzzyMatch(query: string, target: string): boolean {
-  const q = query.toLowerCase();
-  const t = target.toLowerCase();
-  if (t.includes(q)) return true;
+  const categoryFilter = args.indexOf("--category") >= 0
+    ? args[args.indexOf("--category") + 1]
+    : null;
 
-  // Simple subsequence match
-  let qi = 0;
-  for (let ti = 0; ti < t.length && qi < q.length; ti++) {
-    if (t[ti] === q[qi]) qi++;
-  }
-  return qi === q.length;
-}
+  const skills = discoverSkills();
 
-// ---------------------------------------------------------------------------
-// Commands
-// ---------------------------------------------------------------------------
-
-async function skillList(root: string, flags: Record<string, string | boolean>): Promise<void> {
-  const skills = await loadSkills(root);
   if (skills.length === 0) {
-    console.log("No skills found in skills/");
+    console.log(muted("  No skills found in skills/ directory."));
+    console.log(muted("  Skills are loaded from the skills/ directory, organized by category."));
     return;
   }
 
-  const categoryFilter = flags["category"] as string | undefined;
-
   // Group by category
   const grouped = new Map<string, SkillInfo[]>();
-  for (const s of skills) {
-    if (categoryFilter && typeof categoryFilter === "string" && s.category !== categoryFilter) continue;
-    const list = grouped.get(s.category) || [];
-    list.push(s);
-    grouped.set(s.category, list);
+  for (const skill of skills) {
+    if (categoryFilter && skill.category !== categoryFilter) continue;
+    const list = grouped.get(skill.category) ?? [];
+    list.push(skill);
+    grouped.set(skill.category, list);
   }
 
-  console.log("=== Skills ===\n");
+  if (grouped.size === 0) {
+    console.log(muted(`  No skills found in category '${categoryFilter}'.`));
+    const categories = [...new Set(skills.map((s) => s.category))];
+    console.log(muted(`  Available categories: ${categories.join(", ")}`));
+    return;
+  }
 
   for (const [category, categorySkills] of grouped) {
-    console.log(`\x1b[1m${category}\x1b[0m`);
-    for (const s of categorySkills) {
-      const desc = s.description ? ` — ${s.description.substring(0, 70)}` : "";
-      console.log(`  ${s.name}${desc}`);
+    console.log(`  ${info(category)} (${categorySkills.length}):`);
+    for (const skill of categorySkills) {
+      console.log(`    - ${skill.name}`);
     }
     console.log();
   }
-
-  console.log(`Total: ${skills.length} skills across ${grouped.size} categories`);
 }
 
-async function skillRun(root: string, name: string): Promise<void> {
-  const skills = await loadSkills(root);
-
-  // Fuzzy search
-  let skill = skills.find((s) => s.name === name);
-  if (!skill) {
-    skill = skills.find((s) => fuzzyMatch(name, s.name));
+function skillRun(args: string[]): void {
+  const name = args[0];
+  if (!name) {
+    console.log(error("  Usage: harness skill run <name>"));
+    return;
   }
 
+  const skills = discoverSkills();
+  const skill = skills.find(
+    (s) => s.name === name || s.name.includes(name)
+  );
+
   if (!skill) {
-    console.error(`Skill "${name}" not found.`);
+    console.log(error(`  Skill '${name}' not found.`));
     const suggestions = skills
-      .filter((s) => fuzzyMatch(name.substring(0, 3), s.name))
-      .slice(0, 5);
+      .filter((s) => s.name.includes(name.slice(0, 3)))
+      .map((s) => s.name);
     if (suggestions.length > 0) {
-      console.error(`Did you mean: ${suggestions.map((s) => s.name).join(", ")}?`);
+      console.log(muted(`  Did you mean: ${suggestions.join(", ")}?`));
     }
-    process.exit(1);
+    return;
   }
 
-  const skillPath = join(root, "skills", skill.category, skill.file);
-  const content = await Bun.file(skillPath).text();
+  console.log(info(`  Loading skill: ${skill.name} (${skill.category})`));
+  console.log(muted(`  Path: ${skill.path}`));
 
-  // Strip frontmatter for display
-  const body = content.replace(/^---\n[\s\S]*?\n---\n*/, "");
+  // Read skill content and send to claude
+  const content = readFileSync(skill.path, "utf-8");
+  const prompt = `Execute this skill:\n\n${content}`;
 
-  console.log(`=== Skill: ${skill.name} (${skill.category}) ===\n`);
-  console.log(body);
+  try {
+    execSync(
+      `cd ${ROOT_DIR} && claude --dangerously-skip-permissions -p "${prompt.replace(/"/g, '\\"').slice(0, 500)}"`,
+      { stdio: "inherit", timeout: 300000 }
+    );
+  } catch (err) {
+    console.log(warn("  Skill execution ended."));
+  }
 }
 
-// ---------------------------------------------------------------------------
-// Router
-// ---------------------------------------------------------------------------
+function skillEval(args: string[]): void {
+  const name = args[0];
+  if (!name) {
+    console.log(error("  Usage: harness skill eval <name>"));
+    return;
+  }
 
-function printSkillUsage(): void {
-  console.log(`harness skill — browse and run skills
+  console.log(heading(`harness skill eval: ${name}`));
+  console.log(muted("  Running eval via packages/eval-framework..."));
 
-Commands:
-  list [--category <name>]   List all skills, optionally filtered by category
-  run <name>                 Display a skill's content`);
+  try {
+    execSync(
+      `cd ${ROOT_DIR} && bun run packages/eval-framework/src/index.ts --skill ${name}`,
+      { stdio: "inherit", timeout: 600000 }
+    );
+  } catch {
+    console.log(error("  Eval failed. Check output above."));
+  }
 }
 
-export async function runSkill(parsed: ParsedArgs, root: string): Promise<void> {
-  switch (parsed.command) {
-    case "list":
-      await skillList(root, parsed.flags);
-      break;
-    case "run": {
-      const name = parsed.positional[0];
-      if (!name) {
-        console.error("Usage: harness skill run <name>");
-        process.exit(1);
-      }
-      await skillRun(root, name);
-      break;
-    }
-    default:
-      printSkillUsage();
-      break;
+function skillEvalAll(): void {
+  console.log(heading("harness skill eval-all"));
+  console.log(muted("  Running all skill evals via packages/eval-framework..."));
+
+  try {
+    execSync(
+      `cd ${ROOT_DIR} && bun run packages/eval-framework/src/index.ts --all`,
+      { stdio: "inherit", timeout: 600000 }
+    );
+  } catch {
+    console.log(error("  Some evals failed. Check output above."));
   }
 }

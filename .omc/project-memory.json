@@ -54,56 +54,152 @@
   "hotPaths": [
     {
       "path": ".claude/skills/startup-init/SKILL.md",
-      "accessCount": 23,
-      "lastAccessed": 1776120571477,
+      "accessCount": 26,
+      "lastAccessed": 1776131148265,
       "type": "file"
     },
     {
       "path": "reagan_plan_startup_harness_onboarding.md",
-      "accessCount": 17,
-      "lastAccessed": 1776121881398,
-      "type": "file"
-    },
-    {
-      "path": "reference/Archon/packages/workflows/src/dag-executor.ts",
-      "accessCount": 3,
-      "lastAccessed": 1776116104641,
+      "accessCount": 18,
+      "lastAccessed": 1776130818221,
       "type": "file"
     },
     {
       "path": "reference/get-shit-done/sdk/src/phase-runner.ts",
-      "accessCount": 2,
-      "lastAccessed": 1776116086929,
+      "accessCount": 8,
+      "lastAccessed": 1776131482634,
       "type": "file"
     },
     {
       "path": ".harness/stacks.yml",
-      "accessCount": 1,
-      "lastAccessed": 1776115841908,
+      "accessCount": 7,
+      "lastAccessed": 1776131357395,
+      "type": "file"
+    },
+    {
+      "path": "reference/ui-loop/skills/loop/SKILL.md",
+      "accessCount": 5,
+      "lastAccessed": 1776131436611,
+      "type": "file"
+    },
+    {
+      "path": "reference/autoresearch/program.md",
+      "accessCount": 5,
+      "lastAccessed": 1776131558565,
+      "type": "file"
+    },
+    {
+      "path": "reference/Archon/packages/workflows/src/dag-executor.ts",
+      "accessCount": 4,
+      "lastAccessed": 1776126552763,
+      "type": "file"
+    },
+    {
+      "path": "reference/everything-claude-code/hooks/hooks.json",
+      "accessCount": 4,
+      "lastAccessed": 1776127899766,
+      "type": "file"
+    },
+    {
+      "path": "reference/autoagent/agent.py",
+      "accessCount": 4,
+      "lastAccessed": 1776128059745,
+      "type": "file"
+    },
+    {
+      "path": "reference/pi-mono/packages/agent/src/agent-loop.ts",
+      "accessCount": 4,
+      "lastAccessed": 1776128071102,
+      "type": "file"
+    },
+    {
+      "path": "reference/pi-mono/packages/agent/src/agent.ts",
+      "accessCount": 4,
+      "lastAccessed": 1776128071619,
+      "type": "file"
+    },
+    {
+      "path": "reference/autoagent/program.md",
+      "accessCount": 4,
+      "lastAccessed": 1776131436695,
+      "type": "file"
+    },
+    {
+      "path": "reference/get-shit-done/sdk/src/types.ts",
+      "accessCount": 4,
+      "lastAccessed": 1776131460459,
+      "type": "file"
+    },
+    {
+      "path": "reference/autoagent/agent-claude.py",
+      "accessCount": 3,
+      "lastAccessed": 1776126482607,
+      "type": "file"
+    },
+    {
+      "path": "reference/autoresearch/train.py",
+      "accessCount": 3,
+      "lastAccessed": 1776126483597,
+      "type": "file"
+    },
+    {
+      "path": "reference/autoresearch/prepare.py",
+      "accessCount": 3,
+      "lastAccessed": 1776126483641,
+      "type": "file"
+    },
+    {
+      "path": "reference/ui-loop/CLAUDE.md",
+      "accessCount": 3,
+      "lastAccessed": 1776126485018,
+      "type": "file"
+    },
+    {
+      "path": "reference/ui-loop/hooks/hooks.json",
+      "accessCount": 3,
+      "lastAccessed": 1776126498166,
+      "type": "file"
+    },
+    {
+      "path": "reference/harness-design-long-running-apps.md",
+      "accessCount": 3,
+      "lastAccessed": 1776126517668,
+      "type": "file"
+    },
+    {
+      "path": "reference/code-execution-with-mcp.md",
+      "accessCount": 3,
+      "lastAccessed": 1776126518113,
+      "type": "file"
+    },
+    {
+      "path": "reference/writing-tools-for-agents.md",
+      "accessCount": 3,
+      "lastAccessed": 1776126518931,
+      "type": "file"
+    },
+    {
+      "path": "reference/multica/AGENTS.md",
+      "accessCount": 3,
+      "lastAccessed": 1776126547153,
+      "type": "file"
+    },
+    {
+      "path": "reference/Archon/packages/workflows/src/executor.ts",
+      "accessCount": 2,
+      "lastAccessed": 1776126554021,
+      "type": "file"
+    },
+    {
+      "path": "reference/everything-claude-code/agents/chief-of-staff.md",
+      "accessCount": 2,
+      "lastAccessed": 1776126566246,
       "type": "file"
     },
     {
       "path": "reference/niche-documentation/cubic-integration.md",
       "accessCount": 1,
       "lastAccessed": 1776115849515,
-      "type": "file"
-    },
-    {
-      "path": "reference/autoagent/agent.py",
-      "accessCount": 1,
-      "lastAccessed": 1776116051100,
-      "type": "file"
-    },
-    {
-      "path": "reference/autoagent/agent-claude.py",
-      "accessCount": 1,
-      "lastAccessed": 1776116051883,
-      "type": "file"
-    },
-    {
-      "path": "reference/autoagent/program.md",
-      "accessCount": 1,
-      "lastAccessed": 1776116051921,
       "type": "file"
     },
     {
@@ -119,24 +215,6 @@
       "type": "file"
     },
     {
-      "path": "reference/autoresearch/train.py",
-      "accessCount": 1,
-      "lastAccessed": 1776116057649,
-      "type": "file"
-    },
-    {
-      "path": "reference/autoresearch/prepare.py",
-      "accessCount": 1,
-      "lastAccessed": 1776116057927,
-      "type": "file"
-    },
-    {
-      "path": "reference/autoresearch/program.md",
-      "accessCount": 1,
-      "lastAccessed": 1776116057982,
-      "type": "file"
-    },
-    {
       "path": "reference/gstack/ARCHITECTURE.md",
       "accessCount": 1,
       "lastAccessed": 1776116060491,
@@ -146,12 +224,6 @@
       "path": "reference/gstack/AGENTS.md",
       "accessCount": 1,
       "lastAccessed": 1776116060620,
-      "type": "file"
-    },
-    {
-      "path": "reference/ui-loop/CLAUDE.md",
-      "accessCount": 1,
-      "lastAccessed": 1776116060959,
       "type": "file"
     },
     {
@@ -179,30 +251,6 @@
       "type": "file"
     },
     {
-      "path": "reference/ui-loop/hooks/hooks.json",
-      "accessCount": 1,
-      "lastAccessed": 1776116065125,
-      "type": "file"
-    },
-    {
-      "path": "reference/harness-design-long-running-apps.md",
-      "accessCount": 1,
-      "lastAccessed": 1776116066115,
-      "type": "file"
-    },
-    {
-      "path": "reference/code-execution-with-mcp.md",
-      "accessCount": 1,
-      "lastAccessed": 1776116066516,
-      "type": "file"
-    },
-    {
-      "path": "reference/writing-tools-for-agents.md",
-      "accessCount": 1,
-      "lastAccessed": 1776116066654,
-      "type": "file"
-    },
-    {
       "path": "reference/oh-my-claudecode/src/agents/definitions.ts",
       "accessCount": 1,
       "lastAccessed": 1776116067888,
@@ -212,18 +260,6 @@
       "path": "reference/oh-my-claudecode/src/features/background-tasks.ts",
       "accessCount": 1,
       "lastAccessed": 1776116068471,
-      "type": "file"
-    },
-    {
-      "path": "reference/get-shit-done/sdk/src/types.ts",
-      "accessCount": 1,
-      "lastAccessed": 1776116070654,
-      "type": "file"
-    },
-    {
-      "path": "reference/ui-loop/skills/loop/SKILL.md",
-      "accessCount": 1,
-      "lastAccessed": 1776116071094,
       "type": "file"
     },
     {
@@ -248,18 +284,6 @@
       "path": "reference/everything-claude-code/agents/architect.md",
       "accessCount": 1,
       "lastAccessed": 1776116074223,
-      "type": "file"
-    },
-    {
-      "path": "reference/everything-claude-code/agents/chief-of-staff.md",
-      "accessCount": 1,
-      "lastAccessed": 1776116074481,
-      "type": "file"
-    },
-    {
-      "path": "reference/everything-claude-code/hooks/hooks.json",
-      "accessCount": 1,
-      "lastAccessed": 1776116075175,
       "type": "file"
     },
     {
@@ -299,12 +323,6 @@
       "type": "file"
     },
     {
-      "path": "reference/Archon/packages/workflows/src/executor.ts",
-      "accessCount": 1,
-      "lastAccessed": 1776116079786,
-      "type": "file"
-    },
-    {
       "path": "reference/Archon/packages/providers/src/claude/index.ts",
       "accessCount": 1,
       "lastAccessed": 1776116080345,
@@ -317,27 +335,9 @@
       "type": "file"
     },
     {
-      "path": "reference/multica/AGENTS.md",
-      "accessCount": 1,
-      "lastAccessed": 1776116080948,
-      "type": "file"
-    },
-    {
-      "path": "reference/pi-mono/packages/agent/src/agent.ts",
-      "accessCount": 1,
-      "lastAccessed": 1776116081446,
-      "type": "file"
-    },
-    {
       "path": "reference/claude-code-best-practice/best-practice/claude-subagents.md",
       "accessCount": 1,
       "lastAccessed": 1776116081798,
-      "type": "file"
-    },
-    {
-      "path": "reference/pi-mono/packages/agent/src/agent-loop.ts",
-      "accessCount": 1,
-      "lastAccessed": 1776116082007,
       "type": "file"
     },
     {
