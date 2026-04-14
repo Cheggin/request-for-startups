@@ -7,13 +7,61 @@
  */
 
 import { execSync, spawnSync } from "child_process";
-import { existsSync, writeFileSync, mkdirSync } from "fs";
-import { join } from "path";
+import { existsSync, writeFileSync, mkdirSync, readdirSync, symlinkSync, unlinkSync, lstatSync } from "fs";
+import { join, resolve } from "path";
 import { loadState, updateState } from "../lib/state.js";
 import { loadAgents } from "../lib/config.js";
 import { heading, success, warn, error, muted, info } from "../lib/format.js";
 import { STARTUP_PHASES, ROOT_DIR, HARNESS_DIR, STACKS_FILE } from "../lib/constants.js";
 import { spawnPane, ensureSession, isTmuxAvailable } from "../lib/tmux.js";
+import {
+  determineRequiredServices,
+  collectCredentials,
+  validateCredentialFormats,
+  printCredentialSummary,
+} from "../lib/credentials.js";
+
+// ─── Install all skills into .claude/skills/ ────────────────────────────────
+
+function installSkills(): number {
+  const skillsRoot = join(ROOT_DIR, "skills");
+  const claudeSkillsDir = join(ROOT_DIR, ".claude", "skills");
+  const categories = ["design", "coding", "convex", "content", "growth", "operations", "agent"];
+  let count = 0;
+
+  mkdirSync(claudeSkillsDir, { recursive: true });
+
+  for (const category of categories) {
+    const categoryDir = join(skillsRoot, category);
+    if (!existsSync(categoryDir)) continue;
+
+    const files = readdirSync(categoryDir).filter((f) => f.endsWith(".md"));
+    for (const file of files) {
+      const name = file.replace(".md", "");
+      const skillDir = join(claudeSkillsDir, name);
+      const symlinkPath = join(skillDir, "SKILL.md");
+      const targetPath = join("..", "..", "..", "skills", category, file);
+
+      mkdirSync(skillDir, { recursive: true });
+
+      // Remove existing symlink if stale
+      if (existsSync(symlinkPath)) {
+        try {
+          const stat = lstatSync(symlinkPath);
+          if (stat.isSymbolicLink()) unlinkSync(symlinkPath);
+          else continue; // real file, don't overwrite
+        } catch { continue; }
+      }
+
+      try {
+        symlinkSync(targetPath, symlinkPath);
+        count++;
+      } catch {}
+    }
+  }
+
+  return count;
+}
 
 // ─── Spawn a Claude Code session in tmux with a prompt ──────────────────────
 
@@ -104,6 +152,12 @@ export function run(args: string[]): void {
     process.exit(1);
   }
 
+  // Install all skills into .claude/skills/ so every agent session has them
+  console.log(heading("Installing Skills"));
+  const skillCount = installSkills();
+  console.log(success(`  ${skillCount} skills installed into .claude/skills/`));
+  console.log(muted("  All agent sessions will have access to design, coding, growth, and operations skills.\n"));
+
   const state = loadState();
 
   if (state.phase !== "onboarding" && !args.includes("--force")) {
@@ -116,7 +170,21 @@ export function run(args: string[]): void {
   const answers = runPhase0_Interview();
   updateState({ phase: "research", meta: { idea: answers.idea, type: answers.type, preset: answers.design_preset } });
 
-  // Phase 1: Validate Services
+  // Phase 0.5: Credential Collection — every service gets its keys HERE
+  const required = determineRequiredServices(answers);
+  const projectDir = ROOT_DIR; // credentials go in the harness root for now; copied to project dir at scaffold time
+  const collected = collectCredentials(required, projectDir);
+
+  // Validate credential formats
+  const { valid, invalid } = validateCredentialFormats(collected);
+  if (invalid.length > 0) {
+    console.log(warn(`\n  Warning: these credentials look malformed: ${invalid.join(", ")}`));
+    console.log(muted("  Double-check them or update .env.local before deploying."));
+  }
+
+  printCredentialSummary(required, collected);
+
+  // Phase 1: Validate Services (CLI auth — gh, vercel, railway)
   const servicesOk = runPhase1_ValidateServices();
   if (!servicesOk) {
     updateState({ phase: "services" });

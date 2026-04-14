@@ -2,6 +2,15 @@
   "hooks": {
     "PreToolUse": [
       {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun run packages/hooks/src/run-gateguard.ts"
+          }
+        ]
+      },
+      {
         "matcher": "Edit",
         "hooks": [
           {

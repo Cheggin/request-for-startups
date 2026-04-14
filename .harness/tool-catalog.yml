@@ -112,6 +112,23 @@ deployment:
     docs: https://docs.railway.app
     when: "Default — already in the stack"
 
+browser-automation:
+  browser-use:
+    description: Cloud browser automation for social media scraping, competitor monitoring, and web research. Supports persistent profiles (cookies/sessions) for authenticated scraping.
+    env_vars: [BROWSER_USE_API_KEY]
+    setup: "npm install browser-use"
+    docs: https://docs.browser-use.com/cloud/api-v3/sessions/create-session
+    when: "Growth intelligence — scraping Reddit, Twitter/X, LinkedIn, HN, competitor sites"
+
+ai-images:
+  fal:
+    package: "@fal-ai/client"
+    description: AI image generation for placeholder hero images (prototyping only — use Midjourney for production)
+    env_vars: [FAL_KEY]
+    setup: "npm install @fal-ai/client"
+    docs: https://fal.ai/docs
+    when: "Every startup landing page needs placeholder hero images during build"
+
 ai-eval:
   deepeval:
     package: "deepeval"
