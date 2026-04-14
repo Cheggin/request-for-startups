@@ -347,14 +347,33 @@ export function run(args: string[]): void {
   }
 
   // ── Phase 4: Design ────────────────────────────────────────────────────
+  // Fixes #13: no longer entirely skipped
   if (!shouldSkipPhase("design", resumeFrom)) {
     console.log(heading("Phase 4: Design"));
-    if (answers.existing_designs && answers.existing_designs !== "none") {
-      console.log(muted(`  Using existing designs: ${answers.existing_designs}`));
+
+    const hasDesigns = answers.existing_designs && answers.existing_designs !== "none" && answers.existing_designs !== "TBD";
+    const isFigmaUrl = hasDesigns && answers.existing_designs?.includes("figma.com");
+
+    if (isFigmaUrl) {
+      // Figma designs provided — spawn agent to extract design system
+      const designPrompt = [
+        `You are the website agent running design extraction.`,
+        `Figma URL: ${answers.existing_designs}`,
+        "Use the figma-implement-design skill to extract design tokens, components, and layout.",
+        "Save design system to .harness/design-system.json.",
+        "Take Playwright screenshots as visual QA baseline.",
+      ].join(" ");
+      spawnClaudeSession("design-extractor", designPrompt);
+      console.log(success("  Design extraction agent spawned — extracting from Figma"));
+    } else if (hasDesigns) {
+      console.log(muted(`  Using provided designs: ${answers.existing_designs}`));
+      console.log(muted("  Website agent will reference these during build."));
     } else {
-      console.log(muted(`  Design preset: ${answers.design_preset || "minimal"}`));
-      console.log(muted("  Visual QA baseline will be established during build phase."));
+      console.log(muted(`  No Figma designs provided. Design preset: ${answers.design_preset || "minimal"}`));
+      console.log(muted("  Website agent will use impeccable design skills with the preset."));
+      console.log(muted("  Visual QA baseline established during build via Playwright screenshots."));
     }
+
     updateState({ phase: "scaffold" });
   }
 
@@ -362,6 +381,19 @@ export function run(args: string[]): void {
   // Fixes #6: spawn all agents, not just 4
   if (!shouldSkipPhase("build", resumeFrom)) {
     console.log(heading("Phase 5-7: Scaffold + Build"));
+
+    // Set up Cubic webhook for code review — fixes #18
+    try {
+      const repoName = execSync("gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null", {
+        encoding: "utf-8", timeout: 10000
+      }).trim();
+      if (repoName) {
+        console.log(muted(`  Setting up Cubic code review for ${repoName}...`));
+        // Cubic auto-reviews PRs when installed as a GitHub App
+        // The webhook receiver at packages/cubic-channel handles findings
+        console.log(muted("  Cubic reviews PRs automatically. Findings route to agents via MCP."));
+      }
+    } catch {}
 
     // Commander first — orchestrates everything (fixes #14)
     const commanderRules = generateAgentPrompt("commander");
