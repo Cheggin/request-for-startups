@@ -285,11 +285,38 @@ export function run(args: string[]): void {
   runPhase7_Build();
   updateState({ phase: "build" });
 
+  // Phase 8: Deploy
+  runPhase8_Deploy();
+  updateState({ phase: "growth" });
+
+  // Phase 9: Post-deploy (growth + monitoring setup)
+  console.log(heading("Phase 9: Post-Deploy Setup"));
+  console.log(muted("  Setting up growth and monitoring..."));
+
+  const postDeployPrompt = `The startup has been deployed. Set up post-deploy infrastructure:
+1. If a sitemap.ts exists, verify it generates at /sitemap.xml
+2. Create a robots.txt at public/robots.txt allowing all crawlers and pointing to the sitemap
+3. Add PostHog analytics snippet to app/layout.tsx (use NEXT_PUBLIC_POSTHOG_KEY env var, skip if not set)
+4. Verify Sentry is configured (check for @sentry/nextjs in package.json)
+5. Report what was set up.`;
+
+  try {
+    execSync(
+      `echo '${postDeployPrompt.replace(/'/g, "'\\''")}' | claude -p --dangerously-skip-permissions`,
+      { cwd: ROOT_DIR, stdio: "pipe", timeout: 180000 }
+    );
+    console.log(success("  Post-deploy setup complete"));
+  } catch {
+    console.log(warn("  Post-deploy setup had issues — can be configured manually"));
+  }
+
+  updateState({ phase: "live" });
+
   console.log();
-  console.log(heading("Harness is building your startup"));
-  console.log(muted("  The build agent is running in tmux."));
-  console.log(muted("  Attach with: tmux attach -t harness"));
-  console.log(muted("  Check status with: harness status"));
-  console.log(muted("  When build is done, run: harness deploy production"));
+  console.log(heading("Your startup is LIVE"));
+  console.log(success("  All phases complete."));
+  console.log(muted("  Check status: harness status"));
+  console.log(muted("  Post investor update: harness update post"));
+  console.log(muted("  The growth and monitoring loops will keep running."));
   console.log();
 }
