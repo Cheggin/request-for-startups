@@ -94,16 +94,27 @@ tasks:
         msg: "Usage: task feature:new -- feature-name"
 
   feature:list:
-    desc: List all features and their status
+    desc: "List features. Filter: task feature:list -- done|todo|blocked|progress|all"
+    silent: true
     cmd: |
-      echo "=== Features ==="
+      FILTER=$(echo "{{.CLI_ARGS}}" | tr -d "'" | xargs)
+      [ -z "$FILTER" ] && FILTER="all"
+      echo "=== Features ($FILTER) ==="
       for f in {{.FEATURES_DIR}}/*.md; do
         [ -f "$f" ] || continue
         name=$(basename "$f" .md)
         total=$(grep -c '^\- \[' "$f" 2>/dev/null || echo 0)
-        done=$(grep -c '^\- \[x\]' "$f" 2>/dev/null || echo 0)
-        status=$(grep '^**Status:**' "$f" | head -1 | sed 's/\*\*Status:\*\* //')
-        printf "%-30s %s (%d/%d)\n" "$name" "$status" "$done" "$total"
+        done_count=$(grep -c '^\- \[x\]' "$f" 2>/dev/null || echo 0)
+        status_raw=$(grep '^\*\*Status:\*\*' "$f" | head -1 | sed 's/\*\*Status:\*\* //')
+        case "$FILTER" in
+          done)    echo "$status_raw" | grep -qi "complete" || continue ;;
+          todo)    echo "$status_raw" | grep -qi "not started" || continue ;;
+          blocked) echo "$status_raw" | grep -qi "blocked" || continue ;;
+          progress) echo "$status_raw" | grep -qi "in progress" || continue ;;
+          all) ;;
+          *) echo "$status_raw" | grep -qi "$FILTER" || continue ;;
+        esac
+        printf "%-35s %s (%d/%d)\n" "$name" "$status_raw" "$done_count" "$total"
       done
 
   feature:status:
