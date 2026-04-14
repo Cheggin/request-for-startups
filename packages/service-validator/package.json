@@ -1,0 +1,15 @@
+{
+  "name": "@rfs/service-validator",
+  "version": "1.0.0",
+  "description": "Validates all connected services are working before any agent work begins",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "vitest": "^3.1.1"
+  }
+}
