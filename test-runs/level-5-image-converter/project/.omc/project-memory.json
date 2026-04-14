@@ -1,0 +1,294 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1776139828537,
+  "projectRoot": "/Users/reagan/Documents/GitHub/request-for-startups/test-runs/level-5-image-converter/project",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      },
+      {
+        "name": "TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "tsconfig.json"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "next",
+        "version": "16.2.3",
+        "category": "fullstack"
+      },
+      {
+        "name": "react",
+        "version": "19.2.4",
+        "category": "frontend"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.2.4",
+        "category": "frontend"
+      },
+      {
+        "name": "vitest",
+        "version": "4.1.4",
+        "category": "testing"
+      }
+    ],
+    "packageManager": "npm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": "npm run build",
+    "testCommand": "npm test",
+    "lintCommand": "npm run lint",
+    "devCommand": "npm run dev",
+    "scripts": {
+      "dev": "next dev",
+      "build": "next build",
+      "start": "next start",
+      "lint": "eslint",
+      "test": "vitest run"
+    }
+  },
+  "conventions": {
+    "namingStyle": "camelCase",
+    "importStyle": "ES modules",
+    "testPattern": "*.test.ts",
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "__tests__",
+      "app",
+      "components",
+      "lib",
+      "public"
+    ],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "__tests__": {
+      "path": "__tests__",
+      "purpose": "Test files",
+      "fileCount": 3,
+      "lastAccessed": 1776139828529,
+      "keyFiles": [
+        "constants.test.ts",
+        "conversion-engine.test.ts",
+        "format-file-size.test.ts"
+      ]
+    },
+    "app": {
+      "path": "app",
+      "purpose": "Application code",
+      "fileCount": 4,
+      "lastAccessed": 1776139828530,
+      "keyFiles": [
+        "favicon.ico",
+        "globals.css",
+        "layout.tsx",
+        "page.tsx"
+      ]
+    },
+    "components": {
+      "path": "components",
+      "purpose": "UI components",
+      "fileCount": 0,
+      "lastAccessed": 1776139828532,
+      "keyFiles": []
+    },
+    "hooks": {
+      "path": "hooks",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1776139828532,
+      "keyFiles": [
+        "use-image-converter.ts"
+      ]
+    },
+    "lib": {
+      "path": "lib",
+      "purpose": "Library code",
+      "fileCount": 4,
+      "lastAccessed": 1776139828532,
+      "keyFiles": [
+        "constants.ts",
+        "conversion-engine.ts",
+        "format-file-size.ts",
+        "get-image-dimensions.ts"
+      ]
+    },
+    "public": {
+      "path": "public",
+      "purpose": "Public files",
+      "fileCount": 5,
+      "lastAccessed": 1776139828533,
+      "keyFiles": [
+        "file.svg",
+        "globe.svg",
+        "next.svg",
+        "vercel.svg",
+        "window.svg"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "",
+      "accessCount": 6,
+      "lastAccessed": 1776139859913,
+      "type": "directory"
+    },
+    {
+      "path": "app/page.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1776139899705,
+      "type": "file"
+    },
+    {
+      "path": "hooks/use-image-converter.ts",
+      "accessCount": 2,
+      "lastAccessed": 1776139900173,
+      "type": "file"
+    },
+    {
+      "path": "lib/constants.ts",
+      "accessCount": 2,
+      "lastAccessed": 1776139900668,
+      "type": "file"
+    },
+    {
+      "path": "app/layout.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1776139901347,
+      "type": "file"
+    },
+    {
+      "path": "app/globals.css",
+      "accessCount": 2,
+      "lastAccessed": 1776139901749,
+      "type": "file"
+    },
+    {
+      "path": "components/converter/format-picker.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1776139915956,
+      "type": "file"
+    },
+    {
+      "path": "components/converter/drop-zone.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1776139916202,
+      "type": "file"
+    },
+    {
+      "path": "package.json",
+      "accessCount": 1,
+      "lastAccessed": 1776139860087,
+      "type": "file"
+    },
+    {
+      "path": "components/converter/quality-slider.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1776139866134,
+      "type": "file"
+    },
+    {
+      "path": "components/converter/image-preview.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1776139866394,
+      "type": "file"
+    },
+    {
+      "path": "components/converter/download-button.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1776139866539,
+      "type": "file"
+    },
+    {
+      "path": "components/converter/conversion-status.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1776139868885,
+      "type": "file"
+    },
+    {
+      "path": "lib/conversion-engine.ts",
+      "accessCount": 1,
+      "lastAccessed": 1776139868979,
+      "type": "file"
+    },
+    {
+      "path": "lib/format-file-size.ts",
+      "accessCount": 1,
+      "lastAccessed": 1776139869001,
+      "type": "file"
+    },
+    {
+      "path": "lib/get-image-dimensions.ts",
+      "accessCount": 1,
+      "lastAccessed": 1776139869291,
+      "type": "file"
+    },
+    {
+      "path": "components/ui/button.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1776139871626,
+      "type": "file"
+    },
+    {
+      "path": "components/ui/card.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1776139871847,
+      "type": "file"
+    },
+    {
+      "path": "components/ui/badge.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1776139872350,
+      "type": "file"
+    },
+    {
+      "path": "components/layout/header.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1776139872454,
+      "type": "file"
+    },
+    {
+      "path": "components/layout/footer.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1776139872603,
+      "type": "file"
+    },
+    {
+      "path": "app/pricing/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1776139875190,
+      "type": "file"
+    },
+    {
+      "path": "postcss.config.mjs",
+      "accessCount": 1,
+      "lastAccessed": 1776139876349,
+      "type": "file"
+    },
+    {
+      "path": "blog-png-vs-webp-2026.md",
+      "accessCount": 1,
+      "lastAccessed": 1776139889832,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}
