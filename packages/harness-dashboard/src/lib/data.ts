@@ -85,14 +85,17 @@ export function getRunningAgents(): RealAgent[] {
       const cwd = parts[4] || "";
       const name = windowName || session || "unknown";
 
-      // Capture last few lines of output using session:window target
+      // Capture last few lines of output using pane ID (unique, avoids
+      // truncated/ambiguous window name issues like "competitor-fix-")
       let lastOutput = "";
       try {
         lastOutput = execSync(
-          `tmux capture-pane -t "${session}:${windowName}" -p -S -5 2>/dev/null`,
+          `tmux capture-pane -t "${paneId}" -p -S -5 2>/dev/null`,
           { encoding: "utf-8", timeout: 3000 }
         ).trim();
-      } catch {}
+      } catch (e) {
+        console.log(`[getRunningAgents] capture-pane failed for ${name} (${paneId}):`, e);
+      }
 
       // Determine status: Claude Code shows its version as the "command" (e.g. "2.1.108")
       // Also check for common signals in the pane output
