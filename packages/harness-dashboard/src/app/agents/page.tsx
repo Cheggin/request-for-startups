@@ -120,7 +120,11 @@ export default function AgentsPage() {
                     </div>
                   </td>
                   <td className="px-4 py-2.5 max-w-sm">
-                    <p className="text-[12px] text-text-tertiary truncate font-mono">{agent.lastOutput || "No output"}</p>
+                    {agent.lastOutput ? (
+                      <pre className="text-[11px] text-text-secondary font-mono whitespace-pre-wrap leading-relaxed line-clamp-3">{agent.lastOutput}</pre>
+                    ) : (
+                      <p className="text-[12px] text-text-tertiary font-mono">No output</p>
+                    )}
                   </td>
                   <td className="px-4 py-2.5">
                     <span className="text-[12px] text-text-secondary">{agent.startup}</span>

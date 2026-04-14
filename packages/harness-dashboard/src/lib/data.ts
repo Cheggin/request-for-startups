@@ -85,11 +85,11 @@ export function getRunningAgents(): RealAgent[] {
       const cwd = parts[4] || "";
       const name = windowName || session || "unknown";
 
-      // Capture last few lines of output
+      // Capture last few lines of output using session:window target
       let lastOutput = "";
       try {
         lastOutput = execSync(
-          `tmux capture-pane -t "${paneId}" -p -l 5 2>/dev/null`,
+          `tmux capture-pane -t "${session}:${windowName}" -p -S -5 2>/dev/null`,
           { encoding: "utf-8", timeout: 3000 }
         ).trim();
       } catch {}
