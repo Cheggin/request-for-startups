@@ -1,22 +1,30 @@
 /**
  * harness init — run the full startup lifecycle.
  *
- * This is THE entry point. It orchestrates all 12 phases by calling
- * actual packages, not by spawning a Claude session and hoping.
- *
- * Interactive phases run in the current terminal.
- * Autonomous phases spawn agents in tmux panes.
- * State persists to .harness/state.json so `harness resume` can continue.
+ * Every phase spawns a REAL Claude Code session in tmux with skills loaded.
+ * NO claude -p. Skills, hooks, and quality enforcement are active in every session.
+ * The commander monitors each pane via tmux-bridge.
  */
 
 import { execSync, spawnSync } from "child_process";
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from "fs";
+import { existsSync, writeFileSync, mkdirSync } from "fs";
 import { join } from "path";
 import { loadState, updateState } from "../lib/state.js";
-import { loadAgents, loadStacks } from "../lib/config.js";
-import { heading, phaseLabel, success, warn, error, muted, info } from "../lib/format.js";
+import { loadAgents } from "../lib/config.js";
+import { heading, success, warn, error, muted, info } from "../lib/format.js";
 import { STARTUP_PHASES, ROOT_DIR, HARNESS_DIR, STACKS_FILE } from "../lib/constants.js";
 import { spawnPane, ensureSession, isTmuxAvailable } from "../lib/tmux.js";
+
+// ─── Spawn a Claude Code session in tmux with a prompt ──────────────────────
+
+function spawnClaudeSession(name: string, prompt: string, cwd?: string): boolean {
+  ensureSession();
+  const dir = cwd || ROOT_DIR;
+  // Real Claude Code session with dangerously-skip-permissions
+  // Skills, hooks, and CLAUDE.md are all loaded automatically
+  const cmd = `cd "${dir}" && claude --dangerously-skip-permissions --append-system-prompt "${prompt.replace(/"/g, '\\"')}"`;
+  return spawnPane(name, cmd);
+}
 
 // ─── Phase implementations ─────────────────────────────────────────────────
 
@@ -31,13 +39,13 @@ function runPhase0_Interview(): Record<string, string> {
     { key: "business_model", prompt: "Business model? (subscription, usage-based, freemium, commission, one-time)" },
     { key: "budget", prompt: "Budget? (bootstrapped, seed-funded, enterprise)" },
     { key: "timeline", prompt: "Timeline? (weekend, month, quarter)" },
+    { key: "design_preset", prompt: "Design style? (minimal, neobrutalist, glassmorphism, editorial, clean-saas, warm-soft)" },
   ];
 
   const answers: Record<string, string> = {};
 
   for (const q of questions) {
     process.stdout.write(`  ${info(q.prompt)} `);
-    // Read from stdin synchronously
     const input = spawnSync("bash", ["-c", "read -r line && echo $line"], {
       stdio: ["inherit", "pipe", "inherit"],
     });
@@ -54,7 +62,6 @@ function runPhase0_Interview(): Record<string, string> {
   writeFileSync(profilePath, yaml);
   console.log(success(`  Saved founder profile to ${profilePath}`));
 
-  // Save idea separately
   writeFileSync(join(HARNESS_DIR, "idea.md"), `# Startup Idea\n\n${answers.idea}\n`);
 
   return answers;
@@ -86,237 +93,106 @@ function runPhase1_ValidateServices(): boolean {
   return allPassed;
 }
 
-function runPhase2_Research(idea: string): void {
-  console.log(heading("Phase 2: Research"));
-  console.log(muted("  Researching competitors and market..."));
-
-  const prompt = `Research competitors and market for this startup idea: "${idea}". Use WebSearch to find: 1) Direct competitors 2) Market size 3) Target audience pain points 4) Pricing models 5) Design patterns. Write a comprehensive research-report.md to the project root with: executive summary, competitor analysis table, target audience profile, differentiation strategy.`;
-
-  try {
-    execSync(
-      `echo '${prompt.replace(/'/g, "'\\''")}' | claude -p --dangerously-skip-permissions --output-format text > research-report.md`,
-      { cwd: ROOT_DIR, stdio: "pipe", timeout: 300000 }
-    );
-    console.log(success("  Research report saved to research-report.md"));
-  } catch (e: any) {
-    console.log(warn("  Research phase had issues — continuing with available data"));
-  }
-}
-
-function runPhase3_Spec(idea: string): void {
-  console.log(heading("Phase 3: Product Spec"));
-  console.log(muted("  Generating product specification..."));
-
-  const researchExists = existsSync(join(ROOT_DIR, "research-report.md"));
-  const researchContext = researchExists
-    ? `Also read research-report.md for competitive context.`
-    : "";
-
-  const stacksExists = existsSync(STACKS_FILE);
-  const stackContext = stacksExists
-    ? `Read .harness/stacks.yml for tech stack constraints.`
-    : "";
-
-  const prompt = `Generate a comprehensive product spec for this startup: "${idea}". ${researchContext} ${stackContext} Include: 1) Product overview and value proposition 2) Pages and routes 3) Features with P0/P1/P2 priorities and testable acceptance criteria 4) Data models (Convex schema) 5) API routes 6) Component inventory. Write product-spec.md to the project root.`;
-
-  try {
-    execSync(
-      `echo '${prompt.replace(/'/g, "'\\''")}' | claude -p --dangerously-skip-permissions --output-format text > product-spec.md`,
-      { cwd: ROOT_DIR, stdio: "pipe", timeout: 300000 }
-    );
-    console.log(success("  Product spec saved to product-spec.md"));
-  } catch {
-    console.log(error("  Failed to generate product spec"));
-  }
-}
-
-function runPhase5_RepoSetup(): void {
-  console.log(heading("Phase 5: Repository Setup"));
-  console.log(muted("  Scaffolding project with canonical stack..."));
-
-  // The repo-setup package handles this, but we call it via claude
-  // since it needs interactive CLI access for vercel link, railway link etc.
-  const prompt = `Set up the project repository. Read .harness/stacks.yml for the canonical stack. Do these in order:
-1. If packages/website-template/ exists, copy its structure to the project root (don't overwrite existing files)
-2. Run: npm install (if package.json exists)
-3. Set up .github/workflows/ci.yml for lint+typecheck+test
-4. Verify the project builds: npm run build
-Report what was set up.`;
-
-  try {
-    execSync(
-      `echo '${prompt.replace(/'/g, "'\\''")}' | claude -p --dangerously-skip-permissions --output-format text`,
-      { cwd: ROOT_DIR, stdio: "pipe", timeout: 300000 }
-    );
-    console.log(success("  Repository scaffolded"));
-  } catch {
-    console.log(warn("  Repo setup had issues — may need manual intervention"));
-  }
-}
-
-function runPhase6_Decompose(): void {
-  console.log(heading("Phase 6: Feature Decomposition"));
-  console.log(muted("  Breaking spec into features..."));
-
-  const prompt = `Read product-spec.md. Break it into individual features. For each P0 feature:
-1. Create a features/{feature-name}.md checklist file
-2. Create a GitHub Issue with acceptance criteria (use gh issue create)
-3. Order features by dependency
-Report the feature list and dependency order.`;
-
-  try {
-    execSync(
-      `echo '${prompt.replace(/'/g, "'\\''")}' | claude -p --dangerously-skip-permissions --output-format text`,
-      { cwd: ROOT_DIR, stdio: "pipe", timeout: 300000 }
-    );
-    console.log(success("  Features decomposed and GitHub Issues created"));
-  } catch {
-    console.log(warn("  Decomposition had issues"));
-  }
-}
-
-function runPhase7_Build(): void {
-  console.log(heading("Phase 7: Build (TDD Loop)"));
-  console.log(muted("  Spawning build agents in tmux..."));
-
-  if (!isTmuxAvailable()) {
-    console.log(error("  tmux required for build phase. Install with: brew install tmux"));
-    return;
-  }
-
-  ensureSession();
-
-  // Spawn website agent to build features
-  const buildPrompt = [
-    "You are the website agent. Read product-spec.md and the features/ directory.",
-    "For each P0 feature in dependency order:",
-    "1. Write tests first (vitest for unit, playwright for e2e)",
-    "2. Implement the feature to pass the tests",
-    "3. Run tests: npx vitest run",
-    "4. If tests fail, fix and retry (max 10 iterations)",
-    "5. Commit: git add . && git commit -m 'Implement: {feature}'",
-    "6. Move to next feature",
-    "NEVER STOP until all P0 features are done.",
-    "Read .harness/stacks.yml for tech stack.",
-    "Do NOT use Inter font, sparkles icons, or !important.",
-  ].join(" ");
-
-  const cmd = `cd ${ROOT_DIR} && claude --dangerously-skip-permissions --append-system-prompt "${buildPrompt}"`;
-  const spawned = spawnPane("website-builder", cmd);
-
-  if (spawned) {
-    console.log(success("  Website builder agent spawned in tmux"));
-    console.log(muted("  Attach with: tmux attach -t harness"));
-  } else {
-    console.log(error("  Failed to spawn build agent"));
-  }
-}
-
-function runPhase8_Deploy(): void {
-  console.log(heading("Phase 8: Deploy"));
-
-  const steps = [
-    { name: "Vercel (frontend)", cmd: "vercel --prod --yes" },
-    { name: "Convex (database)", cmd: "npx convex deploy" },
-  ];
-
-  for (const step of steps) {
-    console.log(muted(`  Deploying ${step.name}...`));
-    try {
-      execSync(step.cmd, { cwd: ROOT_DIR, stdio: "pipe", timeout: 120000 });
-      console.log(success(`  ${step.name}: deployed`));
-    } catch {
-      console.log(warn(`  ${step.name}: deploy failed — may need manual intervention`));
-    }
-  }
-}
-
 // ─── Main flow ─────────────────────────────────────────────────────────────
 
 export function run(args: string[]): void {
   console.log(heading("HARNESS INIT — Building Your Startup"));
   console.log();
 
+  if (!isTmuxAvailable()) {
+    console.log(error("  tmux is required. Install with: brew install tmux"));
+    process.exit(1);
+  }
+
   const state = loadState();
 
-  // Check if already initialized
   if (state.phase !== "onboarding" && !args.includes("--force")) {
     console.log(warn(`Already at phase: ${state.phase}`));
     console.log(muted("Use --force to restart, or 'harness resume' to continue."));
     return;
   }
 
-  // Phase 0: Founder Interview (interactive)
+  // Phase 0: Founder Interview (interactive, in this terminal)
   const answers = runPhase0_Interview();
-  updateState({ phase: "research", meta: { idea: answers.idea, type: answers.type } });
+  updateState({ phase: "research", meta: { idea: answers.idea, type: answers.type, preset: answers.design_preset } });
 
   // Phase 1: Validate Services
   const servicesOk = runPhase1_ValidateServices();
   if (!servicesOk) {
     updateState({ phase: "services" });
-    console.log(warn("\n  Fix service connections and run 'harness resume' to continue."));
     return;
   }
   updateState({ phase: "research" });
 
-  // Phase 2: Research
-  runPhase2_Research(answers.idea);
+  // Phase 2: Research — real Claude Code session
+  console.log(heading("Phase 2: Research"));
+  const researchPrompt = [
+    `Research competitors for this startup: "${answers.idea}".`,
+    "Use WebSearch to find competitors, market size, pricing, design patterns.",
+    "Write research-report.md with: executive summary, competitor table, target audience, differentiation.",
+    "Post a Slack update when done: 'Research complete. [X] competitors found.'",
+  ].join(" ");
+  spawnClaudeSession("researcher", researchPrompt);
+  console.log(success("  Research agent spawned in tmux pane 'researcher'"));
   updateState({ phase: "spec" });
 
-  // Phase 3: Product Spec
-  runPhase3_Spec(answers.idea);
+  // Phase 3: Spec — real Claude Code session
+  console.log(heading("Phase 3: Product Spec"));
+  const specPrompt = [
+    `Generate a product spec for: "${answers.idea}".`,
+    "Read research-report.md if it exists. Read .harness/stacks.yml for stack.",
+    "Include: pages with routes, features (P0/P1/P2) with testable acceptance criteria,",
+    "data models, API routes, component inventory.",
+    "Write product-spec.md. Create GitHub Issues for every P0 feature.",
+    "Post Slack update when done.",
+  ].join(" ");
+  spawnClaudeSession("planner", specPrompt);
+  console.log(success("  Planner agent spawned in tmux pane 'planner'"));
   updateState({ phase: "design" });
 
-  // Phase 4: Design (skip for now — Figma MCP integration)
+  // Phase 4: Design — skipped (Figma MCP)
   console.log(heading("Phase 4: Design"));
-  console.log(muted("  Skipping Figma design generation (requires Figma MCP connection)"));
-  console.log(muted("  The build phase will work from the spec directly."));
+  console.log(muted("  Skipping Figma generation. Build phase will use preset: " + (answers.design_preset || "minimal")));
   updateState({ phase: "scaffold" });
 
-  // Phase 5: Repo Setup
-  runPhase5_RepoSetup();
-  updateState({ phase: "decompose" });
-
-  // Phase 6: Feature Decomposition
-  runPhase6_Decompose();
+  // Phase 5: Scaffold + Build — real Claude Code session with ALL skills
+  console.log(heading("Phase 5-7: Scaffold + Build"));
+  const buildPrompt = [
+    `You are the website agent. Build the startup: "${answers.idea}".`,
+    `Design preset: ${answers.design_preset || "minimal"}. Follow the website-creation skill exactly.`,
+    "Read product-spec.md for features. Read .harness/stacks.yml for stack.",
+    "Load and follow these skills: website-creation, anti-ai-writing, polish, layout, typeset.",
+    "Steps: 1) Scaffold Next.js project 2) Install deps 3) Write tests first (TDD)",
+    "4) Build each feature 5) Run Playwright screenshots 6) Evaluate visual QA",
+    "7) Post Slack update per feature shipped.",
+    "Use shadcn/ui for components. NO Inter font. NO dark mode. NO vibe coding.",
+    "NEVER STOP until all P0 features are done.",
+  ].join(" ");
+  spawnClaudeSession("website-builder", buildPrompt);
+  console.log(success("  Website builder agent spawned in tmux pane 'website-builder'"));
   updateState({ phase: "build" });
 
-  // Phase 7: Build (spawns agents in tmux — async from here)
-  runPhase7_Build();
-  updateState({ phase: "build" });
-
-  // Phase 8: Deploy
-  runPhase8_Deploy();
-  updateState({ phase: "growth" });
-
-  // Phase 9: Post-deploy (growth + monitoring setup)
-  console.log(heading("Phase 9: Post-Deploy Setup"));
-  console.log(muted("  Setting up growth and monitoring..."));
-
-  const postDeployPrompt = `The startup has been deployed. Set up post-deploy infrastructure:
-1. If a sitemap.ts exists, verify it generates at /sitemap.xml
-2. Create a robots.txt at public/robots.txt allowing all crawlers and pointing to the sitemap
-3. Add PostHog analytics snippet to app/layout.tsx (use NEXT_PUBLIC_POSTHOG_KEY env var, skip if not set)
-4. Verify Sentry is configured (check for @sentry/nextjs in package.json)
-5. Report what was set up.`;
-
-  try {
-    execSync(
-      `echo '${postDeployPrompt.replace(/'/g, "'\\''")}' | claude -p --dangerously-skip-permissions`,
-      { cwd: ROOT_DIR, stdio: "pipe", timeout: 180000 }
-    );
-    console.log(success("  Post-deploy setup complete"));
-  } catch {
-    console.log(warn("  Post-deploy setup had issues — can be configured manually"));
-  }
-
-  updateState({ phase: "live" });
+  // Phase 8: Deploy — spawns when build is done (commander monitors)
+  console.log(heading("Phase 8-9: Deploy + Post-Deploy"));
+  const opsPrompt = [
+    "You are the ops agent. Wait for the website-builder to finish (check tmux pane).",
+    "When build is complete: 1) vercel --prod 2) Verify deployment health",
+    "3) Set up sitemap, robots.txt 4) Post Slack update with live URL.",
+    "Then start the post-deploy monitoring loop.",
+  ].join(" ");
+  spawnClaudeSession("ops", opsPrompt);
+  console.log(success("  Ops agent spawned in tmux pane 'ops'"));
 
   console.log();
-  console.log(heading("Your startup is LIVE"));
-  console.log(success("  All phases complete."));
-  console.log(muted("  Check status: harness status"));
-  console.log(muted("  Post investor update: harness update post"));
-  console.log(muted("  The growth and monitoring loops will keep running."));
+  console.log(heading("Harness is building your startup"));
+  console.log(muted("  4 agents running in tmux:"));
+  console.log(muted("    researcher  — market research"));
+  console.log(muted("    planner     — product spec"));
+  console.log(muted("    website-builder — scaffold + build + visual QA"));
+  console.log(muted("    ops         — deploy + monitoring"));
+  console.log();
+  console.log(muted("  Attach: tmux attach -t harness"));
+  console.log(muted("  Status: harness status"));
+  console.log(muted("  Each agent posts updates to Slack as it completes milestones."));
   console.log();
 }
