@@ -1,15 +1,26 @@
 #!/usr/bin/env bun
 /**
  * CLI wrapper for GateGuard hook.
- * Reads tool call JSON from stdin, checks config-protection rules, outputs result.
- *
- * Note: GateGuard's read-file tracking is stateful across a session, but hooks
- * are invoked as separate processes. We run the config-protection check here
- * (stateless) and use this as the Edit matcher hook. The full stateful gateguard
- * would require a persistent process or file-based state.
+ * Uses file-based state (/tmp/gateguard-reads.json) to persist
+ * which files have been Read across hook invocations.
  */
-import { createGateGuard } from "./gateguard.js";
-import type { ToolCall } from "./gateguard.js";
+import { readFileSync, writeFileSync, existsSync } from "fs";
+
+const STATE_FILE = "/tmp/gateguard-reads.json";
+
+function loadReadFiles(): Set<string> {
+  try {
+    if (existsSync(STATE_FILE)) {
+      const data = JSON.parse(readFileSync(STATE_FILE, "utf-8"));
+      return new Set(data.files || []);
+    }
+  } catch {}
+  return new Set();
+}
+
+function saveReadFiles(files: Set<string>): void {
+  writeFileSync(STATE_FILE, JSON.stringify({ files: [...files] }));
+}
 
 const chunks: string[] = [];
 process.stdin.on("data", (chunk) => chunks.push(chunk.toString()));
@@ -17,24 +28,29 @@ process.stdin.on("end", () => {
   try {
     const raw = chunks.join("");
     const input = JSON.parse(raw) as { tool_name: string; tool_input: Record<string, unknown> };
+    const toolName = input.tool_name;
+    const filePath = (input.tool_input?.file_path as string) || "";
 
-    const call: ToolCall = {
-      tool_name: input.tool_name,
-      tool_input: input.tool_input,
-    };
+    const readFiles = loadReadFiles();
 
-    const guard = createGateGuard();
-    const result = guard.handleToolCall(call);
-
-    if (result.decision === "DENY") {
-      console.error(`[GateGuard] ${result.message}`);
-      process.exit(2);
+    // Track Read calls
+    if (toolName === "Read" && filePath) {
+      readFiles.add(filePath);
+      saveReadFiles(readFiles);
+      console.log(raw);
+      return;
     }
 
-    // Pass through original input
+    // Block Edit if file wasn't Read first
+    if (toolName === "Edit" && filePath) {
+      if (!readFiles.has(filePath)) {
+        console.error(`[GateGuard] File ${filePath} must be Read before it can be edited. Use the Read tool first to inspect the file contents.`);
+        process.exit(2);
+      }
+    }
+
     console.log(raw);
   } catch {
-    // Never block on parse errors
     console.log(chunks.join(""));
   }
 });

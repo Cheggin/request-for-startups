@@ -14,9 +14,9 @@ import { existsSync, readFileSync, writeFileSync, mkdirSync } from "fs";
 import { join } from "path";
 import { loadState, updateState } from "../lib/state.js";
 import { loadAgents, loadStacks } from "../lib/config.js";
-import { heading, phaseLabel, success, warn, error, muted, bold } from "../lib/format.js";
+import { heading, phaseLabel, success, warn, error, muted, info } from "../lib/format.js";
 import { STARTUP_PHASES, ROOT_DIR, HARNESS_DIR, STACKS_FILE } from "../lib/constants.js";
-import { spawnPane, ensureSession, isTmuxAvailable, capturePane } from "../lib/tmux.js";
+import { spawnPane, ensureSession, isTmuxAvailable } from "../lib/tmux.js";
 
 // ─── Phase implementations ─────────────────────────────────────────────────
 
@@ -36,7 +36,7 @@ function runPhase0_Interview(): Record<string, string> {
   const answers: Record<string, string> = {};
 
   for (const q of questions) {
-    process.stdout.write(`  ${bold(q.prompt)} `);
+    process.stdout.write(`  ${info(q.prompt)} `);
     // Read from stdin synchronously
     const input = spawnSync("bash", ["-c", "read -r line && echo $line"], {
       stdio: ["inherit", "pipe", "inherit"],
