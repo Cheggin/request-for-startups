@@ -1,55 +1,55 @@
 ---
 name: social-media
-description: Generate and schedule platform-adapted social media posts with brand-consistent voice
-category: content
-allowed-tools:
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - Bash
-  - WebSearch
+description: Generate and schedule platform-adapted social media posts with brand-consistent voice. Use when the user needs social media content for Twitter/X or LinkedIn, wants to promote product announcements or blog posts on social platforms, needs a consistent posting cadence, or wants to track and analyze social engagement metrics.
 ---
 
-## Purpose
+# Social Media Content Generator
 
-Create social media posts for Twitter/X and LinkedIn that promote the startup. Posts use the brand voice defined in SOUL.md, are adapted per platform norms, and follow a consistent publishing cadence. Engagement metrics are tracked to identify high-performing formats and inform future content.
+Create social media posts for Twitter/X and LinkedIn that promote the startup. Posts use the brand voice, are adapted per platform norms, and follow a consistent publishing cadence.
 
-## Steps
+## Workflow
 
-1. Read SOUL.md and brand guidelines to establish the voice, tone, and visual identity for all posts.
-2. Identify post topics from product announcements, blog posts, tips, behind-the-scenes content, and user stories.
-3. Draft posts adapted to each platform (Twitter/X: concise and casual; LinkedIn: professional and detailed).
-4. For longer-form content on Twitter/X, structure posts as threads.
-5. Include relevant hashtags, mentions, and calls to action per platform best practices.
-6. Schedule posts on a consistent cadence (e.g., 3 times per week per platform).
-7. Track engagement metrics (likes, reposts, replies, impressions) per post.
-8. Analyze engagement data to identify best-performing post formats and topics.
-9. Summarize social performance metrics for investor updates.
-10. Ensure no duplicate content across platforms; each post is adapted to fit platform norms.
+### 1. Establish Voice and Visual Identity
 
-## Examples
+Read SOUL.md and brand guidelines to determine voice, tone, and visual identity. All posts must reflect the documented brand personality.
 
-Good:
-- "Twitter/X post: 'We just shipped dark mode. Your eyes called -- they said thanks.' with a screenshot and #productupdate hashtag."
-- "LinkedIn post: three-paragraph announcement of a new feature with a link to the blog post and a call to action to try it."
-- "Thread on Twitter/X breaking down the architecture of a new feature in 5 tweets with code snippets."
+### 2. Identify Post Topics
 
-Bad:
-- "Identical post copy-pasted to both Twitter/X and LinkedIn with no adaptation."
-- "Post with no call to action, hashtags, or link back to the product."
-- "Sporadic posting with no consistent cadence or scheduling."
+Source topics from:
+- Product announcements and feature launches
+- Blog posts (repurpose key insights)
+- Tips and how-to content
+- Behind-the-scenes / team stories
+- User stories and testimonials
 
-## Checklist
+### 3. Draft Platform-Adapted Posts
 
-- [ ] Posts use voice and tone from SOUL.md and brand guidelines
-- [ ] Content adapted per platform norms (Twitter/X vs LinkedIn)
-- [ ] Post types include announcements, tips, behind-the-scenes, and user stories
-- [ ] Consistent posting cadence scheduled (e.g., 3 times per week per platform)
-- [ ] Engagement metrics tracked per post (likes, reposts, replies, impressions)
-- [ ] Best-performing post formats identified and repeated
-- [ ] Social metrics summarized for investor updates
-- [ ] No duplicate content across platforms
-- [ ] Thread support for longer-form Twitter/X content
-- [ ] Brand guidelines enforced in all posts
+Adapt each post to the target platform:
+
+**Twitter/X**: Concise, casual tone. Under 280 characters for single tweets. Use threads (5 tweets max) for longer-form content like architecture breakdowns or feature deep-dives. Include relevant hashtags and mentions.
+
+**LinkedIn**: Professional, detailed tone. Three-paragraph structure works well for announcements. Include a call to action and link to the blog post or product page.
+
+Never copy-paste identical content across platforms. Each post should feel native to its platform.
+
+### 4. Schedule and Publish
+
+Maintain a consistent cadence (e.g., 3 posts per week per platform). Vary post types across the week to keep the feed diverse.
+
+### 5. Track and Analyze
+
+Track engagement metrics per post: likes, reposts, replies, impressions. Identify best-performing post formats and topics to inform future content. Summarize social performance metrics for investor updates.
+
+## Post Quality Standards
+
+Every post must include:
+- A clear call to action (try, read, reply, share)
+- At least one link back to the product, blog, or docs
+- Platform-appropriate hashtags or mentions
+
+## Anti-Patterns
+
+- Identical post copy-pasted to both Twitter/X and LinkedIn with no adaptation
+- Posts with no call to action, hashtags, or link back to the product
+- Sporadic posting with no consistent cadence or scheduling
+- Overly promotional tone that ignores the brand voice guidelines
