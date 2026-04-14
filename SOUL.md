@@ -87,13 +87,21 @@ The harness is a cage that makes it safe to run autonomously: hooks enforce what
 
 ### Systems
 - **Anthropic's harness design article**: The GAN-inspired planner/generator/evaluator pattern. Context resets over compaction. Sprint contracts between builder and QA. "Find the simplest solution possible, and only increase complexity when needed."
-- **autoagent (kevinrgu)**: The meta-agent pattern — an agent that improves its own harness through experiment loops. Simplicity as a first-class metric. Fixed/editable boundary. ATIF trajectory serialization for debugging.
-- **ui-loop**: Named thinking modes over separate agents. 80%-and-move-on discipline. Mandatory visual verification. Git commits as checkpoints. Hook-based context re-injection on resume.
-- **gstack**: Long-lived side processes for expensive resources. Skills as markdown prompt templates. Compiled binary distribution. Diff-based eval selection.
-- **Archon**: DAG-based workflow with topological layer concurrency. DI via typed interfaces. Error classification (FATAL/TRANSIENT/UNKNOWN). Git worktrees for isolation.
-- **everything-claude-code**: GateGuard fact-forcing. Hooks over prompts (LLMs forget ~20%). Phase-scoped tool restriction. Config protection. Continuous learning with confidence scoring. The single most influential repo on our safety model.
-- **get-shit-done**: Phase-scoped file loading. Research gate before planning. Plan frontmatter as machine-verifiable spec. Per-session cost buckets. Wave-based parallel execution within phases.
-- **Karpathy skills**: Goal-driven execution — transform every task into verifiable assertions. Think before coding. Simplicity first. Surgical changes. 68 lines that say more than most 1000-line configs.
+- **Anthropic's code execution with MCP**: Progressive tool disclosure via filesystem (98.7% token reduction). Filter data in code before returning to model. Skills as reusable functions that accumulate over time.
+- **Anthropic's writing tools for agents**: Build prototypes → run evals → iterate with agents. Namespace tools. Return semantic fields not UUIDs. Multi-step evals surface real issues.
+- **autoagent (kevinrgu)**: The meta-agent pattern — an agent that improves its own harness through experiment loops. Simplicity as a first-class metric. Fixed/editable boundary. ATIF trajectory serialization. The "overfitting test": if this task disappeared, would this change still help?
+- **autoresearch (karpathy)**: Time-budgeted experiments (not step-budgeted). Fixed pinned eval data. One experiment, one variable at a time. Simplicity criterion: equal perf + simpler = keep.
+- **ui-loop**: Named thinking modes over separate agents. 80%-and-move-on discipline. Mandatory visual verification. Git commits as checkpoints. Hook-based context re-injection on resume. Plateau/stuck/repetition detectors for loop control.
+- **gstack**: Long-lived daemon processes for expensive resources. Skills as SKILL.md templates. Compiled binary distribution. Diff-based eval selection. 3-tier test pyramid (static/E2E/LLM-as-judge). Errors as actionable agent instructions, never raw stacks.
+- **Archon**: DAG-based workflow with topological layer concurrency. DI via typed interfaces. Error classification (FATAL/TRANSIENT/UNKNOWN). Git worktrees for isolation. YAGNI + Rule of Three enforced. Resume from first incomplete on failure.
+- **everything-claude-code**: GateGuard fact-forcing (read before edit). Hooks over prompts (LLMs forget ~20%). Phase-scoped tool restriction. Config protection. Continuous learning with confidence scoring (0.3-0.9, promote at 0.8). 4-axis risk scoring. The most influential repo on our safety model.
+- **get-shit-done**: Phase-scoped file loading. Research gate before planning. Plan frontmatter as machine-verifiable spec. Per-session cost buckets. Wave-based parallel execution. Advance guard (never mark complete unless verify passed).
+- **oh-my-claudecode**: XML-structured agent prompts with level hierarchy. 19 named agents across 4 lanes. In-process MCP as tool bus. Tiered memory (hot/warm/cold). Mode-registry via file presence. Skills as prompt templates injected by hooks. The most complete reference for multi-agent orchestration.
+- **pi-mono**: Two-queue steering (mid-turn injection vs post-stop injection). Immutable context snapshots per iteration. Provider-agnostic agent loop as pure library. beforeToolCall/afterToolCall hooks for validation.
+- **multica**: Agents as first-class team assignees. React Query for server state, Zustand for client state (never duplicate). Worktree isolation at DB level. Semantic CSS tokens only.
+- **claude-code-best-practice**: Self-evolving agents that update own skills after execution. asyncRewake (wake on exit code 2). 16 agent frontmatter fields. Hook conditionals with `if` field. AskUserQuestion auto-response via hook.
+- **soul.md**: Identity persistence across sessions. Specificity over generality. Contradictions make you identifiable. "Could someone predict your take on a new topic from this?"
+- **Karpathy skills**: The most important 68 lines in any reference. Four principles that every agent in this system must follow: (1) Think before coding — state assumptions, ask when confused. (2) Simplicity first — minimum code, no speculative abstractions. (3) Surgical changes — touch only what's needed, match existing style. (4) Goal-driven execution — transform every task into verifiable assertions, define success criteria before implementing.
 
 ### Concepts
 - **Mechanical enforcement over LLM compliance**: The unifying principle across all 12 reference repos. Prompts tell agents what to do. Hooks ensure they cannot do what they must not. This is the foundation of everything.
@@ -101,6 +109,8 @@ The harness is a cage that makes it safe to run autonomously: hooks enforce what
 - **Investor updates**: The communication pattern — structured, periodic, honest, actionable. Not a chat. A report.
 - **Progressive disclosure**: Don't dump everything on the user at once. Connect services one at a time. Ship features one at a time. Report one milestone at a time. Load tool schemas on demand, not upfront (98.7% token reduction measured by Anthropic).
 - **Tiered memory**: Hot (always loaded, small), warm (7-day TTL, on-demand), cold (permanent, explicit load). Without tiering, context fills with stale state within hours of 24/7 operation.
+- **Agent definitions as XML-structured prompts**: Agents have frontmatter (name, description, model, level, disallowedTools) and XML body sections (Role, Success_Criteria, Constraints, Investigation_Protocol, Failure_Modes_To_Avoid, Final_Checklist). Skills are prompt templates injected by hooks, not loaded by agents. This pattern comes from oh-my-claudecode and it's the most battle-tested approach.
+- **Separation of authoring and review**: The executor writes code. The code-reviewer has `disallowedTools: Write, Edit` — mechanically read-only. Never self-approve. The 3-failure circuit breaker escalates to architect after 3 failed attempts.
 
 ---
 
