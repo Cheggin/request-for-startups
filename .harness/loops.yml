@@ -1,0 +1,136 @@
+# Loop Registry
+# Persistent agent loops running in tmux panes via /startup-harness: skills.
+# Start: harness loop start <name>
+# Stop:  harness loop stop <name>
+# List:  harness loop list
+
+# ─── Core Orchestration ────────────────────────────────────────────────────
+
+commander:
+  agent: commander
+  loop_type: custom
+  description: Orchestrator — polls Issues, dispatches agents, sends Slack updates
+  interval: 60s
+  skill: startup-harness:plan
+  prompt: |
+    Run /startup-harness:github-state-manager to poll open issues.
+    Classify and dispatch each to the right agent via tmux.
+    Run /startup-harness:investor-updates every 10 ticks.
+    Never write code — coordinate only.
+
+# ─── Quality Scanning ──────────────────────────────────────────────────────
+
+quality-scanner:
+  agent: slop-cleaner
+  loop_type: maintenance
+  description: Scans for AI slop, dead code, duplication — creates issues only
+  interval: 4h
+  skill: startup-harness:slop-cleaner
+  creates_issues: true
+  scope:
+    - packages/
+    - skills/
+    - agents/
+  prompt: |
+    Run /startup-harness:audit on packages/, skills/, agents/.
+    Run /startup-harness:security-scanner on packages/.
+    For each finding: gh issue create following .harness/issue-schema.md.
+    Do NOT fix — only scan and create issues.
+
+alignment-scanner:
+  agent: alignment
+  loop_type: maintenance
+  description: Monitors repo structure drift against configs and best practices
+  interval: 12h
+  skill: startup-harness:audit
+  creates_issues: true
+  scope:
+    - repo structure
+    - .harness/ configs
+  prompt: |
+    Run /startup-harness:audit on repo structure.
+    Compare against .harness/agent-categories.yml and .harness/stacks.yml.
+    Check skill counts match plugin, agent defs match categories.
+    For each drift: gh issue create with [chore] type.
+
+# ─── Operations Monitoring ─────────────────────────────────────────────────
+
+ops-monitor:
+  agent: ops
+  loop_type: monitoring
+  description: Uptime, errors, performance, deps — creates P0/P1 issues
+  interval: 5m
+  skill: startup-harness:uptime-monitor
+  creates_issues: true
+  scope:
+    - production endpoints
+    - Sentry errors
+    - dependencies
+  prompt: |
+    Run /startup-harness:uptime-monitor — check production health.
+    Run /startup-harness:error-tracking — check Sentry for new errors.
+    Run /startup-harness:dependency-manager — weekly npm audit.
+    Run /startup-harness:performance-benchmark — weekly Lighthouse.
+    If clean: log tick and wait.
+    If issue: create GitHub Issue with severity, alert Slack if P0/P1.
+
+# ─── Growth Optimization ───────────────────────────────────────────────────
+
+growth-loop:
+  agent: growth
+  loop_type: growth
+  description: Continuous growth experiments — SEO, conversion, content
+  interval: 24h
+  skill: startup-harness:analytics-integration
+  creates_issues: true
+  scope:
+    - PostHog metrics
+    - SEO rankings
+    - conversion funnels
+  prompt: |
+    Run /startup-harness:analytics-integration — measure current metrics.
+    Run /startup-harness:seo-chat — check ranking changes.
+    Run /startup-harness:social-intelligence — monitor mentions.
+    Run /startup-harness:landing-page-optimizer — propose experiment.
+    Create [feat] issue for each experiment. One variable per experiment.
+
+# ─── Meta-Improvement ──────────────────────────────────────────────────────
+
+meta-improver:
+  agent: harness-researcher
+  loop_type: improvement
+  description: Improves the harness itself — skills, hooks, agents, loops
+  interval: 6h
+  skill: startup-harness:self-improve
+  creates_issues: true
+  scope:
+    - skills/
+    - packages/hooks/
+    - agents/
+    - .harness/
+  prompt: |
+    Run /startup-harness:research — check reference repos for new patterns.
+    Run /startup-harness:self-improve — identify weakest harness area.
+    Run /startup-harness:eval-framework — measure before/after.
+    One change per iteration. Keep if improved or simpler. Discard if worse.
+    Create [feat] or [refactor] issue for changes needing review.
+    Log to .harness/knowledge/meta/improvement-log.md.
+    Plateau (<3% improvement for 4 iterations) → escalate to Slack.
+
+# ─── Content Publishing ────────────────────────────────────────────────────
+
+content-loop:
+  agent: writing
+  loop_type: custom
+  description: Publishes blog posts, social media, docs from Issue backlog
+  interval: 12h
+  skill: startup-harness:anti-ai-writing
+  creates_issues: false
+  scope:
+    - GitHub Issues labeled content
+  prompt: |
+    gh issue list --state open --label "content" --json number,title,body
+    Pick highest-priority content issue.
+    Run /startup-harness:data-driven-blog or /startup-harness:social-media.
+    Run /startup-harness:anti-ai-writing — verify zero slop.
+    Create PR, update Issue with link.

@@ -30,6 +30,10 @@ const GATED_TOOLS = new Set(["Edit", "Write"]);
 const EXEMPT_PATHS: string[] = [
   "tool-catalog.yml",
   "founder-profile.yml",
+  "agent-categories.yml",
+  "loops.yml",
+  "commit-schema.md",
+  "issue-schema.md",
   "idea.md",
   "state.json",
   "alignment-report.md",

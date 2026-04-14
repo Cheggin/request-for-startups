@@ -36,6 +36,9 @@ export const TOOL_CATALOG_FILE = join(HARNESS_DIR, "tool-catalog.yml");
 /** Claude settings.json path. */
 export const CLAUDE_SETTINGS_FILE = join(ROOT_DIR, ".claude", "settings.json");
 
+/** Loops registry path. */
+export const LOOPS_FILE = join(HARNESS_DIR, "loops.yml");
+
 // ─── Tmux ───────────────────────────────────────────────────────────────────
 
 /** Prefix for all harness tmux sessions. */
