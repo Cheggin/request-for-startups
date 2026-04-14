@@ -172,11 +172,37 @@ export async function runImplementationLoop(
   gateResults.tests = { pass: true, output: "All tests passing", failCount: 0 };
   emit({ type: "gate_result", step: "tdd_green" });
 
+  // ── Step 3.5: Create PR for Cubic Review ──
+  emit({ type: "step_start", step: "create_pr" });
+  let prNumber: number;
+  try {
+    const { execSync } = await import("child_process");
+    const branchName = `feature/${config.issueNumber}-${config.featureName.replace(/\s+/g, "-").toLowerCase()}`;
+
+    // Create branch, stage, commit, push, create PR
+    execSync(`git checkout -b ${branchName} 2>/dev/null || git checkout ${branchName}`, { stdio: "pipe" });
+    execSync("git add -A", { stdio: "pipe" });
+    execSync(`git commit -m "feat: ${config.featureName} (closes #${config.issueNumber})" --allow-empty`, { stdio: "pipe" });
+    execSync(`git push -u origin ${branchName}`, { stdio: "pipe", timeout: 30000 });
+
+    const prUrl = execSync(
+      `gh pr create --title "${config.featureName}" --body "Closes #${config.issueNumber}" --base main 2>/dev/null || gh pr view --json number -q .number`,
+      { encoding: "utf-8", stdio: "pipe", timeout: 30000 }
+    ).trim();
+
+    // Extract PR number from URL or direct output
+    const match = prUrl.match(/(\d+)\s*$/);
+    prNumber = match ? parseInt(match[1]) : config.issueNumber;
+    emit({ type: "step_end", result: { step: "create_pr", success: true, iterations: 1, summary: `PR #${prNumber} created` } });
+  } catch (e) {
+    // Fall back to issue number if PR creation fails
+    prNumber = config.issueNumber;
+    emit({ type: "step_end", result: { step: "create_pr", success: false, iterations: 1, summary: `PR creation failed, using issue #${prNumber}: ${e}` } });
+  }
+
   // ── Step 4: Cubic Review ──
   emit({ type: "step_start", step: "cubic_review" });
   const cubicLoop = new RetryLoop({ maxIterations: maxCubic });
-  // PR number would be obtained from `gh pr create` — placeholder for now
-  const prNumber = config.issueNumber; // In practice, create PR first
 
   const cubicResult = await cubicLoop.run(async () => {
     const result = await checkCubic(prNumber);

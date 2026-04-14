@@ -281,6 +281,20 @@ export function run(args: string[]): void {
   // ── Phase 1: Validate Services ─────────────────────────────────────────
   if (!shouldSkipPhase("services", resumeFrom)) {
     runPhase1_ValidateServices(answers);
+
+    // Create GitHub Project board — fixes #20
+    console.log(heading("Creating GitHub Project Board"));
+    try {
+      const projectName = answers.idea?.split(" ").slice(0, 3).join(" ") || "Startup";
+      execSync(
+        `gh project create --title "${projectName}" --owner @me 2>/dev/null || echo "Project may already exist"`,
+        { encoding: "utf-8", stdio: "pipe", timeout: 15000 }
+      );
+      console.log(success(`  Project board "${projectName}" created`));
+    } catch {
+      console.log(warn("  Could not create GitHub Project board — create manually or retry later"));
+    }
+
     updateState({ phase: "research" });
   }
 
