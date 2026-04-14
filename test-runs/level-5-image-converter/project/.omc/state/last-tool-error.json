@@ -1,7 +1,0 @@
-{
-  "tool_name": "Read",
-  "tool_input_preview": "{\"file_path\":\"/Users/reagan/Documents/GitHub/request-for-startups/test-runs/level-5-image-converter/project/node_modules/next/dist/docs/01-app/03-api-reference/04-functions/generate-metadata.md\"}",
-  "error": "File content (14047 tokens) exceeds maximum allowed tokens (10000). Use offset and limit parameters to read specific portions of the file, or search for specific content instead of reading the whole file.",
-  "timestamp": "2026-04-14T07:00:22.901Z",
-  "retry_count": 1
-}
