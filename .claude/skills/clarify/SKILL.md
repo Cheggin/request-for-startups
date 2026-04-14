@@ -1,1 +1,1 @@
-../../skills/clarify/SKILL.md
+../../../skills/clarify/SKILL.md

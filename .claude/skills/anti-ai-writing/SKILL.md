@@ -1,1 +1,1 @@
-../../skills/anti-ai-writing/SKILL.md
+../../../skills/anti-ai-writing/SKILL.md

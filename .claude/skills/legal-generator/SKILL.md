@@ -1,1 +1,1 @@
-../../skills/legal-generator/SKILL.md
+../../../skills/legal-generator/SKILL.md

@@ -1,1 +1,1 @@
-../../skills/context-reset-handler/SKILL.md
+../../../skills/context-reset-handler/SKILL.md

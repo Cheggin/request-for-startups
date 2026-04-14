@@ -1,1 +1,1 @@
-../../skills/debug/SKILL.md
+../../../skills/debug/SKILL.md

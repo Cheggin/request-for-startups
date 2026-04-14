@@ -1,1 +1,1 @@
-../../skills/overdrive/SKILL.md
+../../../skills/overdrive/SKILL.md

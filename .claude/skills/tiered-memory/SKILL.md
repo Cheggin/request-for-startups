@@ -1,1 +1,1 @@
-../../skills/tiered-memory/SKILL.md
+../../../skills/tiered-memory/SKILL.md

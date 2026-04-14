@@ -1,1 +1,1 @@
-../../skills/performance-benchmark/SKILL.md
+../../../skills/performance-benchmark/SKILL.md

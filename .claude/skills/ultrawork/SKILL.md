@@ -1,1 +1,1 @@
-../../skills/ultrawork/SKILL.md
+../../../skills/ultrawork/SKILL.md

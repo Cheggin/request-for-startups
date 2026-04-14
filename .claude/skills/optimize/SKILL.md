@@ -1,1 +1,1 @@
-../../skills/optimize/SKILL.md
+../../../skills/optimize/SKILL.md

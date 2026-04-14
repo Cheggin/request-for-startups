@@ -1,1 +1,1 @@
-../../skills/self-improve/SKILL.md
+../../../skills/self-improve/SKILL.md

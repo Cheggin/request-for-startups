@@ -1,1 +1,1 @@
-../../skills/agent-creator/SKILL.md
+../../../skills/agent-creator/SKILL.md

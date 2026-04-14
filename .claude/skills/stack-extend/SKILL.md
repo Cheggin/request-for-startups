@@ -1,1 +1,1 @@
-../../skills/stack-extend/SKILL.md
+../../../skills/stack-extend/SKILL.md

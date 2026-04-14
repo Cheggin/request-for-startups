@@ -1,1 +1,1 @@
-../../skills/avoid-feature-creep/SKILL.md
+../../../skills/avoid-feature-creep/SKILL.md

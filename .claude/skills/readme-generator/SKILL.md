@@ -1,1 +1,1 @@
-../../skills/readme-generator/SKILL.md
+../../../skills/readme-generator/SKILL.md

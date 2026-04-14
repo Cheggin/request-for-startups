@@ -1,1 +1,1 @@
-../../skills/user-feedback-collector/SKILL.md
+../../../skills/user-feedback-collector/SKILL.md

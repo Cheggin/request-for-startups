@@ -1,1 +1,1 @@
-../../skills/ultraqa/SKILL.md
+../../../skills/ultraqa/SKILL.md

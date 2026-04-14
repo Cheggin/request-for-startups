@@ -1,1 +1,1 @@
-../../skills/convex/SKILL.md
+../../../skills/convex/SKILL.md

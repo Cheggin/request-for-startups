@@ -1,1 +1,1 @@
-../../skills/cubic-codebase-scan/SKILL.md
+../../../skills/cubic-codebase-scan/SKILL.md

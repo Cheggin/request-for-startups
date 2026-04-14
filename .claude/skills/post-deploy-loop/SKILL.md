@@ -1,1 +1,1 @@
-../../skills/post-deploy-loop/SKILL.md
+../../../skills/post-deploy-loop/SKILL.md

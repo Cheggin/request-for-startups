@@ -1,1 +1,1 @@
-../../skills/bolder/SKILL.md
+../../../skills/bolder/SKILL.md

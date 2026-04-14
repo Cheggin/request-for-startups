@@ -1,1 +1,1 @@
-../../skills/error-tracking/SKILL.md
+../../../skills/error-tracking/SKILL.md

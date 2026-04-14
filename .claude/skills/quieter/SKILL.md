@@ -1,1 +1,1 @@
-../../skills/quieter/SKILL.md
+../../../skills/quieter/SKILL.md

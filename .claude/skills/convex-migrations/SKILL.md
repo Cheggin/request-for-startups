@@ -1,1 +1,1 @@
-../../skills/convex-migrations/SKILL.md
+../../../skills/convex-migrations/SKILL.md

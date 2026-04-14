@@ -1,1 +1,1 @@
-../../skills/documentation-generator/SKILL.md
+../../../skills/documentation-generator/SKILL.md

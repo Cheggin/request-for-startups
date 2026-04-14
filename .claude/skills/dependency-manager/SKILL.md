@@ -1,1 +1,1 @@
-../../skills/dependency-manager/SKILL.md
+../../../skills/dependency-manager/SKILL.md

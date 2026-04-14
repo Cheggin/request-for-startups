@@ -1,1 +1,1 @@
-../../skills/github-state-manager/SKILL.md
+../../../skills/github-state-manager/SKILL.md

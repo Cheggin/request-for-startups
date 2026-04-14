@@ -1,1 +1,1 @@
-../../skills/investor-updates/SKILL.md
+../../../skills/investor-updates/SKILL.md

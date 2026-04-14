@@ -1,1 +1,1 @@
-../../skills/uptime-monitor/SKILL.md
+../../../skills/uptime-monitor/SKILL.md

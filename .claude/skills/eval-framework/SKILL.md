@@ -1,1 +1,1 @@
-../../skills/eval-framework/SKILL.md
+../../../skills/eval-framework/SKILL.md

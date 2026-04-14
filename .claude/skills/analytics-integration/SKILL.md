@@ -1,1 +1,1 @@
-../../skills/analytics-integration/SKILL.md
+../../../skills/analytics-integration/SKILL.md

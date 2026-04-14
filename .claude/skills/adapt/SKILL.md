@@ -1,1 +1,1 @@
-../../skills/adapt/SKILL.md
+../../../skills/adapt/SKILL.md

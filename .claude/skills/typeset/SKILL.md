@@ -1,1 +1,1 @@
-../../skills/typeset/SKILL.md
+../../../skills/typeset/SKILL.md

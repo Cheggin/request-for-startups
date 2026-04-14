@@ -1,1 +1,1 @@
-../../skills/deep-interview/SKILL.md
+../../../skills/deep-interview/SKILL.md

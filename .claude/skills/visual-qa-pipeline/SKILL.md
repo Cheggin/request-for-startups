@@ -1,1 +1,1 @@
-../../skills/visual-qa-pipeline/SKILL.md
+../../../skills/visual-qa-pipeline/SKILL.md

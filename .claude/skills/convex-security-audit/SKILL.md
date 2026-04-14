@@ -1,1 +1,1 @@
-../../skills/convex-security-audit/SKILL.md
+../../../skills/convex-security-audit/SKILL.md

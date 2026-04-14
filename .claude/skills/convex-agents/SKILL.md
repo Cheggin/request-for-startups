@@ -1,1 +1,1 @@
-../../skills/convex-agents/SKILL.md
+../../../skills/convex-agents/SKILL.md

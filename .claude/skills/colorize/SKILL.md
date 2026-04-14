@@ -1,1 +1,1 @@
-../../skills/colorize/SKILL.md
+../../../skills/colorize/SKILL.md

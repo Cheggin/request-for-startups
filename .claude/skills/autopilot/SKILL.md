@@ -1,1 +1,1 @@
-../../skills/autopilot/SKILL.md
+../../../skills/autopilot/SKILL.md

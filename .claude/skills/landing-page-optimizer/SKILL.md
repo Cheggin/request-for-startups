@@ -1,1 +1,1 @@
-../../skills/landing-page-optimizer/SKILL.md
+../../../skills/landing-page-optimizer/SKILL.md

@@ -1,1 +1,1 @@
-../../skills/audit/SKILL.md
+../../../skills/audit/SKILL.md

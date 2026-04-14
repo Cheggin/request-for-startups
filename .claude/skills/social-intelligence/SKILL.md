@@ -1,1 +1,1 @@
-../../skills/social-intelligence/SKILL.md
+../../../skills/social-intelligence/SKILL.md

@@ -1,1 +1,1 @@
-../../skills/convex-component-authoring/SKILL.md
+../../../skills/convex-component-authoring/SKILL.md

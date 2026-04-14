@@ -1,1 +1,1 @@
-../../skills/slack-course-correction/SKILL.md
+../../../skills/slack-course-correction/SKILL.md

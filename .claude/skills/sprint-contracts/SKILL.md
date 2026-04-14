@@ -1,1 +1,1 @@
-../../skills/sprint-contracts/SKILL.md
+../../../skills/sprint-contracts/SKILL.md

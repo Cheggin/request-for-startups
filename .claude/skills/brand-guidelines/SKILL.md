@@ -1,1 +1,1 @@
-../../skills/brand-guidelines/SKILL.md
+../../../skills/brand-guidelines/SKILL.md

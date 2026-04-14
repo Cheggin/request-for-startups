@@ -1,1 +1,1 @@
-../../skills/convex-security-check/SKILL.md
+../../../skills/convex-security-check/SKILL.md

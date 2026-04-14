@@ -1,1 +1,1 @@
-../../skills/deploy-pipeline/SKILL.md
+../../../skills/deploy-pipeline/SKILL.md

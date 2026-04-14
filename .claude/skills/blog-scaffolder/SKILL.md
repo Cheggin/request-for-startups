@@ -1,1 +1,1 @@
-../../skills/blog-scaffolder/SKILL.md
+../../../skills/blog-scaffolder/SKILL.md

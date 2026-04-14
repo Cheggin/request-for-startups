@@ -1,1 +1,1 @@
-../../skills/deep-dive/SKILL.md
+../../../skills/deep-dive/SKILL.md

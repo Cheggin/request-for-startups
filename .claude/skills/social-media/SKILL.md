@@ -1,1 +1,1 @@
-../../skills/social-media/SKILL.md
+../../../skills/social-media/SKILL.md

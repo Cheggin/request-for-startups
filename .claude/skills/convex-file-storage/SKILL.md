@@ -1,1 +1,1 @@
-../../skills/convex-file-storage/SKILL.md
+../../../skills/convex-file-storage/SKILL.md

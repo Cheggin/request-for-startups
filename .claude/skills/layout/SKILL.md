@@ -1,1 +1,1 @@
-../../skills/layout/SKILL.md
+../../../skills/layout/SKILL.md

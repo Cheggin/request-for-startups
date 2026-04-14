@@ -1,1 +1,1 @@
-../../skills/asset-generation/SKILL.md
+../../../skills/asset-generation/SKILL.md

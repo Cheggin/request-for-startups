@@ -1,1 +1,1 @@
-../../skills/trajectory-logging/SKILL.md
+../../../skills/trajectory-logging/SKILL.md

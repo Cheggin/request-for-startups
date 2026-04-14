@@ -65,7 +65,7 @@ function installSkills(): number {
 
     const targetDir = join(claudeSkillsDir, dir.name);
     const symlinkPath = join(targetDir, "SKILL.md");
-    const relativePath = join("..", "..", "skills", dir.name, "SKILL.md");
+    const relativePath = join("..", "..", "..", "skills", dir.name, "SKILL.md");
 
     mkdirSync(targetDir, { recursive: true });
 

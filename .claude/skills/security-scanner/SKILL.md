@@ -1,1 +1,1 @@
-../../skills/security-scanner/SKILL.md
+../../../skills/security-scanner/SKILL.md

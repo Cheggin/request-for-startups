@@ -1,1 +1,1 @@
-../../skills/verify/SKILL.md
+../../../skills/verify/SKILL.md

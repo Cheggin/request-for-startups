@@ -1,1 +1,1 @@
-../../skills/research/SKILL.md
+../../../skills/research/SKILL.md

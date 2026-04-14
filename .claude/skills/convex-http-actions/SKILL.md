@@ -1,1 +1,1 @@
-../../skills/convex-http-actions/SKILL.md
+../../../skills/convex-http-actions/SKILL.md

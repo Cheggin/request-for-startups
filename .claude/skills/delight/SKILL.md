@@ -1,1 +1,1 @@
-../../skills/delight/SKILL.md
+../../../skills/delight/SKILL.md

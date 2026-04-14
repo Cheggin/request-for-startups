@@ -1,1 +1,1 @@
-../../skills/convex-functions/SKILL.md
+../../../skills/convex-functions/SKILL.md

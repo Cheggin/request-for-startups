@@ -1,1 +1,1 @@
-../../skills/log-aggregation/SKILL.md
+../../../skills/log-aggregation/SKILL.md

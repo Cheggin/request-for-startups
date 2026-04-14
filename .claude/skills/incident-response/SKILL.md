@@ -1,1 +1,1 @@
-../../skills/incident-response/SKILL.md
+../../../skills/incident-response/SKILL.md

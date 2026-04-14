@@ -1,1 +1,1 @@
-../../skills/distill/SKILL.md
+../../../skills/distill/SKILL.md

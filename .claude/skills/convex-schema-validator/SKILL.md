@@ -1,1 +1,1 @@
-../../skills/convex-schema-validator/SKILL.md
+../../../skills/convex-schema-validator/SKILL.md

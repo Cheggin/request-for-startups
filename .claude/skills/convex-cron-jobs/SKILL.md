@@ -1,1 +1,1 @@
-../../skills/convex-cron-jobs/SKILL.md
+../../../skills/convex-cron-jobs/SKILL.md

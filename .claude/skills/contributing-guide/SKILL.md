@@ -1,1 +1,1 @@
-../../skills/contributing-guide/SKILL.md
+../../../skills/contributing-guide/SKILL.md

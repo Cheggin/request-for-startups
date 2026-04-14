@@ -1,1 +1,1 @@
-../../skills/cost-tracker/SKILL.md
+../../../skills/cost-tracker/SKILL.md

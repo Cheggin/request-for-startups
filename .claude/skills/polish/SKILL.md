@@ -1,1 +1,1 @@
-../../skills/polish/SKILL.md
+../../../skills/polish/SKILL.md

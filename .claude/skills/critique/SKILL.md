@@ -1,1 +1,1 @@
-../../skills/critique/SKILL.md
+../../../skills/critique/SKILL.md

@@ -1,1 +1,1 @@
-../../skills/convex-best-practices/SKILL.md
+../../../skills/convex-best-practices/SKILL.md

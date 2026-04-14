@@ -1,1 +1,1 @@
-../../skills/test-generator/SKILL.md
+../../../skills/test-generator/SKILL.md

@@ -1,1 +1,1 @@
-../../skills/seo-setup/SKILL.md
+../../../skills/seo-setup/SKILL.md

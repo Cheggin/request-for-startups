@@ -1,1 +1,1 @@
-../../skills/data-driven-blog/SKILL.md
+../../../skills/data-driven-blog/SKILL.md

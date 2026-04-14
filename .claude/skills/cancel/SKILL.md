@@ -1,1 +1,1 @@
-../../skills/cancel/SKILL.md
+../../../skills/cancel/SKILL.md

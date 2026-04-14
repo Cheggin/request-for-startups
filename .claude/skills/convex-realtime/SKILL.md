@@ -1,1 +1,1 @@
-../../skills/convex-realtime/SKILL.md
+../../../skills/convex-realtime/SKILL.md

@@ -1,1 +1,1 @@
-../../skills/slop-cleaner/SKILL.md
+../../../skills/slop-cleaner/SKILL.md

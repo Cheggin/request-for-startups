@@ -1,1 +1,1 @@
-../../skills/animate/SKILL.md
+../../../skills/animate/SKILL.md

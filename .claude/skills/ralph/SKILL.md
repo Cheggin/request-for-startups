@@ -1,1 +1,1 @@
-../../skills/ralph/SKILL.md
+../../../skills/ralph/SKILL.md

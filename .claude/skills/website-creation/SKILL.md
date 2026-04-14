@@ -1,1 +1,1 @@
-../../skills/website-creation/SKILL.md
+../../../skills/website-creation/SKILL.md
