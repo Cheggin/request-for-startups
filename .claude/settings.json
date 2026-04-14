@@ -30,6 +30,14 @@
           {
             "type": "command",
             "command": "bun run packages/hooks/src/run-config-protection.ts"
+          },
+          {
+            "type": "command",
+            "command": "bun run packages/hooks/src/run-scope-enforcer.ts"
+          },
+          {
+            "type": "command",
+            "command": "bun run packages/hooks/src/run-metrics-gate.ts"
           }
         ]
       },
@@ -39,6 +47,14 @@
           {
             "type": "command",
             "command": "bun run packages/hooks/src/run-config-protection.ts"
+          },
+          {
+            "type": "command",
+            "command": "bun run packages/hooks/src/run-scope-enforcer.ts"
+          },
+          {
+            "type": "command",
+            "command": "bun run packages/hooks/src/run-metrics-gate.ts"
           }
         ]
       },
@@ -56,6 +72,14 @@
           {
             "type": "command",
             "command": "bun run packages/hooks/src/validate-issue-create.ts"
+          },
+          {
+            "type": "command",
+            "command": "bun run packages/hooks/src/run-deploy-gate.ts"
+          },
+          {
+            "type": "command",
+            "command": "bun run packages/hooks/src/run-metrics-gate.ts"
           }
         ]
       }
