@@ -1,0 +1,13 @@
+ # Move impeccable skills to our skills directory
+for skill in .agents/skills/*/SKILL.md; do
+  name=$(basename $(dirname "$skill"))
+  cp "$skill" "skills/shared/$name.md" 2>/dev/null && echo "Copied: $name"
+done
+
+# Clean up .agents symlinks
+rm -rf .agents
+find skills/ -maxdepth 1 -type l -delete 2>/dev/null
+
+echo "---"
+ls skills/shared/*.md | wc -l && echo "total shared skills"
+ git add skills/ .claude/ .harness/knowledge/design/raw/ai-design-antipatterns.md && git commit -m "Add impeccable design skills (17), AI anti-patterns, visual libraries, dangerous command hooks, command logging" && git push origin main 2>&1 | tail -3

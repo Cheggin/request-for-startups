@@ -200,16 +200,58 @@ Shadow: shadow-md with warm tint
 
 ---
 
-## Anti-Patterns (all styles)
+## Visual Libraries (optional, for standout sites)
 
-- Dark mode / dark backgrounds (BANNED)
-- Generic gradient hero backgrounds
-- Sparkles, emoji decorations, or floating shapes
-- Feature walls with 8+ features
-- Stock photos of people at laptops
-- "Revolutionary", "game-changing", "cutting-edge"
-- Centered paragraph text (center only headlines + CTAs)
-- Mixing styles (glassmorphism cards on a brutalist page)
-- Inter font
-- !important in CSS
-- Left outline indicators (signal of vibe coding)
+Not everything needs to be static. Use sparingly — every animation must serve a purpose:
+- **Three.js / React Three Fiber** — 3D product showcases, interactive backgrounds
+- **Framer Motion** — purposeful transitions, scroll-triggered reveals
+- **GSAP** — complex scroll animations, text reveals
+- **Lottie** — lightweight vector animations for icons
+- **Spline** — embeddable 3D scenes
+
+If it doesn't communicate state change or guide attention, remove it.
+
+---
+
+## Anti-Patterns (BANNED — these are vibe-coded AI slop signals)
+
+### Color
+- **Homogenous goo** — icon, box, card, border all same hue. Fix: 70/20/10 rule (70% neutral, 20% complementary, 10% accent).
+- **Unnecessary borders** — if background colors separate elements, no border needed.
+
+### Visual Assets
+- **Icons in colored rounded squares** — font awesome in a colored box. Communicates nothing. Fix: bare Lucide icons, NO box. Or drop the icon entirely.
+- **Emojis as visual assets** — always bad. Use Lucide icons or custom SVGs.
+- **Stock photos of people at laptops** — generic, says nothing.
+
+### Typography
+- **Excessive serif hero** — Instrument Serif / DM Serif in hero. Claude's "elegant" default. Already overused, going stale. Avoid.
+- **Inter font** — banned.
+
+### Effects
+- **Glassmorphism everywhere** — frosted glass + gradient + 1px border = obvious AI. The new purple gradient. Do NOT default to it.
+- **Linear gradients on everything** — gradient text, gradient buttons. Abused, lost meaning. Use solid accent colors.
+- **Unnecessary shadows** — shadow behind buttons making backgrounds muddy. Fix: solid accent background, no shadow.
+- **Green left border with border-radius** — viral vibe coding signal. Remove the border.
+
+### Layout
+- **Cards within cards** — AI can't do hierarchy. Nested containers. Fix: remove wrappers, quiet secondary text.
+- **Feature walls (8+ features)** — nobody reads. Max 3-4.
+- **Centered paragraph text** — center headlines and CTAs only. Left-align body.
+- **No visual hierarchy** — everything same size/weight/color. Must be glanceable.
+- **Floating chat bubble** — orange circle bottom-right. Nobody enjoys this.
+
+### Animations
+- **Animations everywhere** — hover in multiple directions, slow appears, scroll everything. Buggy, random, tiring.
+- **Animation without purpose** — if it doesn't communicate state or guide attention, delete.
+- **Broken scroll animations** — elements not appearing on scroll. Test every animation.
+
+### Content
+- **"Revolutionary", "game-changing", "cutting-edge"** — see anti-ai-writing skill.
+- **"Trusted by 10,000+"** without logos — fake social proof.
+
+### CSS
+- **!important** — banned.
+- **Left outline indicators** — vibe coding signal.
+- **Mixing styles** — glassmorphism on brutalist = incoherent.
+- **Dark mode / dark backgrounds** — banned. Light mode only.
