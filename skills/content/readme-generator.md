@@ -1,54 +1,63 @@
 ---
 name: readme-generator
-description: Auto-generate a README.md with product overview, tech stack, setup instructions, and architecture
-category: content
-allowed-tools:
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - Bash
+description: Auto-generate a README.md with product overview, tech stack, setup instructions, and architecture. Use when the user needs a README for their startup repository, wants to document the project for new developers, or needs to keep the README in sync with the actual project state.
 ---
 
-## Purpose
+# README Generator
 
-Auto-generate a README.md for the startup repository that stays in sync with the project state. The README includes what the product does, the tech stack, how to set up the dev environment, an architecture overview, and how to contribute. It is regenerated when features or the stack change.
+Auto-generate a README.md that stays in sync with the project state. Includes what the product does, the tech stack, how to set up the dev environment, an architecture overview, and how to contribute.
 
-## Steps
+## Workflow
 
-1. Read the product spec to extract a plain-language description of what the product does.
-2. Read project configuration files (package.json, stacks.yml, etc.) to list the tech stack and major dependencies.
-3. Generate a "Getting started" section with step-by-step local dev setup instructions derived from the actual project setup process.
-4. Create an architecture overview section describing the high-level system design.
-5. Add a project structure section explaining key directories and their purpose.
-6. Add a contributing section summarizing how agents and humans contribute (linking to CONTRIBUTING.md if it exists).
-7. Generate badges for build status, deploy status, and test coverage.
-8. Link to the documentation site if the documentation-generator skill is active.
-9. Validate that the README contains no stale information by checking against the actual project state.
-10. Configure regeneration so the README updates when features are added or the stack changes.
+### 1. Extract Product Description
 
-## Examples
+Read the product spec to write a plain-language description of what the product does and who it is for. Keep it to two or three sentences.
 
-Good:
-- "Product description in two sentences explaining what the app does and who it is for."
-- "Tech stack section listing Next.js 15, Convex, Tailwind CSS 4, and Clerk with links to each."
-- "Getting started section with numbered steps: clone, install, configure env, run dev server."
+### 2. List Tech Stack
 
-Bad:
-- "README with only a project title and no description or setup instructions."
-- "Tech stack section listing 'React' without specifying the framework version or related tools."
-- "Setup instructions that reference a script that no longer exists in the repo."
+Read project configuration files (`package.json`, `stacks.yml`, etc.) to list the tech stack and major dependencies with version numbers and links:
 
-## Checklist
+```markdown
+## Tech Stack
 
-- [ ] Product description section in plain language
-- [ ] Tech stack section listing all major dependencies and services
-- [ ] Getting started section with step-by-step local dev setup
-- [ ] Architecture overview section with high-level system description
-- [ ] Project structure section explaining key directories
-- [ ] Contributing section with link to CONTRIBUTING.md
-- [ ] Badges for build status, deploy status, and test coverage
-- [ ] README regenerated when features are added or stack changes
-- [ ] No stale information validated against actual project state
-- [ ] Links to documentation site if documentation-generator is active
+- [Next.js 15](https://nextjs.org) - React framework
+- [Convex](https://convex.dev) - Backend and database
+- [Tailwind CSS 4](https://tailwindcss.com) - Styling
+- [Clerk](https://clerk.com) - Authentication
+```
+
+### 3. Generate Getting Started
+
+Derive step-by-step local dev setup instructions from the actual project setup process:
+
+```markdown
+## Getting Started
+
+1. Clone the repository: `git clone <url>`
+2. Install dependencies: `pnpm install`
+3. Copy environment variables: `cp .env.example .env.local`
+4. Start the dev server: `pnpm dev`
+```
+
+### 4. Architecture Overview
+
+Describe the high-level system design: how the frontend, backend, database, and external services connect. Include a project structure section explaining key directories and their purpose.
+
+### 5. Contributing Section
+
+Summarize how agents and humans contribute. Link to CONTRIBUTING.md if it exists.
+
+### 6. Add Badges and Links
+
+Generate badges for build status, deploy status, and test coverage. Link to the documentation site if the documentation-generator skill is active.
+
+### 7. Validate and Maintain
+
+Check the README against the actual project state to ensure no stale references (removed scripts, outdated versions, renamed directories). Configure regeneration so the README updates when features are added or the stack changes.
+
+## Anti-Patterns
+
+- README with only a project title and no description or setup instructions
+- Tech stack section listing "React" without specifying the framework version or related tools
+- Setup instructions that reference a script that no longer exists in the repo
+- Architecture section that doesn't match the actual project structure
