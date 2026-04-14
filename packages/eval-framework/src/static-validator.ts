@@ -13,7 +13,7 @@ import * as path from "path";
 
 // --- Constants ---
 
-const REQUIRED_FRONTMATTER_FIELDS = ["name", "description", "category"] as const;
+const REQUIRED_FRONTMATTER_FIELDS = ["name", "description"] as const;
 
 /**
  * Known tool registry. Tools that can be referenced in allowed-tools

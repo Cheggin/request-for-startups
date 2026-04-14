@@ -12,7 +12,6 @@ describe("investor-updates skill validation", () => {
     expect(result.valid).toBe(true);
     expect(result.frontmatter).not.toBeNull();
     expect(result.frontmatter!.name).toBe("investor-updates");
-    expect(result.frontmatter!.category).toBe("shared");
     expect(result.issues.filter((i) => i.severity === "error")).toHaveLength(0);
   });
 });

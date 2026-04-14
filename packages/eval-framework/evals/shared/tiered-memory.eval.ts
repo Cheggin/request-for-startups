@@ -12,7 +12,6 @@ describe("tiered-memory skill validation", () => {
     expect(result.valid).toBe(true);
     expect(result.frontmatter).not.toBeNull();
     expect(result.frontmatter!.name).toBe("tiered-memory");
-    expect(result.frontmatter!.category).toBe("shared");
     expect(result.issues.filter((i) => i.severity === "error")).toHaveLength(0);
   });
 });

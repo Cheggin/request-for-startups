@@ -19,7 +19,6 @@ describe("competitor-research skill", () => {
     expect(result.frontmatter).not.toBeNull();
     expect(result.frontmatter!.name).toBe("competitor-research");
     expect(result.frontmatter!.description).toBeTruthy();
-    expect(result.frontmatter!.category).toBe("growth");
   });
 
   test("has allowed-tools list with valid tools", () => {

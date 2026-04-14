@@ -95,12 +95,11 @@ describe("validateSkillContent", () => {
     const fieldIssues = result.issues.filter(
       (i) => i.rule === "required-field",
     );
-    // Missing: description, category
-    expect(fieldIssues.length).toBeGreaterThanOrEqual(2);
+    // Missing: description
+    expect(fieldIssues.length).toBeGreaterThanOrEqual(1);
     expect(fieldIssues.some((i) => i.message.includes("description"))).toBe(
       true,
     );
-    expect(fieldIssues.some((i) => i.message.includes("category"))).toBe(true);
   });
 
   test("unknown tools are errors", () => {

@@ -18,7 +18,6 @@ describe("documentation-generator skill", () => {
     const result = validateSkillFile(SKILL_PATH);
     expect(result.frontmatter).not.toBeNull();
     expect(result.frontmatter!.name).toBe("documentation-generator");
-    expect(result.frontmatter!.category).toBe("content");
     expect(result.frontmatter!.description).toBeTruthy();
     expect(result.frontmatter!["allowed-tools"]).toBeInstanceOf(Array);
   });

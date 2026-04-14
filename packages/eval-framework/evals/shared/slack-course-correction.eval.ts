@@ -12,7 +12,6 @@ describe("slack-course-correction skill validation", () => {
     expect(result.valid).toBe(true);
     expect(result.frontmatter).not.toBeNull();
     expect(result.frontmatter!.name).toBe("slack-course-correction");
-    expect(result.frontmatter!.category).toBe("shared");
     expect(result.issues.filter((i) => i.severity === "error")).toHaveLength(0);
   });
 });

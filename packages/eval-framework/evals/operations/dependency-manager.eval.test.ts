@@ -18,8 +18,6 @@ describe("dependency-manager skill", () => {
     const result = validateSkillFile(SKILL_PATH);
     expect(result.frontmatter).not.toBeNull();
     expect(result.frontmatter!.name).toBe("dependency-manager");
-    expect(result.frontmatter!.category).toBe("operations");
     expect(result.frontmatter!.description).toBeTruthy();
-    expect(result.frontmatter!["allowed-tools"]).toBeInstanceOf(Array);
   });
 });

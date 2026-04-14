@@ -19,7 +19,6 @@ describe("cubic-codebase-scan skill", () => {
     const result = validateSkillFile(SKILL_PATH);
     expect(result.frontmatter).not.toBeNull();
     expect(result.frontmatter!.name).toBe("cubic-codebase-scan");
-    expect(result.frontmatter!.category).toBe("coding");
     expect(result.frontmatter!.description).toBeTruthy();
     expect(result.frontmatter!["allowed-tools"]).toBeInstanceOf(Array);
   });

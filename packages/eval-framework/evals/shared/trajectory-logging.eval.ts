@@ -12,7 +12,6 @@ describe("trajectory-logging skill validation", () => {
     expect(result.valid).toBe(true);
     expect(result.frontmatter).not.toBeNull();
     expect(result.frontmatter!.name).toBe("trajectory-logging");
-    expect(result.frontmatter!.category).toBe("shared");
     expect(result.issues.filter((i) => i.severity === "error")).toHaveLength(0);
   });
 });
