@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"npx next build 2>&1\",\"timeout\":120000,\"description\":\"Run Next.js production build\"}",
+  "error": "Exit code 1\n⚠ Warning: Next.js inferred your workspace root, but it may not be correct.\n We detected multiple lockfiles and selected the directory of /Users/reagan/Documents/GitHub/request-for-startups/bun.lock as the root directory.\n To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.\n   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.\n Detected addit...",
+  "timestamp": "2026-04-14T08:09:59.363Z",
+  "retry_count": 2
+}
