@@ -23,6 +23,18 @@ const GATED_TOOLS = new Set(["Edit", "Write"]);
  * Entries ending with "/" match any file under that directory prefix.
  * All other entries match by exact basename or full path.
  */
+/**
+ * Paths that are EXEMPT from protection even if inside a protected directory.
+ * tool-catalog.yml and founder-profile.yml are data files, not enforcement configs.
+ */
+const EXEMPT_PATHS: string[] = [
+  "tool-catalog.yml",
+  "founder-profile.yml",
+  "idea.md",
+  "state.json",
+  "alignment-report.md",
+];
+
 const PROTECTED_PATHS: string[] = [
   ".harness/",
   ".github/workflows/",
@@ -50,6 +62,12 @@ const PROTECTED_PATHS: string[] = [
 
 function isProtected(filePath: string): boolean {
   const normalized = filePath.replace(/\\/g, "/");
+  const basename = normalized.split("/").pop() || "";
+
+  // Check exemptions first — data files inside protected dirs
+  if (EXEMPT_PATHS.some((exempt) => basename === exempt || normalized.endsWith(exempt))) {
+    return false;
+  }
 
   for (const pattern of PROTECTED_PATHS) {
     if (pattern.endsWith("/")) {

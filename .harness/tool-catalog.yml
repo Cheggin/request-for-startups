@@ -112,6 +112,15 @@ deployment:
     docs: https://docs.railway.app
     when: "Default — already in the stack"
 
+communication:
+  slack:
+    description: Investor updates, agent status, course corrections. Uses Slack Claude Code plugin (pre-installed globally).
+    env_vars: []
+    setup: "Authenticate via /slack:authenticate in any Claude Code session"
+    docs: https://api.slack.com
+    when: "Every startup — investor updates and agent monitoring go to Slack"
+    note: "No API key needed — Slack plugin handles OAuth. Agents use /slack:* skills."
+
 browser-automation:
   browser-use:
     description: Cloud browser automation for social media scraping, competitor monitoring, and web research. Supports persistent profiles (cookies/sessions) for authenticated scraping.
