@@ -22,9 +22,21 @@ Pages that DON'T need generated assets:
 - Documentation — code examples are the visual
 - Settings / dashboard — the UI itself is the content
 
-## Recommended API: Fal.ai + Flux 2 Pro
+## Production Images: Midjourney
 
-Best quality, fastest, cheapest for hero images in 2026.
+Midjourney produces the best quality images for hero sections, illustrations, and brand visuals. **No AI tool matches it for final production assets.**
+
+The harness CANNOT generate Midjourney images programmatically. Instead:
+1. During build, use Fal.ai to generate **prototype placeholder images** so the layout works
+2. Add a `TODO(midjourney)` comment next to every placeholder image in the codebase
+3. Tell the user: "Replace these placeholders with Midjourney-generated images before launch"
+4. The user generates their own via Midjourney (Discord or web) and drops them into `public/images/`
+
+This is a manual step. The harness automates everything it can, but Midjourney quality requires human curation.
+
+## Prototyping API: Fal.ai + Flux 2 Pro
+
+Use Fal.ai for placeholder images during development. Fast, cheap, good enough for layout validation.
 
 ```bash
 npm install @fal-ai/client
@@ -43,18 +55,20 @@ const result = await fal.subscribe("fal-ai/flux-pro/v1.1", {
   },
 });
 
-// result.data.images[0].url — download and save to public/
+// result.data.images[0].url — download and save to public/images/
+// Mark as placeholder: <!-- TODO(midjourney): Replace with production image -->
 ```
 
-## Alternative APIs
+## API Comparison
 
-| Provider | Model | Cost | Best For |
-|----------|-------|------|----------|
-| Fal.ai | Flux 2 Pro | ~$0.05/img | Hero images, photorealism |
-| Fal.ai | Flux Schnell | ~$0.003/img | Fast iterations, drafts |
-| Replicate | SDXL + LoRA | ~$0.02/img | Custom styles, brand-specific |
-| OpenAI | DALL-E 3 | ~$0.04/img | Good text rendering |
-| Recraft | v3 | ~$0.04/img | Brand assets, icons |
+| Provider | Quality | Cost | Use Case |
+|----------|---------|------|----------|
+| **Midjourney** | Best | $10/mo plan | Production hero images, illustrations — USER generates manually |
+| Fal.ai Flux 2 Pro | Good | ~$0.05/img | Prototyping placeholders during build |
+| Fal.ai Flux Schnell | Okay | ~$0.003/img | Fast iterations, layout testing |
+| Replicate SDXL | Good | ~$0.02/img | Custom LoRA styles if needed |
+| OpenAI DALL-E 3 | Okay | ~$0.04/img | Text rendering in images |
+| Recraft v3 | Good | ~$0.04/img | Brand assets, icons |
 
 ## Prompt Engineering for Web Assets
 
