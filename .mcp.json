@@ -8,6 +8,16 @@
         "REPO": "${GITHUB_REPO}",
         "POLL_INTERVAL": "5000"
       }
+    },
+    "webhook-channel": {
+      "command": "bun",
+      "args": ["run", "packages/webhook-receiver/channel/index.ts"],
+      "env": {
+        "CONVEX_URL": "${CONVEX_URL}",
+        "AGENT_TARGET": "",
+        "SOURCE_FILTER": "",
+        "POLL_INTERVAL": "5000"
+      }
     }
   }
 }
