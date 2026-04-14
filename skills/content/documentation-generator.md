@@ -1,55 +1,64 @@
 ---
 name: documentation-generator
-description: Auto-generate user-facing documentation including API reference, user guides, and changelog
-category: content
-allowed-tools:
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - Bash
+description: Auto-generate user-facing documentation including API reference, user guides, and changelog. Use when the user needs a documentation site, wants API docs generated from code comments and type definitions, needs user guides derived from a product spec, or wants a changelog generated from git history.
 ---
 
-## Purpose
+# Documentation Generator
 
-Auto-generate user-facing documentation for the product. This includes API reference from code comments and type definitions, user guides from the product spec, and a changelog from git history. Documentation is published as part of the website or as a separate docs site and is rebuilt on every deploy.
+Auto-generate user-facing documentation for the product: API reference from code, user guides from the product spec, and a changelog from git history. Documentation is published as part of the website or as a separate docs site and rebuilds on every deploy.
 
-## Steps
+## Workflow
 
-1. Scaffold the documentation site structure (e.g., /docs route or separate subdomain).
-2. Parse code comments, JSDoc annotations, and TypeScript type definitions to generate API reference pages.
-3. Read the product spec to identify major features and generate a user guide for each.
-4. Parse git history using conventional commit format to generate a grouped changelog (features, fixes, breaking changes).
-5. Build navigation with sidebar and breadcrumbs across all doc sections.
-6. Add search functionality across all documentation pages.
-7. Include runnable code examples in the API reference.
-8. Generate OpenAPI/Swagger spec if the product has a public API.
-9. Link documentation from README, landing page, and in-app help.
-10. Configure docs to rebuild on every deploy to prevent stale content.
+### 1. Scaffold Documentation Site
 
-## Examples
+Set up the docs infrastructure:
+- Create the `/docs` route or separate subdomain
+- Build navigation with sidebar and breadcrumbs across all sections
+- Add search functionality across all documentation pages
 
-Good:
-- "API reference page for the /users endpoint showing request params, response schema, and a curl example."
-- "User guide for the dashboard feature with screenshots, step-by-step instructions, and common troubleshooting tips."
-- "Changelog grouped by version with sections for features, fixes, and breaking changes."
+### 2. Generate API Reference
 
-Bad:
-- "API reference that lists endpoint names without request/response schemas or examples."
-- "User guide written in developer jargon instead of plain language for end users."
-- "Changelog that is a flat list of commit messages with no grouping or formatting."
+Parse code comments, JSDoc annotations, and TypeScript type definitions to produce API reference pages. Each endpoint or function page should include:
+- Description and purpose
+- Request parameters with types and constraints
+- Response schema with examples
+- Runnable code examples (curl, SDK snippets)
 
-## Checklist
+If the product has a public API, generate an OpenAPI/Swagger spec.
 
-- [ ] Docs site scaffolded with proper routing
-- [ ] API reference auto-generated from code comments and type definitions
-- [ ] User guides generated from product spec, one per major feature
-- [ ] Changelog generated from git history with conventional commit parsing
-- [ ] Search functionality across all documentation
-- [ ] Navigation with sidebar and breadcrumbs
-- [ ] Code examples included in API reference
-- [ ] Docs rebuilt on every deploy with no stale content
-- [ ] Versioning support for API breaking changes
-- [ ] Docs linked from README, landing page, and in-app help
-- [ ] OpenAPI/Swagger spec generated if product has a public API
+### 3. Generate User Guides
+
+Read the product spec to identify major features and generate a user guide for each:
+- Written in plain language for end users (not developer jargon)
+- Step-by-step instructions with screenshots where applicable
+- Common troubleshooting tips per feature
+
+### 4. Generate Changelog
+
+Parse git history using conventional commit format to produce a grouped changelog:
+
+```markdown
+## v1.2.0 (2025-01-15)
+
+### Features
+- Add dark mode support (#123)
+
+### Fixes
+- Fix login redirect on mobile (#124)
+
+### Breaking Changes
+- Remove deprecated /v1/users endpoint (#125)
+```
+
+### 5. Cross-Link and Publish
+
+- Link documentation from README, landing page, and in-app help
+- Add versioning support for API breaking changes
+- Configure docs to rebuild on every deploy to prevent stale content
+
+## Anti-Patterns
+
+- API reference that lists endpoint names without request/response schemas or examples
+- User guide written in developer jargon instead of plain language for end users
+- Changelog that is a flat list of commit messages with no grouping or formatting
+- Documentation that is manually maintained and goes stale after deployment
