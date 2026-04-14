@@ -7,13 +7,17 @@ const FOOTER_LINKS = {
     { href: "/pricing", label: "Pricing" },
   ],
   Resources: [
-    { href: "/docs", label: "Getting Started" },
-    { href: "/docs", label: "CLI Reference" },
-    { href: "/docs", label: "API Reference" },
+    { href: "/docs", label: "Getting started" },
+    { href: "/blog", label: "Blog" },
+    { href: "/docs", label: "API reference" },
   ],
   Links: [
     { href: "https://github.com/json2ts/json2ts", label: "GitHub", external: true },
     { href: "https://www.npmjs.com/package/json2ts", label: "npm", external: true },
+  ],
+  Legal: [
+    { href: "/legal/terms", label: "Terms of service" },
+    { href: "/legal/privacy", label: "Privacy policy" },
   ],
 };
 
