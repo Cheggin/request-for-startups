@@ -153,128 +153,128 @@
     },
     {
       "path": "app/page.tsx",
-      "accessCount": 3,
-      "lastAccessed": 1776139899705,
-      "type": "file"
-    },
-    {
-      "path": "hooks/use-image-converter.ts",
-      "accessCount": 2,
-      "lastAccessed": 1776139900173,
-      "type": "file"
-    },
-    {
-      "path": "lib/constants.ts",
-      "accessCount": 2,
-      "lastAccessed": 1776139900668,
+      "accessCount": 5,
+      "lastAccessed": 1776150004976,
       "type": "file"
     },
     {
       "path": "app/layout.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1776139901347,
+      "accessCount": 4,
+      "lastAccessed": 1776150005228,
+      "type": "file"
+    },
+    {
+      "path": "lib/constants.ts",
+      "accessCount": 4,
+      "lastAccessed": 1776150010805,
+      "type": "file"
+    },
+    {
+      "path": "hooks/use-image-converter.ts",
+      "accessCount": 4,
+      "lastAccessed": 1776150011103,
       "type": "file"
     },
     {
       "path": "app/globals.css",
-      "accessCount": 2,
-      "lastAccessed": 1776139901749,
-      "type": "file"
-    },
-    {
-      "path": "components/converter/format-picker.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1776139915956,
+      "accessCount": 3,
+      "lastAccessed": 1776149958802,
       "type": "file"
     },
     {
       "path": "components/converter/drop-zone.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1776139916202,
+      "accessCount": 3,
+      "lastAccessed": 1776149964106,
+      "type": "file"
+    },
+    {
+      "path": "components/converter/format-picker.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1776149964279,
       "type": "file"
     },
     {
       "path": "package.json",
-      "accessCount": 1,
-      "lastAccessed": 1776139860087,
-      "type": "file"
-    },
-    {
-      "path": "components/converter/quality-slider.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1776139866134,
-      "type": "file"
-    },
-    {
-      "path": "components/converter/image-preview.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1776139866394,
-      "type": "file"
-    },
-    {
-      "path": "components/converter/download-button.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1776139866539,
-      "type": "file"
-    },
-    {
-      "path": "components/converter/conversion-status.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1776139868885,
+      "accessCount": 2,
+      "lastAccessed": 1776149958007,
       "type": "file"
     },
     {
       "path": "lib/conversion-engine.ts",
-      "accessCount": 1,
-      "lastAccessed": 1776139868979,
-      "type": "file"
-    },
-    {
-      "path": "lib/format-file-size.ts",
-      "accessCount": 1,
-      "lastAccessed": 1776139869001,
+      "accessCount": 2,
+      "lastAccessed": 1776149960973,
       "type": "file"
     },
     {
       "path": "lib/get-image-dimensions.ts",
-      "accessCount": 1,
-      "lastAccessed": 1776139869291,
+      "accessCount": 2,
+      "lastAccessed": 1776149961674,
+      "type": "file"
+    },
+    {
+      "path": "lib/format-file-size.ts",
+      "accessCount": 2,
+      "lastAccessed": 1776149961863,
+      "type": "file"
+    },
+    {
+      "path": "components/converter/quality-slider.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1776149964637,
+      "type": "file"
+    },
+    {
+      "path": "components/converter/image-preview.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1776149964916,
+      "type": "file"
+    },
+    {
+      "path": "components/converter/download-button.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1776149965164,
+      "type": "file"
+    },
+    {
+      "path": "components/converter/conversion-status.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1776149965321,
       "type": "file"
     },
     {
       "path": "components/ui/button.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1776139871626,
-      "type": "file"
-    },
-    {
-      "path": "components/ui/card.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1776139871847,
+      "accessCount": 2,
+      "lastAccessed": 1776149968283,
       "type": "file"
     },
     {
       "path": "components/ui/badge.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1776139872350,
+      "accessCount": 2,
+      "lastAccessed": 1776149968387,
       "type": "file"
     },
     {
-      "path": "components/layout/header.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1776139872454,
-      "type": "file"
-    },
-    {
-      "path": "components/layout/footer.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1776139872603,
+      "path": "components/ui/card.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1776149968439,
       "type": "file"
     },
     {
       "path": "app/pricing/page.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1776139875190,
+      "accessCount": 2,
+      "lastAccessed": 1776149968498,
+      "type": "file"
+    },
+    {
+      "path": "components/layout/header.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1776149970623,
+      "type": "file"
+    },
+    {
+      "path": "components/layout/footer.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1776149970792,
       "type": "file"
     },
     {
@@ -287,6 +287,24 @@
       "path": "blog-png-vs-webp-2026.md",
       "accessCount": 1,
       "lastAccessed": 1776139889832,
+      "type": "file"
+    },
+    {
+      "path": "tsconfig.json",
+      "accessCount": 1,
+      "lastAccessed": 1776149971006,
+      "type": "file"
+    },
+    {
+      "path": "next.config.ts",
+      "accessCount": 1,
+      "lastAccessed": 1776149971296,
+      "type": "file"
+    },
+    {
+      "path": "reagan_plan_seo_pages.md",
+      "accessCount": 1,
+      "lastAccessed": 1776150054701,
       "type": "file"
     }
   ],
