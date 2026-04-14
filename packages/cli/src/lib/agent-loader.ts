@@ -6,9 +6,9 @@
  * Fixes #19: agents get category-specific skills.
  */
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from "fs";
 import { join } from "path";
-import { HARNESS_DIR, ROOT_DIR } from "./constants.js";
+import { HARNESS_DIR, ROOT_DIR, SKILLS_DIR } from "./constants.js";
 import { loadCategories } from "./config.js";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
@@ -33,21 +33,68 @@ interface AgentConfig {
 
 // ─── Skill Discovery ───────────────────────────────────────────────────────
 
+interface SkillInfo {
+  name: string;
+  description: string;
+}
+
 /**
  * Get all skill names from the skills/ directory.
  * Skills are in plugin format: skills/<name>/SKILL.md
  */
 function getSkillNames(): string[] {
-  const skillsDir = join(ROOT_DIR, "skills");
-  if (!existsSync(skillsDir)) return [];
+  if (!existsSync(SKILLS_DIR)) return [];
 
-  const { readdirSync } = require("fs");
-  const dirs = readdirSync(skillsDir, { withFileTypes: true })
+  const dirs = readdirSync(SKILLS_DIR, { withFileTypes: true })
     .filter((d: any) => d.isDirectory());
 
   return dirs
-    .filter((d: any) => existsSync(join(skillsDir, d.name, "SKILL.md")))
+    .filter((d: any) => existsSync(join(SKILLS_DIR, d.name, "SKILL.md")))
     .map((d: any) => d.name);
+}
+
+/**
+ * Read skill description from SKILL.md frontmatter.
+ * Returns the 'description' field, truncated for prompt brevity.
+ */
+function getSkillDescription(skillName: string): string {
+  const skillFile = join(SKILLS_DIR, skillName, "SKILL.md");
+  if (!existsSync(skillFile)) return "";
+
+  try {
+    const content = readFileSync(skillFile, "utf-8");
+    const fmMatch = content.match(/^---\n([\s\S]*?)\n---/);
+    if (!fmMatch) return "";
+
+    for (const line of fmMatch[1].split("\n")) {
+      const colonIdx = line.indexOf(":");
+      if (colonIdx > 0) {
+        const key = line.slice(0, colonIdx).trim();
+        if (key === "description") {
+          const val = line.slice(colonIdx + 1).trim();
+          // Truncate long descriptions to first sentence or 120 chars
+          const firstSentence = val.split(". ")[0];
+          return firstSentence.length > 120
+            ? firstSentence.slice(0, 117) + "..."
+            : firstSentence;
+        }
+      }
+    }
+  } catch {
+    // Skill file unreadable — skip silently
+  }
+  return "";
+}
+
+/**
+ * Get skill names with descriptions for a list of skill names.
+ * Reads each SKILL.md frontmatter at spawn time (not hardcoded).
+ */
+function getSkillManifest(skillNames: string[]): SkillInfo[] {
+  return skillNames.map((name) => ({
+    name,
+    description: getSkillDescription(name),
+  }));
 }
 
 /**
@@ -174,20 +221,50 @@ export function getAgentConfig(agentName: string): AgentConfig | null {
 
 /**
  * Generate a system prompt snippet listing an agent's skills and ground truth.
+ *
+ * Skills are read from skills/ at spawn time with descriptions from SKILL.md
+ * frontmatter. Output uses <Available_Skills> tags with /startup-harness: routes
+ * so agents invoke via the Skill tool, never improvise.
+ *
+ * Fixes #34: inject skill routes into agent spawn prompts.
  */
 export function generateAgentPrompt(agentName: string): string {
   const config = getAgentConfig(agentName);
   if (!config) return "";
 
+  // Read descriptions from SKILL.md frontmatter at spawn time
+  const manifest = getSkillManifest(config.skills);
+
+  const skillLines = manifest.map((s) =>
+    s.description
+      ? `/startup-harness:${s.name} — ${s.description}`
+      : `/startup-harness:${s.name}`
+  );
+
+  // Orchestration agents also get skill-creator
+  const isOrchestration = config.category === "orchestration";
+
+  // Ground truth rules may be strings or objects (YAML "Key: value" parses as {Key: "value"})
+  const formatRule = (r: string | Record<string, string>): string => {
+    if (typeof r === "string") return r;
+    return Object.entries(r).map(([k, v]) => `${k}: ${v}`).join(", ");
+  };
+
   const lines: string[] = [
     `You are the ${agentName} agent (${config.category} category).`,
     "",
     "## Ground Truth Rules (non-negotiable)",
-    ...config.groundTruth.map((r) => `- ${r}`),
+    ...config.groundTruth.map((r) => `- ${formatRule(r)}`),
     "",
-    "## Available Skills",
-    `You have ${config.skills.length} skills loaded. Use them by following the instructions in each SKILL.md:`,
-    ...config.skills.map((s) => `- ${s}`),
+    "<Available_Skills>",
+    "You MUST invoke these via slash command. NEVER implement what a skill does yourself.",
+    "Use the Skill tool with the exact /startup-harness:<skill-name> route shown below.",
+    "",
+    ...skillLines,
+    ...(isOrchestration
+      ? ["", "/startup-harness:skill-creator — create new skills for the harness"]
+      : []),
+    "</Available_Skills>",
   ];
 
   return lines.join("\n");

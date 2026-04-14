@@ -12,6 +12,7 @@
 import { readFileSync, existsSync } from "fs";
 import { parse as parseYaml } from "yaml";
 import { LOOPS_FILE, ROOT_DIR } from "../lib/constants.js";
+import { generateAgentPrompt } from "../lib/agent-loader.js";
 import {
   listPanes,
   spawnPane,
@@ -66,11 +67,13 @@ const CLAUDE_LOAD_WAIT_SECONDS = 15;
  * This is what gets typed into the Claude Code session after it loads.
  */
 function buildLoopPrompt(name: string, loop: LoopDef): string {
+  // Inject the agent's full skill manifest so the loop knows its available skills
+  const agentSkills = generateAgentPrompt(loop.agent);
+
   const lines = [
     loop.prompt.trim(),
     "",
     `You are the ${name} loop (agent: ${loop.agent}, type: ${loop.loop_type}).`,
-    `Run /startup-harness: skills for all operations.`,
     `Primary skill: /startup-harness:${loop.skill.replace("startup-harness:", "")}`,
     loop.creates_issues
       ? "Create GitHub Issues following .harness/issue-schema.md for all findings."
@@ -78,6 +81,8 @@ function buildLoopPrompt(name: string, loop: LoopDef): string {
     loop.scope ? `Scope: ${loop.scope.join(", ")}` : "",
     "NEVER STOP. Run continuously until manually interrupted.",
     "On context reset: commit all work, write state to GitHub Issues, restart.",
+    "",
+    agentSkills,
   ];
 
   return lines.filter(Boolean).join(" ");
