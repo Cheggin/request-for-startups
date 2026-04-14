@@ -36,6 +36,9 @@ error-tracking:
     setup: "npx @sentry/wizard@latest -i nextjs"
     docs: https://docs.sentry.io/platforms/javascript/guides/nextjs/
     when: "Any deployed startup — error tracking is always needed"
+    mcp_server: "https://mcp.sentry.dev/mcp"
+    mcp_auth: "OAuth (automatic via claude)"
+    mcp_note: "Agents should use Sentry MCP directly — no webhook needed. Add to .mcp.json for any agent that needs error data."
 
 email:
   resend:
