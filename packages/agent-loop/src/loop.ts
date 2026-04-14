@@ -295,11 +295,16 @@ async function runMode(
   config: LoopConfig,
   hooks: HookSet,
   emit: LoopEventSink,
+  extraContext?: string,
 ): Promise<ModeResult> {
   emit({ type: "mode_start", mode });
 
   const modePrompt = MODE_PROMPTS[mode];
-  const systemPrompt = buildSystemPrompt(agent, skills, modePrompt, config.task);
+  let systemPrompt = buildSystemPrompt(agent, skills, modePrompt, config.task);
+
+  if (extraContext) {
+    systemPrompt += "\n\n## Prior Knowledge (from learning system)\n" + extraContext;
+  }
 
   let output: string;
   let attempt = 0;
@@ -354,6 +359,8 @@ export async function runLoop(
   agentName: string,
   emit: LoopEventSink = () => {},
 ): Promise<ModeResult[]> {
+  const startTime = Date.now();
+
   // 1. Load agent definition
   const agent = loadAgent(config.agentsDir, agentName);
 
@@ -372,21 +379,45 @@ export async function runLoop(
   // 5. Initialize plateau detector
   const detector = new PlateauDetector();
 
+  // 6. Pre-task learning: query knowledge wiki for relevant context
+  const cwd = config.cwd ?? process.cwd();
+  const learningCategory = resolveAgentCategory(agentName);
+  let learningContext: LearningContext | undefined;
+
+  try {
+    learningContext = await preTaskLearning(learningCategory, config.task, cwd);
+    if (learningContext.contextToInject) {
+      emit({
+        type: "subprocess_output",
+        data: `[learning] Pre-task context loaded: ${learningContext.relevantFindings.length} findings, ${learningContext.recentLogEntries.length} log entries`,
+      });
+    }
+  } catch {
+    // Learning is best-effort — never block the main loop
+  }
+
   emit({ type: "loop_start", agent: agent.name, task: config.task });
 
   const results: ModeResult[] = [];
   let totalTurns = 0;
+  const filesChanged: string[] = [];
 
   for (const mode of modes) {
     if (totalTurns >= maxTurns) {
       emit({ type: "loop_end", reason: "max_turns_reached", totalTurns });
-      return results;
+      break;
     }
 
     totalTurns++;
     emit({ type: "turn", turn: totalTurns, maxTurns });
 
-    const result = await runMode(mode, agent, skills, config, hooks, emit);
+    // Inject learning context into the first mode's system prompt
+    const extraContext =
+      totalTurns === 1 && learningContext?.contextToInject
+        ? learningContext.contextToInject
+        : undefined;
+
+    const result = await runMode(mode, agent, skills, config, hooks, emit, extraContext);
     results.push(result);
 
     // Record progress and check for plateau
@@ -400,17 +431,63 @@ export async function runLoop(
 
       if (signal === "plateau") {
         emit({ type: "loop_end", reason: "plateau_detected", totalTurns });
-        return results;
+        break;
       }
       // "stuck" = escalate but continue for now
     }
 
     if (!result.completed) {
       emit({ type: "loop_end", reason: "mode_failed", totalTurns });
-      return results;
+      break;
     }
   }
 
-  emit({ type: "loop_end", reason: "completed", totalTurns });
+  if (results.length === modes.length && results.every((r) => r.completed)) {
+    emit({ type: "loop_end", reason: "completed", totalTurns });
+  }
+
+  // 7. Post-task learning: ingest results into knowledge wiki
+  const allCompleted = results.every((r) => r.completed);
+  try {
+    await postTaskLearning(
+      learningCategory,
+      {
+        success: allCompleted,
+        duration_ms: Date.now() - startTime,
+        turns_used: totalTurns,
+        filesChanged,
+        lessonsLearned: results
+          .map((r) => r.summary)
+          .filter((s) => s.length > 0)
+          .join("; ")
+          .slice(0, 500),
+      },
+      cwd,
+    );
+  } catch {
+    // Learning is best-effort — never block the main loop
+  }
+
   return results;
+}
+
+// ─── Agent Category Resolver ────────────────────────────────────────────────
+
+/**
+ * Map agent names to knowledge categories for learning hooks.
+ */
+function resolveAgentCategory(agentName: string): string {
+  const AGENT_CATEGORY_MAP: Record<string, string> = {
+    backend: "coding",
+    website: "coding",
+    "slop-cleaner": "coding",
+    commander: "operations",
+    ops: "operations",
+    growth: "growth",
+    writing: "content",
+    researcher: "general",
+    "harness-researcher": "general",
+  };
+
+  return AGENT_CATEGORY_MAP[agentName] ?? "general";
 }

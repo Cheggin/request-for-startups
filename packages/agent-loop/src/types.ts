@@ -117,6 +117,32 @@ export interface LoopConfig {
   task: string;
 }
 
+// ─── Learning System ────────────────────────────────────────────────────────
+
+export interface LearningContext {
+  /** Combined context string ready for injection into system prompt */
+  contextToInject: string;
+  /** Raw index content from the knowledge base */
+  indexContent: string;
+  /** Relevant wiki page contents (truncated) */
+  relevantFindings: string[];
+  /** Recent log entries from the category */
+  recentLogEntries: string[];
+}
+
+export interface PostTaskResult {
+  /** Whether the task completed successfully */
+  success: boolean;
+  /** Total wall-clock time in milliseconds */
+  duration_ms: number;
+  /** Number of turns/modes used */
+  turns_used: number;
+  /** Files changed during execution */
+  filesChanged: string[];
+  /** Free-text summary of lessons learned */
+  lessonsLearned: string;
+}
+
 // ─── Loop Events ─────────────────────────────────────────────────────────────
 
 export type LoopEvent =

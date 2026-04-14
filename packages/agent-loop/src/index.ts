@@ -26,7 +26,20 @@ export {
   FATAL_PATTERNS,
   TRANSIENT_PATTERNS,
 } from "./error-classifier.js";
-export { runLoop, buildSystemPrompt, spawnClaude } from "./loop.js";
+export { runLoop, buildSystemPrompt, spawnClaude, preTaskLearning, postTaskLearning } from "./loop.js";
+export {
+  extractLearnings,
+  proposeSkillUpdate,
+  shouldUpdateSkill,
+  checkIsSimplification,
+  SKILL_UPDATE_CONFIDENCE_THRESHOLD,
+  LEARNING_SIGNAL_PATTERNS,
+} from "./self-improve.js";
+export type {
+  ExtractedLearning,
+  SkillUpdateProposal,
+  TranscriptAnalysis,
+} from "./self-improve.js";
 export type {
   AgentDefinition,
   LoadedSkill,
@@ -42,4 +55,6 @@ export type {
   ClassifiedError,
   LoopConfig,
   LoopEvent,
+  LearningContext,
+  PostTaskResult,
 } from "./types.js";
