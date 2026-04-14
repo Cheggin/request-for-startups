@@ -1,56 +1,47 @@
 ---
 name: error-tracking
-description: Integrate error tracking with Sentry for frontend and backend, with routing, deduplication, and spike detection
-category: operations
-allowed-tools:
-  - Bash
-  - Read
-  - Write
-  - Edit
-  - Grep
-  - Glob
+description: Integrate error tracking with Sentry for frontend and backend applications. Capture, classify, deduplicate, and alert on errors with deploy-version tagging.
 ---
 
-## Purpose
+# Error Tracking
 
-Integrate error tracking (Sentry or similar) into deployed applications to capture frontend and backend errors, route them to the appropriate agent for resolution, deduplicate error reports into GitHub Issues, and detect error rate spikes that may indicate regressions.
+Set up Sentry-based error tracking across frontend and backend. Capture errors, deduplicate into issues, detect spikes, and route to the right owner.
 
-## Steps
+## Setup
 
-1. Create a Sentry project during repository setup and configure the DSN in environment variables.
-2. Install and configure the Sentry SDK in the frontend app with source map uploads and release tracking.
-3. Install and configure the Sentry SDK in the backend/API layer for server-side error capture.
-4. Classify errors by source: frontend (React errors, network failures) vs. backend (API errors, database errors, unhandled exceptions).
-5. Route frontend errors to the website agent and backend errors to the backend agent for resolution.
-6. On each new error group, create a GitHub Issue with the stack trace, error context, breadcrumbs, and affected URL.
-7. Deduplicate similar errors into a single Issue, updating the count and last-seen timestamp.
-8. Classify error severity as critical (app crash, data loss), warning (degraded functionality), or info (handled error logged for visibility).
-9. Post to Slack immediately for critical errors and trigger incident response if the error rate spikes.
-10. Track errors per minute and alert when the rate exceeds 3x the baseline within a 5-minute window.
-11. Tag errors with the deploy version to identify regressions introduced by specific releases.
+1. Create a Sentry project and store the DSN in environment variables.
+2. Install the Sentry SDK in the frontend app. Enable source map uploads and release tracking.
+3. Install the Sentry SDK in the backend/API layer for server-side error capture.
 
-## Examples
+## Classification and Routing
 
-Good:
-- "Set up Sentry for the frontend with source maps so stack traces are readable in production."
-- "Create a GitHub Issue for the new TypeError group with stack trace and breadcrumbs attached."
-- "Alert on error rate spike: 45 errors/min vs. 12 errors/min baseline in the last 5 minutes."
+4. Classify every error by source: frontend (React errors, network failures) or backend (API errors, database errors, unhandled exceptions).
+5. Classify severity: **critical** (app crash, data loss), **warning** (degraded functionality), **info** (handled error logged for visibility).
+6. Route frontend errors to the website owner. Route backend errors to the backend owner.
 
-Bad:
-- "Create a separate GitHub Issue for every single occurrence of the same error." (Errors must be deduplicated.)
-- "Ignore backend errors and only track frontend crashes." (Both frontend and backend must be tracked.)
-- "Wait until someone checks the dashboard to notice a spike." (Spikes must trigger automatic alerts.)
+## Deduplication and Issue Creation
 
-## Checklist
+7. On each new error group, create a GitHub Issue with: stack trace, error context, breadcrumbs, and affected URL.
+8. Deduplicate similar errors into a single Issue. Update the occurrence count and last-seen timestamp on each new hit.
+9. Tag every error with the deploy version to identify regressions from specific releases.
 
-- [ ] Sentry project is created and DSN is configured in environment variables
-- [ ] Frontend Sentry SDK is installed with source map uploads and release tracking
-- [ ] Backend Sentry SDK is installed for server-side error capture
-- [ ] Errors are classified by source (frontend vs. backend)
-- [ ] Errors are routed to the appropriate agent (website or backend)
-- [ ] New error groups create a GitHub Issue with stack trace, context, and breadcrumbs
-- [ ] Similar errors are deduplicated into a single Issue with count and last-seen updates
-- [ ] Errors are classified by severity (critical, warning, info)
-- [ ] Critical errors trigger immediate Slack notification
-- [ ] Error rate monitoring alerts on spikes exceeding 3x baseline in 5 minutes
-- [ ] Errors are tagged with deploy version for regression identification
+## Spike Detection and Alerting
+
+10. Track errors per minute. Alert when the rate exceeds 3x baseline within a 5-minute window.
+11. Post to Slack immediately for critical errors. Trigger incident response on confirmed spikes.
+
+## Anti-patterns
+
+- Creating a separate GitHub Issue for every occurrence of the same error. Deduplicate.
+- Tracking only frontend or only backend. Both are required.
+- Waiting for someone to check a dashboard to notice spikes. Alerts must be automatic.
+- Returning generic error messages without stack traces or context.
+
+## Validation
+
+- Sentry DSN is configured and receiving events from both frontend and backend.
+- Source maps produce readable stack traces in production.
+- A triggered test error creates a GitHub Issue with full context.
+- Duplicate errors update the existing Issue instead of creating a new one.
+- A simulated error spike fires a Slack alert within 5 minutes.
+- Errors are tagged with the correct deploy version.
