@@ -97,15 +97,27 @@
   },
   "hotPaths": [
     {
-      "path": "",
-      "accessCount": 3,
-      "lastAccessed": 1776138032841,
-      "type": "directory"
+      "path": "app/page.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1776138250282,
+      "type": "file"
     },
     {
       "path": "__tests__/counter.test.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1776138253831,
+      "type": "file"
+    },
+    {
+      "path": "",
+      "accessCount": 4,
+      "lastAccessed": 1776138239446,
+      "type": "directory"
+    },
+    {
+      "path": "components/increment-button.tsx",
       "accessCount": 3,
-      "lastAccessed": 1776138051519,
+      "lastAccessed": 1776138243366,
       "type": "file"
     },
     {
@@ -121,18 +133,6 @@
       "type": "file"
     },
     {
-      "path": "components/increment-button.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1776138025996,
-      "type": "file"
-    },
-    {
-      "path": "app/page.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1776138026183,
-      "type": "file"
-    },
-    {
       "path": "tsconfig.json",
       "accessCount": 2,
       "lastAccessed": 1776138034358,
@@ -142,6 +142,12 @@
       "path": "vitest.config.ts",
       "accessCount": 2,
       "lastAccessed": 1776138038318,
+      "type": "file"
+    },
+    {
+      "path": "components/reset-button.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1776138247953,
       "type": "file"
     }
   ],

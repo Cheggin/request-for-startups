@@ -25,4 +25,16 @@ describe('Counter', () => {
     const display = screen.getByTestId('count-display')
     expect(display.textContent).toBe('2')
   })
+
+  it('resets count to 0 after incrementing 3 times', () => {
+    render(<CounterPage />)
+    const incrementButton = screen.getByTestId('increment-button')
+    const resetButton = screen.getByTestId('reset-button')
+    fireEvent.click(incrementButton)
+    fireEvent.click(incrementButton)
+    fireEvent.click(incrementButton)
+    expect(screen.getByTestId('count-display').textContent).toBe('3')
+    fireEvent.click(resetButton)
+    expect(screen.getByTestId('count-display').textContent).toBe('0')
+  })
 })
