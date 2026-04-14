@@ -1,59 +1,77 @@
 ---
 name: blog-scaffolder
-description: Scaffold SEO-optimized blog posts derived from product specs and competitor research
-category: content
-allowed-tools:
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - Bash
-  - WebSearch
+description: Scaffold SEO-optimized blog post systems derived from product specs and competitor research. Use when the user needs a blog section for their startup website, wants to generate blog content from product specs, needs SEO-optimized posts with proper metadata and heading structure, or wants a complete blog infrastructure with RSS, sitemap, and pagination.
 ---
 
-## Purpose
+# Blog Scaffolder
 
-Generate a complete blog post system for a startup website. Topics are derived from the product spec and competitor research. Each post is SEO-optimized with proper metadata, heading structure, and internal linking. The blog integrates into the existing site and supports ongoing content publishing.
+Generate a complete blog post system for a startup website. Topics are derived from the product spec and competitor research. Each post is SEO-optimized with proper metadata, heading structure, and internal linking.
 
-## Steps
+## Workflow
 
-1. Read the product spec and competitor research to identify content gaps and target keywords.
-2. Generate a list of blog topics targeting long-tail keywords relevant to the product category.
-3. Scaffold the blog infrastructure (e.g., /blog route, MDX/markdown system with frontmatter support).
-4. For each blog post, create a markdown file with:
-   - Title optimized for the target keyword
-   - Meta description under 160 characters
-   - Proper heading hierarchy (H1 > H2 > H3)
-   - Internal links to product pages and related posts
-   - Open Graph metadata for social sharing
-5. Create a blog index page with pagination and post previews.
-6. Add the blog to the site navigation and link from the landing page.
-7. Generate an RSS feed and include blog posts in sitemap.xml.
-8. Validate all posts for readability, grammar, and factual accuracy.
+### 1. Research and Topic Generation
 
-## Examples
+Read the product spec and competitor research to identify content gaps and target keywords. Generate a list of blog topics targeting long-tail keywords relevant to the product category.
 
-Good:
-- "A blog post with a clear H1, descriptive meta, three H2 sections, and links to the product pricing page."
-- "Blog index at /blog showing 10 posts per page with title, excerpt, date, and read-time estimate."
-- "RSS feed at /blog/rss.xml containing all published posts with full content."
+When identifying topics, prioritize:
+- Keywords competitors rank for but the product doesn't cover
+- Questions potential users ask about the problem space
+- Technical topics that demonstrate domain expertise
 
-Bad:
-- "A blog post with no meta description and all content under a single heading."
-- "Blog posts with no internal links to the product or other posts."
-- "Hard-coded blog post list with no pagination or dynamic generation."
+### 2. Scaffold Blog Infrastructure
 
-## Checklist
+Set up the blog system within the existing site:
+- Create the `/blog` route with MDX or markdown support and frontmatter parsing
+- Create a blog index page with pagination and post previews (title, excerpt, date, read-time estimate)
+- Add the blog to site navigation and link from the landing page
 
-- [ ] Blog section added to the website (e.g., /blog route)
-- [ ] MDX or markdown-based blog post system with frontmatter
-- [ ] Topic generation from product spec keywords and competitor gaps
-- [ ] SEO optimization with target keyword, meta description, and heading structure
-- [ ] Internal linking to product pages and other blog posts
-- [ ] Blog post index page with pagination
-- [ ] Blog linked from landing page navigation
-- [ ] RSS feed generated for blog posts
-- [ ] Blog posts included in sitemap.xml
-- [ ] Open Graph images generated per post
-- [ ] Content quality check for readability, grammar, and factual accuracy
+### 3. Create Individual Posts
+
+For each blog post, create a markdown file with:
+
+```markdown
+---
+title: "Keyword-optimized title"
+description: "Meta description under 160 characters"
+date: "YYYY-MM-DD"
+author: "Author Name"
+tags: ["relevant", "keywords"]
+image: "/blog/og/post-slug.png"
+---
+
+# H1 Title (matches frontmatter title)
+
+## H2 Section (3-5 per post)
+
+### H3 Subsection (as needed)
+```
+
+Each post must include:
+- Title optimized for the target keyword
+- Meta description under 160 characters
+- Proper heading hierarchy (H1 > H2 > H3, no skipped levels)
+- Internal links to product pages and related posts
+- Open Graph metadata for social sharing
+
+### 4. Feeds and Discovery
+
+- Generate an RSS feed at `/blog/rss.xml` containing all published posts
+- Include blog posts in `sitemap.xml`
+- Add structured data (JSON-LD) for blog posts
+
+### 5. Quality Validation
+
+Validate all posts for:
+- Heading hierarchy correctness (no skipped levels)
+- Meta description length (under 160 characters)
+- Internal link presence (at least one per post)
+- Image alt text on all images
+- Readability and factual accuracy
+
+## Anti-Patterns
+
+- Posts with no meta description or all content under a single heading
+- Blog posts with no internal links to the product or other posts
+- Hard-coded blog post list with no pagination or dynamic generation
+- Identical Open Graph images across all posts
+- Keyword stuffing instead of natural language
