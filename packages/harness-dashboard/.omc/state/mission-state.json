@@ -1,0 +1,53 @@
+{
+  "updatedAt": "2026-04-14T20:04:24.752Z",
+  "missions": [
+    {
+      "id": "session:25d21533-5069-4f39-907a-5d63bbf6ed0c:none",
+      "source": "session",
+      "name": "none",
+      "objective": "Session mission",
+      "createdAt": "2026-04-14T20:03:46.092Z",
+      "updatedAt": "2026-04-14T20:04:24.752Z",
+      "status": "done",
+      "workerCount": 1,
+      "taskCounts": {
+        "total": 1,
+        "pending": 0,
+        "blocked": 0,
+        "inProgress": 0,
+        "completed": 1,
+        "failed": 0
+      },
+      "agents": [
+        {
+          "name": "claude-code-guide:a1bfd16",
+          "role": "claude-code-guide",
+          "ownership": "a1bfd16319eb17a27",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-04-14T20:04:24.752Z"
+        }
+      ],
+      "timeline": [
+        {
+          "id": "session-start:a1bfd16319eb17a27:2026-04-14T20:03:46.092Z",
+          "at": "2026-04-14T20:03:46.092Z",
+          "kind": "update",
+          "agent": "claude-code-guide:a1bfd16",
+          "detail": "started claude-code-guide:a1bfd16",
+          "sourceKey": "session-start:a1bfd16319eb17a27"
+        },
+        {
+          "id": "session-stop:a1bfd16319eb17a27:2026-04-14T20:04:24.752Z",
+          "at": "2026-04-14T20:04:24.752Z",
+          "kind": "completion",
+          "agent": "claude-code-guide:a1bfd16",
+          "detail": "completed",
+          "sourceKey": "session-stop:a1bfd16319eb17a27"
+        }
+      ]
+    }
+  ]
+}

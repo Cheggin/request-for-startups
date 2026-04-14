@@ -1,0 +1,7 @@
+{
+  "tool_name": "Read",
+  "tool_input_preview": "{\"file_path\":\"/Users/reagan/.claude\"}",
+  "error": "EISDIR: illegal operation on a directory, read '/Users/reagan/.claude'",
+  "timestamp": "2026-04-14T20:04:14.809Z",
+  "retry_count": 1
+}
