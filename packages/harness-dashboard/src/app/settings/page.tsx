@@ -14,7 +14,7 @@ export default function SettingsPage() {
 
   return (
     <div className="px-6 py-5 max-w-6xl space-y-8">
-      <h1 className="text-xl font-semibold text-text-primary leading-tight">Settings</h1>
+      <h1 className="text-xl heading-page text-text-primary leading-tight">Settings</h1>
 
       <section>
         <div className="flex items-center justify-between mb-2">

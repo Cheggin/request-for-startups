@@ -14,7 +14,7 @@ export default function GrowthPage() {
   return (
     <div className="px-6 py-5 max-w-6xl">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-semibold text-text-primary leading-tight">Growth</h1>
+        <h1 className="text-xl heading-page text-text-primary leading-tight">Growth</h1>
         <span className="text-xs uppercase tracking-wider text-text-tertiary">
           {snapshot.source === "cache" ? "Cached metrics" : "No metrics"}
         </span>

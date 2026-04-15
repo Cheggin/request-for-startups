@@ -21,7 +21,7 @@ export default function DeployPage() {
   return (
     <div className="px-6 py-5 max-w-6xl">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-semibold text-text-primary leading-tight">Deployments</h1>
+        <h1 className="text-xl heading-page text-text-primary leading-tight">Deployments</h1>
         {deployments.length > 0 && (
           <span className="text-sm text-text-tertiary tabular">{deployments.length} result{deployments.length === 1 ? "" : "s"}</span>
         )}

@@ -61,7 +61,7 @@ export function Sidebar() {
   return (
     <aside className="w-48 shrink-0 border-r border-border bg-surface flex flex-col h-full">
       <div className="px-4 py-4 border-b border-border-subtle">
-        <span className="text-md font-semibold tracking-tight text-text-primary">
+        <span className="text-md heading-page text-text-primary">
           Harness
         </span>
       </div>

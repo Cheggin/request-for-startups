@@ -26,7 +26,7 @@ export default function LoopsPage() {
   return (
     <div className="px-6 py-5 max-w-6xl">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-semibold text-text-primary leading-tight">Loops</h1>
+        <h1 className="text-xl heading-page text-text-primary leading-tight">Loops</h1>
         <button onClick={refetch} className="text-sm font-medium text-text-tertiary hover:text-text-primary border border-border px-3 py-1.5 rounded-md hover:bg-surface-hover transition-colors">
           Refresh
         </button>

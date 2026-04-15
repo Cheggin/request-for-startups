@@ -64,7 +64,7 @@ export default function IssuesPage() {
   return (
     <div className="px-6 py-5 space-y-6 max-w-6xl">
       <div className="flex items-center gap-3">
-        <h1 className="text-xl font-semibold text-text-primary">Issues</h1>
+        <h1 className="text-xl heading-page text-text-primary">Issues</h1>
         {!loading && (
           <span className="text-sm font-medium text-text-tertiary tabular">
             {totalOpen} open

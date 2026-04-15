@@ -35,7 +35,7 @@ export default function OverviewPage() {
 
   return (
     <div className="px-6 py-5 max-w-6xl">
-      <h1 className="text-xl font-semibold text-text-primary leading-tight mb-6">Overview</h1>
+      <h1 className="text-xl heading-page text-text-primary leading-tight mb-6">Overview</h1>
 
       {/* Traffic chart — primary visualization */}
       <section className="mb-8">
