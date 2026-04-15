@@ -37,6 +37,9 @@ const EXEMPT_PATHS: string[] = [
   "idea.md",
   "state.json",
   "alignment-report.md",
+  "knowledge/",
+  "handoffs/",
+  "signals/",
 ];
 
 const PROTECTED_PATHS: string[] = [
@@ -68,8 +71,14 @@ function isProtected(filePath: string): boolean {
   const normalized = filePath.replace(/\\/g, "/");
   const basename = normalized.split("/").pop() || "";
 
-  // Check exemptions first — data files inside protected dirs
-  if (EXEMPT_PATHS.some((exempt) => basename === exempt || normalized.endsWith(exempt))) {
+  // Check exemptions first — data files and subdirs inside protected dirs
+  if (EXEMPT_PATHS.some((exempt) => {
+    if (exempt.endsWith("/")) {
+      // Directory prefix exemption (e.g., "knowledge/" exempts .harness/knowledge/*)
+      return normalized.includes("/" + exempt) || normalized.includes(exempt);
+    }
+    return basename === exempt || normalized.endsWith(exempt);
+  })) {
     return false;
   }
 
