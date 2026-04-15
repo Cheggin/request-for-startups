@@ -3,14 +3,21 @@
  *
  * Subcommands:
  *   list              — all agents with model, level, status, current task
- *   spawn <name> <prompt> — spawn interactive claude session with full agent config
+ *   spawn <name> [--runtime <runtime>] [prompt] — spawn interactive agent session
  *   kill <name>       — kill agent pane
  *   logs <name>       — read recent output from agent's tmux pane
  */
 
 import { loadAgents } from "../lib/config.js";
 import { loadState, recordAgentActivity } from "../lib/state.js";
-import { generateAgentPrompt } from "../lib/agent-loader.js";
+import { buildAgentSystemPrompt } from "../lib/claude.js";
+import {
+  buildRuntimeLaunchCommand,
+  buildSessionBootstrapPrompt,
+  getSupportedRuntimes,
+  isAgentRuntime,
+  resolveAgentRuntime,
+} from "../lib/runtime.js";
 import {
   listPanes,
   spawnPane,
@@ -22,6 +29,7 @@ import {
   sendKeys,
   waitForReady,
   verifyRunning,
+  getTmuxSessionName,
 } from "../lib/tmux.js";
 import {
   heading,
@@ -34,9 +42,7 @@ import {
   muted,
   info,
 } from "../lib/format.js";
-import { ROOT_DIR, AGENTS_DIR } from "../lib/constants.js";
-import { readFileSync, existsSync } from "fs";
-import { join } from "path";
+import { ROOT_DIR } from "../lib/constants.js";
 
 // ─── Subcommand Routing ─────────────────────────────────────────────────────
 
@@ -55,7 +61,7 @@ export function run(args: string[]): void {
       console.log(heading("harness agent"));
       console.log("  Usage:");
       console.log("    harness agent list                    — list all agents");
-      console.log("    harness agent spawn <name> <prompt>   — spawn agent session");
+      console.log("    harness agent spawn <name> [--runtime <runtime>] [prompt] — spawn agent session");
       console.log("    harness agent kill <name>             — kill agent pane");
       console.log("    harness agent logs <name>             — read agent output");
       console.log();
@@ -97,10 +103,34 @@ function listAgents(): void {
 
 // ─── spawn ──────────────────────────────────────────────────────────────────
 
+function extractRuntimeFlag(args: string[]): {
+  runtime: string | null;
+  remainingArgs: string[];
+  errorMessage: string | null;
+} {
+  const remainingArgs = [...args];
+  const flagIndex = remainingArgs.indexOf("--runtime");
+  if (flagIndex === -1) {
+    return { runtime: null, remainingArgs, errorMessage: null };
+  }
+
+  const runtime = remainingArgs[flagIndex + 1];
+  if (!runtime) {
+    return {
+      runtime: null,
+      remainingArgs: [],
+      errorMessage: "  Missing value for --runtime. Supported: claude, codex, gemini",
+    };
+  }
+
+  remainingArgs.splice(flagIndex, 2);
+  return { runtime, remainingArgs, errorMessage: null };
+}
+
 function spawnAgent(args: string[]): void {
   const name = args[0];
   if (!name) {
-    console.log(error("  Usage: harness agent spawn <name> <prompt>"));
+    console.log(error("  Usage: harness agent spawn <name> [--runtime <runtime>] [prompt]"));
     return;
   }
 
@@ -109,7 +139,21 @@ function spawnAgent(args: string[]): void {
     return;
   }
 
-  const prompt = args.slice(1).join(" ");
+  const { runtime: runtimeOverride, remainingArgs, errorMessage } = extractRuntimeFlag(args.slice(1));
+  if (errorMessage) {
+    console.log(error(errorMessage));
+    return;
+  }
+  if (runtimeOverride && !isAgentRuntime(runtimeOverride)) {
+    console.log(
+      error(
+        `  Unsupported runtime '${runtimeOverride}'. Supported: ${getSupportedRuntimes().join(", ")}`
+      )
+    );
+    return;
+  }
+
+  const prompt = remainingArgs.join(" ");
   const agents = loadAgents();
   const agent = agents.find((a) => a.name === name);
 
@@ -119,57 +163,40 @@ function spawnAgent(args: string[]): void {
     return;
   }
 
-  // Build the full system prompt from the agent's .md file
-  const agentFile = join(AGENTS_DIR, `${name}.md`);
-  let systemPrompt = "";
-  if (existsSync(agentFile)) {
-    const content = readFileSync(agentFile, "utf-8");
-    // Extract body after frontmatter
-    const match = content.match(/^---\n[\s\S]*?\n---\n([\s\S]*)$/);
-    systemPrompt = match ? match[1].trim() : content;
-  }
-
-  // Generate agent prompt with ground truth + skills as /startup-harness: slash commands
-  const agentPrompt = generateAgentPrompt(name);
-
   ensureSession();
+  const runtime = resolveAgentRuntime(name, { override: runtimeOverride });
+  const systemPrompt = buildAgentSystemPrompt(name);
+  const launchCommand = buildRuntimeLaunchCommand(runtime, {
+    model: agent.model,
+    systemPrompt: runtime === "claude" ? systemPrompt : null,
+  });
 
-  // Build claude command with full permissions bypass (lfg alias unavailable in tmux)
-  const cmdParts = [
-    "claude",
-    "--dangerously-skip-permissions",
-    "--model", agent.model,
-  ];
-
-  // Combine agent .md body + generated prompt (ground truth + skills)
-  const systemParts = [systemPrompt, agentPrompt].filter(Boolean).join("\n\n");
-
-  if (systemParts) {
-    cmdParts.push("--append-system-prompt", systemParts);
-  }
-
-  // Step 1: Spawn Claude Code in a new tmux window (no prompt yet)
-  const fullCmd = `cd ${ROOT_DIR} && ${cmdParts.join(" ")}`;
-  const spawned = spawnPane(name, fullCmd);
+  // Step 1: Spawn the runtime in a new tmux window
+  const spawned = spawnPane(name, `cd "${ROOT_DIR}" && ${launchCommand}`);
 
   if (!spawned) {
     console.log(error(`  Failed to spawn ${name}.`));
     return;
   }
 
-  console.log(success(`  Spawned ${name} (${agent.model}) in tmux pane.`));
+  console.log(success(`  Spawned ${name} (${runtime}) in tmux pane.`));
 
-  // Step 2: If there's a task prompt, wait for load then send it
-  if (prompt) {
-    console.log(muted(`  Waiting for Claude Code to load...`));
+  const initialPrompt = buildSessionBootstrapPrompt(runtime, {
+    systemPrompt: runtime === "claude" ? null : systemPrompt,
+    taskPrompt: prompt,
+  });
+
+  // Step 2: If there's a bootstrap/task prompt, wait for load then send it
+  if (initialPrompt) {
+    console.log(muted(`  Waiting for ${runtime} to load...`));
     const ready = waitForReady(name, 30000);
 
     if (!ready) {
-      console.log(warn(`  Claude Code may not have fully loaded. Sending prompt anyway.`));
+      console.log(warn(`  ${runtime} may not have fully loaded. Sending prompt anyway.`));
     }
 
-    // Step 3: Send the task prompt (text + Enter are separate inside sendKeys)
-    const sent = sendKeys(name, prompt);
+    // Step 3: Send the bootstrap/task prompt (text + Enter are separate inside sendKeys)
+    const sent = sendKeys(name, initialPrompt);
 
     if (!sent) {
       console.log(error(`  Failed to send prompt to ${name}.`));
@@ -183,12 +210,15 @@ function spawnAgent(args: string[]): void {
     if (running) {
       console.log(success(`  ${name} is working on task.`));
     } else {
-      console.log(warn(`  ${name} may not have started. Check: tmux attach -t harness:${name}`));
+      console.log(warn(`  ${name} may not have started. Check: tmux attach -t ${getTmuxSessionName()}:${name}`));
     }
   }
 
-  recordAgentActivity(name, { status: "running", currentTask: prompt || "interactive session" });
-  console.log(muted(`  Attach: tmux attach -t harness:${name}`));
+  recordAgentActivity(name, {
+    status: "running",
+    currentTask: prompt || `${runtime} interactive session`,
+  });
+  console.log(muted(`  Attach: tmux attach -t ${getTmuxSessionName()}:${name}`));
 }
 
 // ─── kill ───────────────────────────────────────────────────────────────────

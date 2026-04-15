@@ -6,6 +6,8 @@
  */
 
 import { execSync } from "child_process";
+import { isRuntimeProcess } from "./runtime.js";
+import { getTmuxSessionName } from "./tmux.js";
 
 export interface TmuxAgent {
   name: string;
@@ -20,8 +22,9 @@ export interface TmuxAgent {
  */
 export function getTmuxAgents(): TmuxAgent[] {
   try {
+    const session = getTmuxSessionName();
     const raw = execSync(
-      'tmux list-panes -t harness -a -F "#{window_name}|#{pane_id}|#{pane_current_command}|#{pane_current_path}|#{pane_dead}" 2>/dev/null',
+      `tmux list-panes -t ${session} -a -F "#{window_name}|#{pane_id}|#{pane_current_command}|#{pane_current_path}|#{pane_dead}" 2>/dev/null`,
       { encoding: "utf-8", timeout: 5000 }
     ).trim();
 
@@ -42,9 +45,19 @@ export function getTmuxAgents(): TmuxAgent[] {
       let status: TmuxAgent["status"];
       if (dead === "1") {
         status = "exited";
-      } else if (/^\d+\.\d+\.\d+$/.test(command) || command === "claude" || command === "node") {
+      } else if (isRuntimeProcess(command)) {
         // Check if the output indicates the agent is actively working
-        const activeSignals = ["Reading", "Writing", "Running", "Embellishing", "Searching", "Editing", "bypass permissions"];
+        const activeSignals = [
+          "Reading",
+          "Writing",
+          "Running",
+          "Embellishing",
+          "Searching",
+          "Editing",
+          "bypass permissions",
+          "Codex",
+          "Gemini",
+        ];
         const isActive = activeSignals.some(s => lastOutput.includes(s));
 
         // Check for idle signals

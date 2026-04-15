@@ -71,6 +71,7 @@ function hookList(): void {
     console.log("    gateguard          — block Edit without prior Read (PreToolUse)");
     console.log("    config-protection  — block modification of infra files (PreToolUse)");
     console.log("    budget-enforcer    — turn limit + wall-clock timeout (PostToolUse)");
+    console.log("    inter-agent-signal — write .harness/signals/done or needs-approval");
     console.log();
     return;
   }

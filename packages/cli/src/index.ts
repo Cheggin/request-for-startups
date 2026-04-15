@@ -31,14 +31,24 @@ ${bold}Core:${reset}
 
 ${bold}Agents:${reset}
   ${green}agent list${reset}                        All agents with status
-  ${green}agent spawn${reset} <name> <prompt>       Spawn agent in tmux pane
+  ${green}agent spawn${reset} <name> [--runtime <runtime>] [prompt]
+                                                   Spawn agent in tmux pane
   ${green}agent kill${reset} <name>                 Kill agent pane
   ${green}agent logs${reset} <name>                 Read agent output
 
 ${bold}Teams:${reset}
   ${green}team start${reset} <n> <prompt>           Spawn n coordinated agents
+  ${green}team grid${reset}                         Create the shared 2x4 agent grid
   ${green}team status${reset}                       Show team members
   ${green}team stop${reset}                         Stop all team members
+
+${bold}Loops:${reset}
+  ${green}loop list${reset}                         List all loops
+  ${green}loop start${reset} <name>                 Start one loop
+  ${green}loop grid${reset}                         Create the shared 2x4 loop grid
+  ${green}loop stop${reset} <name>                  Stop one loop
+  ${green}loop start-all${reset}                    Start all loops
+  ${green}loop stop-all${reset}                     Stop all loops
 
 ${bold}Features:${reset}
   ${green}feature list${reset} [--done|--todo|...]  List with counts
@@ -123,6 +133,11 @@ async function main(): Promise<void> {
     }
     case "team": {
       const mod = await import("./commands/team.js");
+      mod.run(commandArgs);
+      break;
+    }
+    case "loop": {
+      const mod = await import("./commands/loop.js");
       mod.run(commandArgs);
       break;
     }

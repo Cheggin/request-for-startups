@@ -35,6 +35,14 @@ const DEFAULT_HOOKS: HookConfig[] = [
     event: "PostToolUse",
     command: "node packages/hooks/dist/budget-enforcer.js",
   },
+  {
+    event: "Stop",
+    command: "node packages/hooks/dist/run-inter-agent-signal.js",
+  },
+  {
+    event: "PermissionRequest",
+    command: "node packages/hooks/dist/run-inter-agent-signal.js",
+  },
 ];
 
 export function buildClaudeSettings(

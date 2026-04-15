@@ -15,7 +15,14 @@ import { join } from "path";
 import { loadState, updateState } from "../lib/state.js";
 import { heading, success, warn, error, muted, info } from "../lib/format.js";
 import { STARTUP_PHASES, ROOT_DIR, HARNESS_DIR } from "../lib/constants.js";
-import { spawnPane, ensureSession, isTmuxAvailable } from "../lib/tmux.js";
+import {
+  spawnPane,
+  ensureSession,
+  isTmuxAvailable,
+  getTmuxSessionName,
+  sendKeys,
+  waitForReady,
+} from "../lib/tmux.js";
 import {
   determineRequiredServices,
   collectCredentials,
@@ -23,6 +30,11 @@ import {
   printCredentialSummary,
 } from "../lib/credentials.js";
 import { generateAgentPrompt, writeAgentConfigs } from "../lib/agent-loader.js";
+import {
+  buildRuntimeLaunchCommand,
+  buildSessionBootstrapPrompt,
+  resolveAgentRuntime,
+} from "../lib/runtime.js";
 
 // ─── Constants ─────────────────────────────────────────────────────────────
 
@@ -88,15 +100,30 @@ function installSkills(): number {
   return count;
 }
 
-// ─── Spawn a Claude Code session in tmux with a prompt ──────────────────────
+// ─── Spawn an agent runtime session in tmux with a prompt ───────────────────
 
-function spawnClaudeSession(name: string, prompt: string, cwd?: string): boolean {
+function spawnAgentSession(name: string, prompt: string, cwd?: string): boolean {
   ensureSession();
   const dir = cwd || ROOT_DIR;
-  const escapedPrompt = prompt.replace(/"/g, '\\"');
-  const cmd = `cd "${dir}" && claude --dangerously-skip-permissions --append-system-prompt "${escapedPrompt}"`;
+  const runtime = resolveAgentRuntime(name);
+  const cmd = `cd "${dir}" && ${buildRuntimeLaunchCommand(runtime, {
+    systemPrompt: runtime === "claude" ? prompt : null,
+  })}`;
   console.log(muted(`  [spawn] ${name} in ${dir}`));
-  return spawnPane(name, cmd);
+  const spawned = spawnPane(name, cmd);
+  if (!spawned) {
+    return false;
+  }
+
+  const bootstrapPrompt = buildSessionBootstrapPrompt(runtime, {
+    systemPrompt: runtime === "claude" ? null : prompt,
+  });
+  if (bootstrapPrompt) {
+    waitForReady(name, 30000);
+    sendKeys(name, bootstrapPrompt);
+  }
+
+  return true;
 }
 
 // ─── Wait for an artifact file to exist ─────────────────────────────────────
@@ -333,7 +360,7 @@ export function run(args: string[]): void {
         "Write research-report.md with: executive summary, competitor table, target audience, positioning gaps, differentiation opportunities.",
         "Be thorough. This report feeds directly into the product spec.",
       ].join(" ");
-      spawnClaudeSession("researcher", researchPrompt);
+      spawnAgentSession("researcher", researchPrompt);
       console.log(success("  Researcher agent spawned — waiting for research-report.md"));
 
       // Wait for artifact — fixes #5 (sequential phases)
@@ -359,7 +386,7 @@ export function run(args: string[]): void {
         "data models, API routes, component inventory.",
         "Write product-spec.md. Create GitHub Issues for every P0 feature.",
       ].join(" ");
-      spawnClaudeSession("planner", specPrompt);
+      spawnAgentSession("planner", specPrompt);
       console.log(success("  Planner agent spawned — waiting for product-spec.md"));
 
       waitForArtifact(specArtifact, "Product Spec");
@@ -384,7 +411,7 @@ export function run(args: string[]): void {
         "Save design system to .harness/design-system.json.",
         "Take Playwright screenshots as visual QA baseline.",
       ].join(" ");
-      spawnClaudeSession("design-extractor", designPrompt);
+      spawnAgentSession("design-extractor", designPrompt);
       console.log(success("  Design extraction agent spawned — extracting from Figma"));
     } else if (hasDesigns) {
       console.log(muted(`  Using provided designs: ${answers.existing_designs}`));
@@ -427,7 +454,7 @@ export function run(args: string[]): void {
       "Verify quality gates: tests pass, Cubic clean, visual QA pass.",
       "NEVER write or edit code yourself — only coordinate.",
     ].join(" ");
-    spawnClaudeSession("commander", commanderPrompt);
+    spawnAgentSession("commander", commanderPrompt);
     console.log(success("  Commander agent spawned (orchestrator)"));
 
     // Website agent — frontend
@@ -441,7 +468,7 @@ export function run(args: string[]): void {
       "Steps: scaffold Next.js → install deps → write tests → build features → visual QA.",
       "NEVER STOP until all P0 frontend features pass.",
     ].join(" ");
-    spawnClaudeSession("website", websitePrompt);
+    spawnAgentSession("website", websitePrompt);
     console.log(success("  Website agent spawned (frontend)"));
 
     // Backend agent — Convex, API routes, auth
@@ -456,7 +483,7 @@ export function run(args: string[]): void {
       answers.business_model?.includes("subscription") ? "Wire Stripe integration for payments." : "",
       "NEVER STOP until all P0 backend features pass.",
     ].filter(Boolean).join(" ");
-    spawnClaudeSession("backend", backendPrompt);
+    spawnAgentSession("backend", backendPrompt);
     console.log(success("  Backend agent spawned (Convex, API)"));
 
     // Writing agent — legal, content
@@ -470,7 +497,7 @@ export function run(args: string[]): void {
       "Then: blog post with unique data (data-driven-blog skill).",
       "Then: social media launch posts (social-media skill).",
     ].join(" ");
-    spawnClaudeSession("writing", writingPrompt);
+    spawnAgentSession("writing", writingPrompt);
     console.log(success("  Writing agent spawned (legal, content)"));
 
     // Growth agent — analytics, SEO
@@ -483,7 +510,7 @@ export function run(args: string[]): void {
       "Follow programmatic-seo skill if applicable to this startup type.",
       "Set up conversion funnels and A/B testing framework.",
     ].join(" ");
-    spawnClaudeSession("growth", growthPrompt);
+    spawnAgentSession("growth", growthPrompt);
     console.log(success("  Growth agent spawned (analytics, SEO)"));
 
     // Slop cleaner — continuous quality
@@ -495,7 +522,7 @@ export function run(args: string[]): void {
       "left outlines, generic AI copy, bounce/elastic animations, gradient text.",
       "Fix any violations found. Run continuously.",
     ].join(" ");
-    spawnClaudeSession("slop-cleaner", slopPrompt);
+    spawnAgentSession("slop-cleaner", slopPrompt);
     console.log(success("  Slop-cleaner agent spawned (quality)"));
 
     // Conditional: docs agent for devtools
@@ -507,7 +534,7 @@ export function run(args: string[]): void {
         "Follow documentation-generator skill. Create: API reference, SDK guide, quickstart.",
         "Follow contributing-guide skill for open-source contribution docs.",
       ].join(" ");
-      spawnClaudeSession("docs", docsPrompt);
+      spawnAgentSession("docs", docsPrompt);
       console.log(success("  Docs agent spawned (devtool documentation)"));
     }
 
@@ -527,7 +554,7 @@ export function run(args: string[]): void {
       `${answers.domain && answers.domain !== "TBD" ? `Configure domain: ${answers.domain}` : ""}`,
       "Then start the post-deploy monitoring loop (post-deploy-loop skill).",
     ].filter(Boolean).join(" ");
-    spawnClaudeSession("ops", opsPrompt);
+    spawnAgentSession("ops", opsPrompt);
     console.log(success("  Ops agent spawned (deploy + monitoring)"));
     updateState({ phase: "deploy" });
   }
@@ -545,7 +572,7 @@ export function run(args: string[]): void {
     console.log(muted(`    ${name}`));
   }
   console.log();
-  console.log(muted("  Attach: tmux attach -t harness"));
+  console.log(muted(`  Attach: tmux attach -t ${getTmuxSessionName()}`));
   console.log(muted("  Status: harness status"));
   console.log(muted("  Commander posts investor updates to Slack as milestones complete."));
   console.log();

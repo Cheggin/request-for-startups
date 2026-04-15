@@ -13,6 +13,14 @@
         "hooks": [
           {
             "type": "command",
+            "command": "bun run packages/hooks/src/run-auto-finish.ts"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
             "command": "bun run packages/hooks/src/run-context-handoff.ts"
           }
         ]

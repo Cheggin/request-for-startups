@@ -22,6 +22,12 @@ describe("setup-hooks", () => {
       expect(settings.hooks).toBeDefined();
       expect(settings.hooks!["PreToolUse"]).toHaveLength(2);
       expect(settings.hooks!["PostToolUse"]).toHaveLength(1);
+      expect(settings.hooks!["Stop"]).toEqual([
+        { command: "node packages/hooks/dist/run-inter-agent-signal.js" },
+      ]);
+      expect(settings.hooks!["PermissionRequest"]).toEqual([
+        { command: "node packages/hooks/dist/run-inter-agent-signal.js" },
+      ]);
     });
 
     it("should create settings with custom hooks", () => {
@@ -71,6 +77,12 @@ describe("setup-hooks", () => {
       const content = JSON.parse(readFileSync(settingsPath, "utf-8"));
       expect(content.hooks).toBeDefined();
       expect(content.hooks["PreToolUse"]).toHaveLength(2);
+      expect(content.hooks["Stop"]).toEqual([
+        { command: "node packages/hooks/dist/run-inter-agent-signal.js" },
+      ]);
+      expect(content.hooks["PermissionRequest"]).toEqual([
+        { command: "node packages/hooks/dist/run-inter-agent-signal.js" },
+      ]);
     });
 
     it("should preserve existing settings.json content", () => {
