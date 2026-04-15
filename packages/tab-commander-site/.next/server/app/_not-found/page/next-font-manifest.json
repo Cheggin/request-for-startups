@@ -1,0 +1,11 @@
+{
+  "pages": {},
+  "app": {
+    "[project]/packages/tab-commander-site/src/app/_not-found/page": [
+      "static/media/d0f5953821b08bc1-s.p.0khntj4v-gpmp.woff2",
+      "static/media/f7aa21714c1c53f8-s.p.0bhxxck2.9j91.woff2"
+    ]
+  },
+  "appUsingSizeAdjust": true,
+  "pagesUsingSizeAdjust": false
+}
