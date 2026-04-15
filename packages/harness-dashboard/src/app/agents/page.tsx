@@ -92,7 +92,6 @@ export default function AgentsPage() {
                 <tr className="border-b border-border text-left">
                   <th className="px-4 py-2 text-xs font-medium text-text-tertiary uppercase tracking-wider">Agent</th>
                   <th className="px-4 py-2 text-xs font-medium text-text-tertiary uppercase tracking-wider">Last Output</th>
-                  <th className="px-4 py-2 text-xs font-medium text-text-tertiary uppercase tracking-wider">Project</th>
                   <th className="px-4 py-2 text-xs font-medium text-text-tertiary uppercase tracking-wider text-right">Status</th>
                   <th className="px-4 py-2 text-xs font-medium text-text-tertiary uppercase tracking-wider text-right w-20">Action</th>
                 </tr>
@@ -107,14 +106,7 @@ export default function AgentsPage() {
                       </div>
                     </td>
                     <td className="px-4 py-2.5 max-w-sm">
-                      {agent.lastOutput ? (
-                        <pre className="text-xs text-text-secondary font-mono whitespace-pre-wrap leading-relaxed line-clamp-2">{agent.lastOutput}</pre>
-                      ) : (
-                        <p className="text-sm text-text-tertiary font-mono">No output</p>
-                      )}
-                    </td>
-                    <td className="px-4 py-2.5">
-                      <span className="text-sm text-text-secondary">{agent.startup}</span>
+                      <pre className="text-xs text-text-secondary font-mono whitespace-pre-wrap leading-relaxed line-clamp-2">{agent.lastOutput || "No output"}</pre>
                     </td>
                     <td className="px-4 py-2.5 text-right">
                       <span className={`text-sm font-medium capitalize ${agent.status === "running" ? "text-positive" : "text-text-tertiary"}`}>
