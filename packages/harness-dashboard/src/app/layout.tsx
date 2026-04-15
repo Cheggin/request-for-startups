@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/layout/sidebar";
-import { StartupSwitcher } from "@/components/layout/startup-switcher";
 import { AgentPanel } from "@/components/agents/agent-panel";
 import { CurrentDate } from "@/components/layout/current-date";
 
@@ -36,7 +35,7 @@ export default function RootLayout({
 
         <div className="flex-1 flex flex-col min-w-0 h-full">
           <header className="flex items-center justify-between px-6 py-2.5 border-b border-border bg-surface shrink-0">
-            <StartupSwitcher />
+            <span className="text-base font-semibold text-text-primary">Harness</span>
             <CurrentDate />
           </header>
 
