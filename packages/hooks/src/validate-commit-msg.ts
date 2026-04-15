@@ -103,8 +103,10 @@ function validateCommitMessage(message: string): string[] {
   return errors;
 }
 
-function main() {
-  const input = process.env.CLAUDE_TOOL_INPUT;
+const chunks: string[] = [];
+process.stdin.on("data", (chunk) => chunks.push(chunk.toString()));
+process.stdin.on("end", () => {
+  const input = chunks.join("");
   if (!input) {
     process.exit(0);
   }
@@ -146,6 +148,4 @@ function main() {
 
   // Valid
   process.exit(0);
-}
-
-main();
+});
