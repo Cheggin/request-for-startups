@@ -1,45 +1,48 @@
 "use client";
 
-import { useAgents, useStartups, useGrowth } from "@/lib/use-data";
-import { MetricCard } from "@/components/metrics/metric-card";
+import { useAgents, useStartups, useGrowth, useIssues } from "@/lib/use-data";
 import { TrafficChart } from "@/components/charts/traffic-chart";
+import { formatNumber } from "@/lib/format";
+
+type AgentCategory = "running" | "idle" | "stopped";
+
+const CATEGORY_COLORS: Record<AgentCategory, string> = {
+  running: "bg-positive",
+  idle: "bg-text-tertiary",
+  stopped: "bg-border",
+};
 
 export default function OverviewPage() {
   const { agents, loading: agentsLoading } = useAgents(5000);
   const { startups, loading: startupsLoading } = useStartups();
   const { snapshot: growth, loading: growthLoading } = useGrowth();
+  const { issues, loading: issuesLoading } = useIssues(30000);
 
-  const running = agents.filter((a) => a.status === "running");
   const trafficData = growth?.traffic?.map((p) => ({ date: new Date(p.date), value: p.value })) ?? [];
-  const trafficSparkline = growth?.traffic?.map((p) => p.value) ?? [];
+  const totalTraffic = growth?.traffic?.reduce((sum, p) => sum + p.value, 0) ?? 0;
+
+  // Agent breakdown
+  const agentCounts: Record<AgentCategory, number> = { running: 0, idle: 0, stopped: 0 };
+  for (const a of agents) {
+    const cat = a.status === "running" ? "running" : a.status === "idle" ? "idle" : "stopped";
+    agentCounts[cat]++;
+  }
+  const agentTotal = agents.length;
+
+  // Issue severity counts
+  const p0Count = issues.filter((i) => i.severity === "P0").length;
+  const p1Count = issues.filter((i) => i.severity === "P1").length;
 
   return (
     <div className="px-6 py-5 max-w-6xl">
       <h1 className="text-xl font-semibold text-text-primary leading-tight mb-6">Overview</h1>
 
-      {/* Summary cards */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
-        <MetricCard
-          label="Running Agents"
-          value={agentsLoading ? "-" : String(running.length)}
-        />
-        <MetricCard
-          label="Startups"
-          value={startupsLoading ? "-" : String(startups.length)}
-        />
-        <MetricCard
-          label="Traffic"
-          value={growthLoading ? "-" : String(trafficSparkline.reduce((a, b) => a + b, 0))}
-          sparklineData={trafficSparkline.length >= 2 ? trafficSparkline : undefined}
-        />
-      </section>
-
-      {/* Traffic chart */}
+      {/* Traffic chart — primary visualization */}
       <section className="mb-8">
         {growthLoading ? (
           <p className="text-base text-text-tertiary">Loading traffic data...</p>
         ) : trafficData.length >= 2 ? (
-          <TrafficChart data={trafficData} title="Traffic" subtitle="Daily visitors" />
+          <TrafficChart data={trafficData} title="Traffic" subtitle={`${formatNumber(totalTraffic)} total visitors`} />
         ) : (
           <div className="border border-border-subtle rounded-md px-4 py-5">
             <p className="text-base text-text-secondary">No traffic data yet.</p>
@@ -50,19 +53,82 @@ export default function OverviewPage() {
         )}
       </section>
 
-      {/* Agent activity */}
-      {!agentsLoading && agents.length > 0 && (
-        <section className="mb-8">
-          <h2 className="text-base font-semibold text-text-primary mb-3">Agent Activity</h2>
-          <div className="flex items-center gap-4 border border-border-subtle rounded-md px-4 py-3">
-            <div>
-              <span className="text-3xl font-semibold tabular text-text-primary">{running.length}</span>
-              <span className="text-base text-text-tertiary ml-1.5">running</span>
-              <span className="text-base text-text-tertiary ml-3">{agents.length} total</span>
-            </div>
+      {/* Agent status bar + Issues summary — side by side */}
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        {/* Agent breakdown */}
+        <div className="border border-border-subtle rounded-md px-4 py-4">
+          <div className="flex items-baseline justify-between mb-3">
+            <h2 className="text-base font-semibold text-text-primary">Agents</h2>
+            <span className="text-xs text-text-tertiary tabular">{agentsLoading ? "-" : `${agentTotal} total`}</span>
           </div>
-        </section>
-      )}
+          {agentsLoading ? (
+            <p className="text-sm text-text-tertiary">Loading from tmux...</p>
+          ) : agentTotal === 0 ? (
+            <p className="text-sm text-text-tertiary">No agents running.</p>
+          ) : (
+            <>
+              {/* Horizontal bar */}
+              <div className="flex h-2 rounded-full overflow-hidden mb-3">
+                {(["running", "idle", "stopped"] as AgentCategory[]).map((cat) => {
+                  const pct = agentTotal > 0 ? (agentCounts[cat] / agentTotal) * 100 : 0;
+                  if (pct === 0) return null;
+                  return (
+                    <div
+                      key={cat}
+                      className={`${CATEGORY_COLORS[cat]} transition-all`}
+                      style={{ width: `${pct}%` }}
+                    />
+                  );
+                })}
+              </div>
+              {/* Legend */}
+              <div className="flex items-center gap-4">
+                {(["running", "idle", "stopped"] as AgentCategory[]).map((cat) => (
+                  <div key={cat} className="flex items-center gap-1.5">
+                    <span className={`w-2 h-2 rounded-full ${CATEGORY_COLORS[cat]}`} />
+                    <span className="text-xs text-text-secondary capitalize">{cat}</span>
+                    <span className="text-xs text-text-primary tabular font-semibold">{agentCounts[cat]}</span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Issues summary */}
+        <div className="border border-border-subtle rounded-md px-4 py-4">
+          <div className="flex items-baseline justify-between mb-3">
+            <h2 className="text-base font-semibold text-text-primary">Issues</h2>
+            <span className="text-xs text-text-tertiary tabular">{issuesLoading ? "-" : `${issues.length} open`}</span>
+          </div>
+          {issuesLoading ? (
+            <p className="text-sm text-text-tertiary">Fetching from GitHub...</p>
+          ) : issues.length === 0 ? (
+            <p className="text-sm text-text-tertiary">No open issues.</p>
+          ) : (
+            <div className="space-y-2">
+              {p0Count > 0 && (
+                <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-negative/10">
+                  <span className="text-sm font-semibold text-negative tabular">{p0Count}</span>
+                  <span className="text-sm text-negative">Critical (P0)</span>
+                </div>
+              )}
+              {p1Count > 0 && (
+                <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-caution/10">
+                  <span className="text-sm font-semibold text-caution tabular">{p1Count}</span>
+                  <span className="text-sm text-caution">Broken (P1)</span>
+                </div>
+              )}
+              {issues.length - p0Count - p1Count > 0 && (
+                <div className="flex items-center gap-2 px-3 py-2">
+                  <span className="text-sm font-semibold text-text-secondary tabular">{issues.length - p0Count - p1Count}</span>
+                  <span className="text-sm text-text-tertiary">Other</span>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* Startups */}
       <section>
