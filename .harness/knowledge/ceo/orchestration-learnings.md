@@ -52,3 +52,43 @@ Lessons from running the harness as CEO. These persist across cloned repos.
 - IssueLint blocks issues missing required fields
 - Scanner loops create issues, fixer agents consume them
 - Close issues with commit refs: `closes #42`
+
+## CEO Monitor Loop
+- NEVER run the monitor as a cron on the CEO's own session — it floods the conversation with queued ticks
+- The CEO monitor should be a SEPARATE tmux pane running its own claude session with `/loop 60s`
+- Use event-driven signals (.harness/signals/) instead of polling tmux capture-pane
+- Stop hook writes `.harness/signals/<agent>.done` when any agent finishes
+- PermissionRequest hook writes `.harness/signals/<agent>.needs-approval`
+- CEO reads signals/ directory, acts on them, clears after handling
+- The `harness ceo-monitor once --verbose` command processes one tick
+
+## Hook-Driven Architecture
+- Hooks are project-level (.claude/settings.json) — shared across ALL panes in the repo
+- Available hooks: Stop, PermissionRequest, PreToolUse, PostToolUse, SessionStart, SubagentStop, TeammateIdle
+- Stop hook → auto-commit + write done signal
+- PermissionRequest hook → write needs-approval signal
+- Branch enforcer hook → blocks git push to main (CEO exempt via HARNESS_AGENT env var)
+- Hooks fire INSIDE each agent's pane — CEO reads the resulting signal files
+
+## Runtime Configuration
+- `claude --dangerously-skip-permissions --model claude-opus-4-6` for Claude Code agents
+- `codex --yolo` for Codex agents
+- Runtime configurable in .harness/stacks.yml, overridable per-agent with --runtime flag
+- Claude Code: has plugin access, can invoke /startup-harness: slash commands
+- Codex: no plugin access, but can read SKILL.md files directly
+- Use Claude for skill-driven work, Codex for raw implementation
+
+## Product Reference Library
+- Clone real open source production apps as ground truth for quality eval
+- Categories: saas/, chrome-extensions/, cli-tools/, desktop-apps/, mobile/
+- Each category gets a wiki page with common patterns extracted
+- Gap analysis: compare harness output to reference product, score the gap
+- Feed gap analysis back as improvement targets — iterate until gap closes
+
+## Anti-Patterns (Learned the Hard Way)
+- Don't run 16 parallel agents on main — they overwrite each other
+- Don't commit agent work without reading the diff — rubber-stamping creates regressions
+- Don't tell agents to "run /startup-harness:skill" as text — they interpret it as instruction, not invocation
+- Don't use -p flag for agent sessions — one-shot mode kills the session
+- Don't use cron on yourself for monitoring — use a separate pane
+- Don't hardcode `lfg` alias in scripts — tmux doesn't load .zshrc aliases
