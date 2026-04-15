@@ -77,6 +77,10 @@ ${bold}Evals:${reset}
   ${green}eval judge${reset}                        Tier 3: LLM judge
   ${green}eval all${reset}                          Run all tiers
 
+${bold}Analyze:${reset}
+  ${green}analyze${reset} <pane-name>                Audit agent pane compliance
+  ${green}analyze --all${reset}                      Audit all agent panes
+
 ${bold}Deploy:${reset}
   ${green}deploy staging${reset}                    Deploy to staging
   ${green}deploy production${reset}                 Deploy to production
@@ -163,6 +167,11 @@ async function main(): Promise<void> {
     }
     case "eval": {
       const mod = await import("./commands/eval.js");
+      mod.run(commandArgs);
+      break;
+    }
+    case "analyze": {
+      const mod = await import("./commands/analyze.js");
       mod.run(commandArgs);
       break;
     }

@@ -1,18 +1,37 @@
 "use client";
 
 import { useAgents, useStartups } from "@/lib/use-data";
+import { MetricCard } from "@/components/metrics/metric-card";
 
 export default function OverviewPage() {
   const { agents, loading: agentsLoading } = useAgents(5000);
   const { startups, loading: startupsLoading } = useStartups();
 
   const running = agents.filter((a) => a.status === "running");
+  const idle = agents.filter((a) => a.status === "idle");
 
   return (
     <div className="px-6 py-5 max-w-5xl">
       <h1 className="text-[18px] font-semibold text-text-primary leading-tight mb-6">Overview</h1>
 
-      {/* Agents */}
+      {/* Summary cards */}
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
+        <MetricCard
+          label="Running Agents"
+          value={agentsLoading ? "-" : String(running.length)}
+          sparklineData={agents.length >= 2 ? agents.map((_, i) => running.length - i % 2) : undefined}
+        />
+        <MetricCard
+          label="Total Agents"
+          value={agentsLoading ? "-" : String(agents.length)}
+        />
+        <MetricCard
+          label="Startups"
+          value={startupsLoading ? "-" : String(startups.length)}
+        />
+      </section>
+
+      {/* Agent status row */}
       <section className="mb-8">
         <h2 className="text-[13px] font-semibold text-text-primary mb-3">Agents</h2>
         {agentsLoading ? (
@@ -25,13 +44,14 @@ export default function OverviewPage() {
             </p>
           </div>
         ) : (
-          <div className="flex items-baseline gap-6 mb-3">
+          <div className="flex items-baseline gap-6">
             <div>
               <span className="text-[24px] font-semibold tabular text-text-primary">{running.length}</span>
               <span className="text-[13px] text-text-tertiary ml-1.5">running</span>
             </div>
-            <div className="text-[13px] text-text-tertiary">
-              {agents.length} total session{agents.length !== 1 ? "s" : ""}
+            <div>
+              <span className="text-[24px] font-semibold tabular text-text-primary">{idle.length}</span>
+              <span className="text-[13px] text-text-tertiary ml-1.5">idle</span>
             </div>
             <div className="flex items-center gap-1 ml-auto">
               {agents.map((a) => (
@@ -64,28 +84,19 @@ export default function OverviewPage() {
         ) : (
           <div className="border border-border-subtle rounded-md divide-y divide-border-subtle">
             {startups.map((startup) => (
-              <div
-                key={startup.id}
-                className="px-4 py-3 hover:bg-surface-hover transition-colors"
-              >
+              <div key={startup.id} className="px-4 py-3 hover:bg-surface-hover transition-colors">
                 <div className="flex items-center gap-2 mb-0.5">
                   <span className="text-[13px] font-semibold text-text-primary">{startup.name}</span>
                   <span className="text-[11px] font-medium text-text-tertiary bg-bg px-1.5 py-0.5 rounded uppercase tracking-wide">
                     {startup.type}
                   </span>
                   {startup.deployUrl && (
-                    <a
-                      href={startup.deployUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[11px] font-medium text-accent hover:underline ml-auto"
-                    >
+                    <a href={startup.deployUrl} target="_blank" rel="noopener noreferrer" className="text-[11px] font-medium text-accent hover:underline ml-auto">
                       Live
                     </a>
                   )}
                 </div>
                 <p className="text-[12px] text-text-tertiary truncate">{startup.idea}</p>
-                <p className="text-[11px] text-text-tertiary font-mono mt-0.5 truncate">{startup.path}</p>
               </div>
             ))}
           </div>
