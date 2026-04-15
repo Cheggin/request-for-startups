@@ -11,6 +11,7 @@
 import { loadAgents } from "../lib/config.js";
 import { loadState, recordAgentActivity } from "../lib/state.js";
 import { buildAgentSystemPrompt } from "../lib/claude.js";
+import { generateAgentPrompt, getAgentConfig } from "../lib/agent-loader.js";
 import {
   buildRuntimeLaunchCommand,
   buildSessionBootstrapPrompt,
@@ -165,7 +166,27 @@ function spawnAgent(args: string[]): void {
 
   ensureSession();
   const runtime = resolveAgentRuntime(name, { override: runtimeOverride });
-  const systemPrompt = buildAgentSystemPrompt(name);
+
+  // Generate category-specific prompt (skills, ground truth) from agent-categories.yml
+  const agentConfig = getAgentConfig(name);
+  const categoryPrompt = generateAgentPrompt(name);
+
+  if (agentConfig) {
+    console.log(
+      info(
+        `  Agent config: category=${agentConfig.category}, skills=${agentConfig.skills.length}, hooks=${agentConfig.hooks.length}`
+      )
+    );
+  } else {
+    console.log(
+      warn(`  No category config found for '${name}' in agent-categories.yml. Agent will run without skill injection.`)
+    );
+  }
+
+  const baseSystemPrompt = buildAgentSystemPrompt(name);
+  const systemPrompt = categoryPrompt
+    ? `${baseSystemPrompt}\n\n${categoryPrompt}`
+    : baseSystemPrompt;
   const launchCommand = buildRuntimeLaunchCommand(runtime, {
     model: agent.model,
     systemPrompt: runtime === "claude" ? systemPrompt : null,

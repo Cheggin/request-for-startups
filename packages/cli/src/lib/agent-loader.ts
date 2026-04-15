@@ -98,9 +98,63 @@ function getSkillManifest(skillNames: string[]): SkillInfo[] {
 }
 
 /**
- * Map skill names to their former categories based on frontmatter.
- * Reads the 'category' tag from each SKILL.md if present,
- * otherwise infers from the skill name patterns.
+ * Canonical skill-to-category map.
+ *
+ * Every tracked skill in skills/<name>/SKILL.md MUST appear here.
+ * The validateSkillCoverage() function enforces this at test time
+ * so new skills can't slip through uncategorized.
+ *
+ * Fixes #53: replaces partial hardcoded map with complete coverage.
+ */
+const SKILL_CATEGORIES: Record<string, string> = {
+  // Design (17)
+  impeccable: "design", polish: "design", layout: "design", typeset: "design",
+  animate: "design", colorize: "design", bolder: "design", critique: "design",
+  adapt: "design", audit: "design", clarify: "design", delight: "design",
+  distill: "design", optimize: "design", overdrive: "design", quieter: "design",
+  shape: "design",
+  // Coding (12)
+  "website-creation": "coding", "visual-qa-pipeline": "coding", "test-generator": "coding",
+  "deploy-pipeline": "coding", "security-scanner": "coding", "accessibility-checker": "coding",
+  "performance-benchmark": "coding", "seo-setup": "coding", "slop-cleaner": "coding",
+  "cubic-codebase-scan": "coding", "sprint-contracts": "coding", "asset-generation": "coding",
+  // Convex (13)
+  convex: "convex", "convex-agents": "convex", "convex-best-practices": "convex",
+  "convex-component-authoring": "convex", "convex-cron-jobs": "convex",
+  "convex-file-storage": "convex", "convex-functions": "convex",
+  "convex-http-actions": "convex", "convex-migrations": "convex",
+  "convex-realtime": "convex", "convex-schema-validator": "convex",
+  "convex-security-audit": "convex", "convex-security-check": "convex",
+  // Content (9)
+  "anti-ai-writing": "content", "blog-scaffolder": "content", "brand-guidelines": "content",
+  "contributing-guide": "content", "data-driven-blog": "content",
+  "documentation-generator": "content", "legal-generator": "content",
+  "readme-generator": "content", "social-media": "content",
+  // Growth (7)
+  "analytics-integration": "growth", "competitor-research": "growth",
+  "landing-page-optimizer": "growth", "programmatic-seo": "growth",
+  "seo-chat": "growth", "social-intelligence": "growth", "user-feedback-collector": "growth",
+  // Operations (6)
+  "ci-cd-pipeline": "operations", "dependency-manager": "operations",
+  "error-tracking": "operations", "incident-response": "operations",
+  "log-aggregation": "operations", "uptime-monitor": "operations",
+  // Agent / Orchestration (32)
+  "agent-creator": "agent", autopilot: "agent", "avoid-feature-creep": "agent",
+  cancel: "agent", "context-reset-handler": "agent", "cost-tracker": "agent",
+  debug: "agent", "deep-dive": "agent", "deep-interview": "agent",
+  "error-classifier": "agent", "eval-framework": "agent",
+  "github-state-manager": "agent", "investor-updates": "agent",
+  "issue-creator": "agent", "loop-prompt": "agent", plan: "agent",
+  "post-deploy-loop": "agent", ralph: "agent", research: "agent",
+  "self-improve": "agent", "session-analyzer": "agent",
+  "slack-course-correction": "agent", "stack-extend": "agent",
+  "startup-init": "agent", team: "agent", "tiered-memory": "agent",
+  "tmux-spawn": "agent", trace: "agent", "trajectory-logging": "agent",
+  ultraqa: "agent", ultrawork: "agent", verify: "agent",
+};
+
+/**
+ * Build a category→skills[] lookup from the canonical map.
  */
 function categorizeSkills(): Record<string, string[]> {
   const categories: Record<string, string[]> = {
@@ -113,54 +167,23 @@ function categorizeSkills(): Record<string, string[]> {
     agent: [],
   };
 
-  // Known mappings (hardcoded since we know the reorganization)
-  const SKILL_TO_CATEGORY: Record<string, string> = {
-    // Design
-    impeccable: "design", polish: "design", layout: "design", typeset: "design",
-    animate: "design", colorize: "design", bolder: "design", critique: "design",
-    adapt: "design", audit: "design", clarify: "design", delight: "design",
-    distill: "design", optimize: "design", overdrive: "design", quieter: "design",
-    shape: "design",
-    // Coding
-    "website-creation": "coding", "visual-qa-pipeline": "coding", "test-generator": "coding",
-    "deploy-pipeline": "coding", "security-scanner": "coding", "accessibility-checker": "coding",
-    "performance-benchmark": "coding", "seo-setup": "coding", "slop-cleaner": "coding",
-    "cubic-codebase-scan": "coding", "sprint-contracts": "coding", "asset-generation": "coding",
-    // Convex
-    convex: "convex", "convex-agents": "convex", "convex-best-practices": "convex",
-    "convex-component-authoring": "convex", "convex-cron-jobs": "convex",
-    "convex-file-storage": "convex", "convex-functions": "convex",
-    "convex-http-actions": "convex", "convex-migrations": "convex",
-    "convex-realtime": "convex", "convex-schema-validator": "convex",
-    "convex-security-audit": "convex", "convex-security-check": "convex",
-    // Content
-    "anti-ai-writing": "content", "blog-scaffolder": "content", "brand-guidelines": "content",
-    "contributing-guide": "content", "data-driven-blog": "content",
-    "documentation-generator": "content", "legal-generator": "content",
-    "readme-generator": "content", "social-media": "content",
-    // Growth
-    "analytics-integration": "growth", "competitor-research": "growth",
-    "landing-page-optimizer": "growth", "programmatic-seo": "growth",
-    "seo-chat": "growth", "social-intelligence": "growth", "user-feedback-collector": "growth",
-    // Operations
-    "ci-cd-pipeline": "operations", "dependency-manager": "operations",
-    "error-tracking": "operations", "incident-response": "operations",
-    "log-aggregation": "operations", "uptime-monitor": "operations",
-    // Agent
-    "loop-prompt": "agent", "context-reset-handler": "agent", "cost-tracker": "agent",
-    "error-classifier": "agent", "eval-framework": "agent", "trajectory-logging": "agent",
-    "tiered-memory": "agent", "investor-updates": "agent", "github-state-manager": "agent",
-    "slack-course-correction": "agent", "stack-extend": "agent", "post-deploy-loop": "agent",
-    research: "agent", "avoid-feature-creep": "agent",
-  };
-
-  for (const [skill, cat] of Object.entries(SKILL_TO_CATEGORY)) {
+  for (const [skill, cat] of Object.entries(SKILL_CATEGORIES)) {
     if (categories[cat]) {
       categories[cat].push(skill);
     }
   }
 
   return categories;
+}
+
+/**
+ * Validate that every tracked skill in skills/ is assigned a category.
+ * Returns an array of skill names that exist on disk but have no category.
+ * Call this in tests to prevent drift when new skills are added.
+ */
+export function validateSkillCoverage(): string[] {
+  const tracked = getSkillNames();
+  return tracked.filter((name) => !(name in SKILL_CATEGORIES));
 }
 
 // ─── Agent Config Generation ───────────────────────────────────────────────
@@ -272,6 +295,10 @@ export function generateAgentPrompt(agentName: string): string {
 
 /**
  * Write per-agent config files to .harness/agents/<name>.json
+ *
+ * If a rich config already exists (has fileScope, mcpServers, rules, etc.),
+ * only update the category-derived fields (skills, groundTruth, category)
+ * without overwriting the rich runtime config surface.
  */
 export function writeAgentConfigs(): number {
   const configs = generateAgentConfigs();
@@ -280,6 +307,27 @@ export function writeAgentConfigs(): number {
 
   for (const config of configs) {
     const filePath = join(agentsDir, `${config.name}.json`);
+
+    // If a rich config exists, merge category-derived fields into it
+    if (existsSync(filePath)) {
+      try {
+        const existing = JSON.parse(readFileSync(filePath, "utf-8"));
+        const isRichConfig = existing.fileScope || existing.mcpServers || existing.rules || existing.allowedTools;
+
+        if (isRichConfig) {
+          // Only update fields that come from agent-categories.yml
+          existing.category = existing.category || config.category;
+          existing.skills = config.skills;
+          existing.groundTruth = config.groundTruth;
+          existing.mcp = config.mcp;
+          writeFileSync(filePath, JSON.stringify(existing, null, 2) + "\n");
+          continue;
+        }
+      } catch {
+        // Unparseable — overwrite with fresh config
+      }
+    }
+
     writeFileSync(filePath, JSON.stringify(config, null, 2) + "\n");
   }
 
