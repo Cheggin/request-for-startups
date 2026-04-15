@@ -179,13 +179,13 @@ function Chart({ width, height, data }: { width: number; height: number; data: D
             color: "var(--bg)",
             borderRadius: 6,
             padding: "6px 10px",
-            fontSize: 12,
+            fontSize: "var(--font-size-sm)",
             fontWeight: 500,
-            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+            boxShadow: "0 4px 12px oklch(0.18 0.01 75 / 0.1)",
           }}
         >
           <div>{getValue(tooltipData)} visitors</div>
-          <div style={{ fontSize: 10, opacity: 0.6 }}>
+          <div style={{ fontSize: "var(--font-size-2xs)", opacity: 0.6 }}>
             {getDate(tooltipData).toLocaleDateString("en-US", {
               month: "short",
               day: "numeric",
