@@ -3,7 +3,6 @@
 import { useAgents, useStartups, useGrowth } from "@/lib/use-data";
 import { MetricCard } from "@/components/metrics/metric-card";
 import { TrafficChart } from "@/components/charts/traffic-chart";
-import { Sparkline } from "@/components/charts/sparkline";
 
 export default function OverviewPage() {
   const { agents, loading: agentsLoading } = useAgents(5000);
@@ -23,7 +22,6 @@ export default function OverviewPage() {
         <MetricCard
           label="Running Agents"
           value={agentsLoading ? "-" : String(running.length)}
-          sparklineData={agents.length >= 2 ? agents.map((_, i) => running.length - i % 2) : undefined}
         />
         <MetricCard
           label="Startups"
@@ -52,7 +50,7 @@ export default function OverviewPage() {
         )}
       </section>
 
-      {/* Agent activity sparkline */}
+      {/* Agent activity */}
       {!agentsLoading && agents.length > 0 && (
         <section className="mb-8">
           <h2 className="text-[13px] font-semibold text-text-primary mb-3">Agent Activity</h2>
@@ -61,14 +59,6 @@ export default function OverviewPage() {
               <span className="text-[24px] font-semibold tabular text-text-primary">{running.length}</span>
               <span className="text-[13px] text-text-tertiary ml-1.5">running</span>
               <span className="text-[13px] text-text-tertiary ml-3">{agents.length} total</span>
-            </div>
-            <div className="ml-auto">
-              <Sparkline
-                data={agents.map((_, i) => running.length - (i % 2))}
-                width={120}
-                height={32}
-                color="var(--positive)"
-              />
             </div>
           </div>
         </section>
