@@ -103,7 +103,8 @@ export function writeInterAgentSignal(
     cwd: input.cwd || projectRoot,
   });
 
-  const signalPath = join(signalsDir, signalFileName);
+  const agentName = payload.agent as string;
+  const signalPath = join(signalsDir, `${agentName}.${signalFileName}`);
   writeFileSync(signalPath, JSON.stringify(payload, null, 2) + "\n");
 
   return signalPath;

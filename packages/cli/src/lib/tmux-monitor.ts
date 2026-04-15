@@ -354,7 +354,9 @@ export function readSignals(signalsDir: string): Signal[] {
     try {
       const raw = readFileSync(join(signalsDir, filename), "utf-8");
       const data = JSON.parse(raw);
-      const type = SIGNAL_TYPE_MAP[filename] ?? "unknown";
+      // Filenames are <agent>.<signal-type> e.g. "dashboard.done"
+      const suffix = filename.includes(".") ? filename.split(".").pop()! : filename;
+      const type = SIGNAL_TYPE_MAP[suffix] ?? "unknown";
 
       signals.push({
         type,
