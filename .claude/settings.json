@@ -106,6 +106,10 @@
           {
             "type": "command",
             "command": "bun run packages/hooks/src/run-metrics-gate.ts"
+          },
+          {
+            "type": "command",
+            "command": "bun run packages/hooks/src/branch-enforcer.ts"
           }
         ]
       }
