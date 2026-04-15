@@ -1,0 +1,54 @@
+# Product Reference Library
+# Ground truth for gap analysis against harness-built products.
+# Clone with: git clone --depth 1 <repo> reference/products/<dir> && rm -rf reference/products/<dir>/.git
+
+categories:
+  saas:
+    description: Browser-based SaaS applications
+    references:
+      - name: Cal.com
+        repo: https://github.com/calcom/cal.com
+        dir: reference/products/cal.com
+        stack: Next.js, TypeScript, Prisma, tRPC, Tailwind
+        why: Full-featured scheduling SaaS with complex booking flows, team management, integrations, and billing. Good benchmark for feature depth and test coverage in a Next.js monorepo.
+        metrics:
+          - feature-count
+          - page-count
+          - test-coverage
+          - api-endpoint-count
+          - integration-count
+
+  cli:
+    description: Command-line interface tools
+    references:
+      - name: gh CLI
+        repo: https://github.com/cli/cli
+        dir: reference/products/gh-cli
+        stack: Go
+        why: GitHub's official CLI. Production-grade command structure, help system, auth flows, output formatting, and test suite. Gold standard for CLI UX and composability.
+        metrics:
+          - command-count
+          - test-coverage
+          - help-completeness
+          - error-handling-depth
+
+  chrome-extension:
+    description: Browser extensions (Chrome/Firefox)
+    references:
+      - name: uBlock Origin
+        repo: https://github.com/gorhill/uBlock
+        dir: reference/products/ublock-origin
+        stack: JavaScript, WebExtension APIs
+        why: Most-used content blocker. Complex filter engine, settings UI, popup interface, background processing. Good benchmark for extension architecture, manifest setup, and performance optimization.
+        metrics:
+          - feature-count
+          - ui-surface-count
+          - manifest-completeness
+          - performance-benchmarks
+
+# Planned additions (not yet cloned):
+# - Plane (saas) — https://github.com/makeplane/plane
+# - Twenty CRM (saas) — https://github.com/twentyhq/twenty
+# - Stripe CLI (cli) — https://github.com/stripe/stripe-cli
+# - Vimium (chrome-extension) — https://github.com/philc/vimium
+# - React DevTools (chrome-extension) — https://github.com/nicehash/AOS-uBlock (find correct repo)
