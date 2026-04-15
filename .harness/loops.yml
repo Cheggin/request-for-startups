@@ -18,6 +18,27 @@ commander:
     Run /startup-harness:investor-updates every 10 ticks.
     Never write code — coordinate only.
 
+ceo-monitor:
+  agent: commander
+  loop_type: monitoring
+  description: CEO zero-action monitor — polls tmux panes, detects stuck agents, reports status
+  interval: 60s
+  skill: startup-harness:loop-prompt
+  creates_issues: false
+  scope:
+    - tmux panes
+    - harness session
+    - idle and stuck agents
+    - permission prompts
+  prompt: |
+    Every tick, poll all tmux panes in the harness session.
+    Use tmux list-panes and tmux capture-pane to inspect each pane's latest output.
+    Classify each agent as running, idle, stuck, exited, or waiting on approval.
+    If a pane is blocked on a safe, expected approval prompt, approve it and continue.
+    If a pane is stuck, exited, or idle with open work remaining, notify commander and redispatch from the backlog.
+    Post a concise CEO status update with active agents, blockers, and next actions.
+    Never write product code — only monitor, approve, report, and coordinate.
+
 # ─── Quality Scanning ──────────────────────────────────────────────────────
 
 quality-scanner:
