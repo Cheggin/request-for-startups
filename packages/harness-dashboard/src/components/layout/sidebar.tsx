@@ -15,6 +15,11 @@ const ICONS: Record<string, React.ReactNode> = {
       <polyline points="22,7 13.5,15.5 8.5,10.5 2,17" /><polyline points="16,7 22,7 22,13" />
     </svg>
   ),
+  radio: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9" /><path d="M7.8 16.2a5.5 5.5 0 0 1 0-8.4" /><circle cx="12" cy="12" r="2" /><path d="M16.2 7.8a5.5 5.5 0 0 1 0 8.4" /><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19" />
+    </svg>
+  ),
   cpu: (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <rect x="4" y="4" width="16" height="16" rx="2" /><rect x="9" y="9" width="6" height="6" /><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3" />
@@ -56,7 +61,7 @@ export function Sidebar() {
   return (
     <aside className="w-48 shrink-0 border-r border-border bg-surface flex flex-col h-full">
       <div className="px-4 py-4 border-b border-border-subtle">
-        <span className="text-[14px] font-semibold tracking-tight text-text-primary">
+        <span className="text-md font-semibold tracking-tight text-text-primary">
           Harness
         </span>
       </div>
@@ -70,7 +75,7 @@ export function Sidebar() {
               key={item.href}
               href={item.href}
               aria-current={isActive ? "page" : undefined}
-              className={`flex items-center gap-2.5 px-2.5 py-[7px] rounded-md text-[13px] transition-colors ${
+              className={`flex items-center gap-2.5 px-2.5 py-[7px] rounded-md text-base transition-colors ${
                 isActive
                   ? "font-semibold text-text-primary bg-surface-hover"
                   : "font-medium text-text-secondary hover:text-text-primary hover:bg-surface-hover"
@@ -86,7 +91,7 @@ export function Sidebar() {
       </nav>
 
       <div className="px-4 py-3 border-t border-border-subtle">
-        <span className="text-[11px] text-text-tertiary">v0.1.0</span>
+        <span className="text-xs text-text-tertiary">v0.1.0</span>
       </div>
     </aside>
   );

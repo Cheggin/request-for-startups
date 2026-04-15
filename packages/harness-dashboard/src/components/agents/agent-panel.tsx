@@ -233,7 +233,7 @@ function SummaryPill({ group }: { group: AgentGroup }) {
   return (
     <div className="inline-flex items-center gap-2 rounded-full border border-border-subtle bg-bg px-2.5 py-1">
       <StatusDot tone={group.key} ariaLabel={group.label} />
-      <span className="text-[11px] font-medium text-text-primary">
+      <span className="text-xs font-medium text-text-primary">
         {group.count} {group.label}
       </span>
     </div>
@@ -273,11 +273,11 @@ function AgentGroupSection({
       <div className="flex items-center justify-between border-b border-border-subtle px-3 py-2">
         <div className="flex items-center gap-2">
           <StatusDot tone={group.key} ariaLabel={group.label} />
-          <h3 className="text-[12px] font-semibold uppercase tracking-[0.12em] text-text-secondary">
+          <h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-text-secondary">
             {group.label}
           </h3>
         </div>
-        <span className="tabular text-[12px] text-text-tertiary">{group.count}</span>
+        <span className="tabular text-sm text-text-tertiary">{group.count}</span>
       </div>
 
       <div className="divide-y divide-border-subtle">
@@ -296,14 +296,14 @@ function AgentGroupSection({
                   <StatusDot tone={row.category} ariaLabel={CATEGORY_LABELS[row.category]} />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="truncate text-[13px] font-semibold text-text-primary">
+                      <span className="truncate text-base font-semibold text-text-primary">
                         {row.agent.name}
                       </span>
-                      <span className="ml-auto shrink-0 text-[11px] text-text-tertiary">
+                      <span className="ml-auto shrink-0 text-xs text-text-tertiary">
                         {row.agent.startup}
                       </span>
                     </div>
-                    <p className="mt-0.5 truncate text-[12px] text-text-secondary">
+                    <p className="mt-0.5 truncate text-sm text-text-secondary">
                       {row.summary}
                     </p>
                   </div>
@@ -313,7 +313,7 @@ function AgentGroupSection({
 
               {isExpanded ? (
                 <div className="border-t border-border-subtle bg-bg/60 px-3 py-3">
-                  <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-[11px]">
+                  <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-xs">
                     <dt className="text-text-tertiary">Project</dt>
                     <dd className="text-text-primary">{row.agent.startup}</dd>
                     <dt className="text-text-tertiary">Directory</dt>
@@ -324,7 +324,7 @@ function AgentGroupSection({
                     </dd>
                     <dt className="pt-1 text-text-tertiary">Live Output</dt>
                     <dd>
-                      <pre className="max-h-32 overflow-auto whitespace-pre-wrap rounded bg-surface px-2 py-1.5 font-mono text-[11px] leading-relaxed text-text-secondary">
+                      <pre className="max-h-32 overflow-auto whitespace-pre-wrap rounded bg-surface px-2 py-1.5 font-mono text-xs leading-relaxed text-text-secondary">
                         {row.agent.lastOutput || "No recent output captured."}
                       </pre>
                     </dd>
@@ -351,7 +351,7 @@ function LoopsList({
   if (loops.length === 0) {
     return (
       <div className="rounded-md border border-border-subtle bg-surface px-3 py-4">
-        <p className="text-[12px] text-text-tertiary">
+        <p className="text-sm text-text-tertiary">
           No loops configured in <code className="rounded bg-bg px-1 font-mono">.harness/loops.yml</code>.
         </p>
       </div>
@@ -377,21 +377,21 @@ function LoopsList({
                   <StatusDot tone={tone} ariaLabel={loop.status} />
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-[13px] font-semibold text-text-primary">
+                      <span className="text-base font-semibold text-text-primary">
                         {loop.name}
                       </span>
-                      <span className="rounded-full border border-border-subtle bg-bg px-2 py-0.5 font-mono text-[11px] text-text-secondary">
+                      <span className="rounded-full border border-border-subtle bg-bg px-2 py-0.5 font-mono text-xs text-text-secondary">
                         {loop.interval}
                       </span>
-                      <span className="rounded-full bg-bg px-2 py-0.5 text-[11px] uppercase tracking-[0.12em] text-text-tertiary">
+                      <span className="rounded-full bg-bg px-2 py-0.5 text-xs uppercase tracking-[0.12em] text-text-tertiary">
                         {loop.loopType}
                       </span>
                     </div>
-                    <p className="mt-0.5 truncate text-[12px] text-text-secondary">
+                    <p className="mt-0.5 truncate text-sm text-text-secondary">
                       {loop.description || `${loop.agent} loop`}
                     </p>
                   </div>
-                  <span className="hidden text-[11px] capitalize text-text-tertiary sm:block">
+                  <span className="hidden text-xs capitalize text-text-tertiary sm:block">
                     {loop.status}
                   </span>
                   <Chevron expanded={isExpanded} />
@@ -400,7 +400,7 @@ function LoopsList({
 
               {isExpanded ? (
                 <div className="border-t border-border-subtle bg-bg/60 px-3 py-3">
-                  <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-[11px]">
+                  <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-xs">
                     <dt className="text-text-tertiary">Agent</dt>
                     <dd className="text-text-primary">{loop.agent}</dd>
                     <dt className="text-text-tertiary">Skill</dt>
@@ -466,14 +466,14 @@ export function AgentPanel() {
       >
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-[13px] font-semibold text-text-primary">
+            <span className="text-base font-semibold text-text-primary">
               Agent Overview
             </span>
-            <span className="text-[11px] text-text-tertiary">
+            <span className="text-xs text-text-tertiary">
               {agents.length} agents · {loops.length} loops
             </span>
           </div>
-          <p className="truncate text-[12px] text-text-tertiary">{summaryText}</p>
+          <p className="truncate text-sm text-text-tertiary">{summaryText}</p>
         </div>
 
         <div className="ml-auto hidden items-center gap-2 lg:flex">
@@ -489,13 +489,13 @@ export function AgentPanel() {
         <div>
           <div className="px-4 pb-4">
             {error ? (
-              <p className="py-2 text-[12px] text-negative">{error}</p>
+              <p className="py-2 text-sm text-negative">{error}</p>
             ) : loading && agents.length === 0 && loops.length === 0 ? (
-              <p className="py-2 text-[12px] text-text-tertiary">
+              <p className="py-2 text-sm text-text-tertiary">
                 Loading from tmux and <code className="rounded bg-bg px-1 font-mono">.harness/loops.yml</code>...
               </p>
             ) : agents.length === 0 && loops.length === 0 ? (
-              <p className="py-2 text-[12px] text-text-tertiary">
+              <p className="py-2 text-sm text-text-tertiary">
                 No tmux sessions or loops found. Agents appear here when running via{" "}
                 <code className="rounded bg-bg px-1 font-mono">harness init</code>.
               </p>
@@ -517,14 +517,14 @@ export function AgentPanel() {
                         onClick={() => setActiveTab(tab.key)}
                         role="tab"
                         aria-selected={selected}
-                        className={`px-3 py-2 text-[12px] font-medium transition-colors ${
+                        className={`px-3 py-2 text-sm font-medium transition-colors ${
                           selected
                             ? "border-b-2 border-text-primary text-text-primary"
                             : "text-text-tertiary hover:text-text-primary"
                         }`}
                       >
                         {tab.label}
-                        <span className="ml-1 text-[11px] text-text-tertiary">({count})</span>
+                        <span className="ml-1 text-xs text-text-tertiary">({count})</span>
                       </button>
                     );
                   })}
@@ -540,7 +540,7 @@ export function AgentPanel() {
 
                     {agents.length === 0 ? (
                       <div className="rounded-md border border-border-subtle bg-surface px-3 py-4">
-                        <p className="text-[12px] text-text-tertiary">
+                        <p className="text-sm text-text-tertiary">
                           No tmux sessions found.
                         </p>
                       </div>

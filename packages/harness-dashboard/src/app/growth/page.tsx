@@ -1,12 +1,9 @@
 import { TrafficChart } from "@/components/charts/traffic-chart";
 import { MetricCard } from "@/components/metrics/metric-card";
 import { getGrowthSnapshot } from "@/lib/data";
+import { formatNumber as fmt } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
-
-function formatNumber(value: number): string {
-  return new Intl.NumberFormat("en-US").format(value);
-}
 
 export default function GrowthPage() {
   const snapshot = getGrowthSnapshot();
@@ -17,8 +14,8 @@ export default function GrowthPage() {
   return (
     <div className="px-6 py-5 max-w-6xl">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-[18px] font-semibold text-text-primary leading-tight">Growth</h1>
-        <span className="text-[11px] uppercase tracking-wider text-text-tertiary">
+        <h1 className="text-xl font-semibold text-text-primary leading-tight">Growth</h1>
+        <span className="text-xs uppercase tracking-wider text-text-tertiary">
           {snapshot.source === "cache" ? "Cached metrics" : "No metrics"}
         </span>
       </div>
@@ -26,9 +23,9 @@ export default function GrowthPage() {
       {snapshot.traffic.length > 0 || snapshot.topPages.length > 0 ? (
         <>
           <section className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
-            <MetricCard label="Traffic Volume" value={formatNumber(totalTraffic)} sparklineData={sparkline} />
-            <MetricCard label="Latest Day" value={formatNumber(latestTraffic)} sparklineData={sparkline} />
-            <MetricCard label="Top Pages" value={formatNumber(snapshot.topPages.length)} />
+            <MetricCard label="Traffic Volume" value={fmt(totalTraffic)} sparklineData={sparkline} />
+            <MetricCard label="Latest Day" value={fmt(latestTraffic)} sparklineData={sparkline} />
+            <MetricCard label="Top Pages" value={fmt(snapshot.topPages.length)} />
           </section>
 
           <section className="mb-6">
@@ -41,20 +38,20 @@ export default function GrowthPage() {
 
           {snapshot.topPages.length > 0 && (
             <section>
-              <h2 className="text-[13px] font-semibold text-text-primary mb-2">Top Pages</h2>
+              <h2 className="text-base font-semibold text-text-primary mb-2">Top Pages</h2>
               <div className="border border-border-subtle rounded-md overflow-hidden">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-border text-left">
-                      <th className="px-4 py-2 text-[11px] font-medium text-text-tertiary uppercase tracking-wider">Page</th>
-                      <th className="px-4 py-2 text-[11px] font-medium text-text-tertiary uppercase tracking-wider text-right">Views</th>
+                      <th className="px-4 py-2 text-xs font-medium text-text-tertiary uppercase tracking-wider">Page</th>
+                      <th className="px-4 py-2 text-xs font-medium text-text-tertiary uppercase tracking-wider text-right">Views</th>
                     </tr>
                   </thead>
                   <tbody>
                     {snapshot.topPages.map((page) => (
                       <tr key={page.path} className="border-b border-border-subtle last:border-0 hover:bg-surface-hover transition-colors">
-                        <td className="px-4 py-2.5 text-[12px] font-mono text-text-secondary">{page.path}</td>
-                        <td className="px-4 py-2.5 text-[12px] text-text-primary text-right tabular">{formatNumber(page.views)}</td>
+                        <td className="px-4 py-2.5 text-sm font-mono text-text-secondary">{page.path}</td>
+                        <td className="px-4 py-2.5 text-sm text-text-primary text-right tabular">{fmt(page.views)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -65,11 +62,11 @@ export default function GrowthPage() {
         </>
       ) : (
         <section>
-          <h2 className="text-[13px] font-semibold text-text-primary mb-2">Traffic</h2>
+          <h2 className="text-base font-semibold text-text-primary mb-2">Traffic</h2>
           <div className="border border-border-subtle rounded-md px-4 py-5">
-            <p className="text-[13px] text-text-secondary">No traffic data.</p>
-            <p className="text-[12px] text-text-tertiary mt-1">
-              Configure PostHog in <code className="font-mono text-[12px] text-text-secondary bg-bg px-1 py-0.5 rounded">.harness/secrets.env</code> or write cached metrics into a startup&apos;s <code className="font-mono text-[12px] text-text-secondary bg-bg px-1 py-0.5 rounded">.harness/metrics</code> directory.
+            <p className="text-base text-text-secondary">No traffic data.</p>
+            <p className="text-sm text-text-tertiary mt-1">
+              Configure PostHog in <code className="font-mono text-sm text-text-secondary bg-bg px-1 py-0.5 rounded">.harness/secrets.env</code> or write cached metrics into a startup&apos;s <code className="font-mono text-sm text-text-secondary bg-bg px-1 py-0.5 rounded">.harness/metrics</code> directory.
             </p>
           </div>
         </section>

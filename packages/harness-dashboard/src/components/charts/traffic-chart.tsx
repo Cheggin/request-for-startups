@@ -202,8 +202,8 @@ export function TrafficChart({ data, title = "Traffic", subtitle = "Daily visito
   if (!data || data.length < 2) {
     return (
       <div className="border border-border-subtle rounded-md px-4 py-5">
-        <p className="text-[13px] text-text-secondary">No {title.toLowerCase()} data.</p>
-        <p className="text-[12px] text-text-tertiary mt-1">
+        <p className="text-base text-text-secondary">No {title.toLowerCase()} data.</p>
+        <p className="text-sm text-text-tertiary mt-1">
           Connect a data source to see the chart.
         </p>
       </div>
@@ -213,8 +213,8 @@ export function TrafficChart({ data, title = "Traffic", subtitle = "Daily visito
   return (
     <div className="border border-border-subtle rounded-md p-4">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-[13px] font-semibold text-text-primary">{title}</h3>
-        <span className="text-[11px] text-text-tertiary">{subtitle}</span>
+        <h3 className="text-base font-semibold text-text-primary">{title}</h3>
+        <span className="text-xs text-text-tertiary">{subtitle}</span>
       </div>
       <div style={{ height: 240 }}>
         <ParentSize debounceTime={10}>

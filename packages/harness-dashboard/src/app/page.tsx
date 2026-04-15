@@ -14,8 +14,8 @@ export default function OverviewPage() {
   const trafficSparkline = growth?.traffic?.map((p) => p.value) ?? [];
 
   return (
-    <div className="px-6 py-5 max-w-5xl">
-      <h1 className="text-[18px] font-semibold text-text-primary leading-tight mb-6">Overview</h1>
+    <div className="px-6 py-5 max-w-6xl">
+      <h1 className="text-xl font-semibold text-text-primary leading-tight mb-6">Overview</h1>
 
       {/* Summary cards */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
@@ -37,13 +37,13 @@ export default function OverviewPage() {
       {/* Traffic chart */}
       <section className="mb-8">
         {growthLoading ? (
-          <p className="text-[13px] text-text-tertiary">Loading traffic data...</p>
+          <p className="text-base text-text-tertiary">Loading traffic data...</p>
         ) : trafficData.length >= 2 ? (
           <TrafficChart data={trafficData} title="Traffic" subtitle="Daily visitors" />
         ) : (
           <div className="border border-border-subtle rounded-md px-4 py-5">
-            <p className="text-[13px] text-text-secondary">No traffic data yet.</p>
-            <p className="text-[12px] text-text-tertiary mt-1">
+            <p className="text-base text-text-secondary">No traffic data yet.</p>
+            <p className="text-sm text-text-tertiary mt-1">
               Configure PostHog or add cached metrics to see the chart.
             </p>
           </div>
@@ -53,12 +53,12 @@ export default function OverviewPage() {
       {/* Agent activity */}
       {!agentsLoading && agents.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-[13px] font-semibold text-text-primary mb-3">Agent Activity</h2>
+          <h2 className="text-base font-semibold text-text-primary mb-3">Agent Activity</h2>
           <div className="flex items-center gap-4 border border-border-subtle rounded-md px-4 py-3">
             <div>
-              <span className="text-[24px] font-semibold tabular text-text-primary">{running.length}</span>
-              <span className="text-[13px] text-text-tertiary ml-1.5">running</span>
-              <span className="text-[13px] text-text-tertiary ml-3">{agents.length} total</span>
+              <span className="text-3xl font-semibold tabular text-text-primary">{running.length}</span>
+              <span className="text-base text-text-tertiary ml-1.5">running</span>
+              <span className="text-base text-text-tertiary ml-3">{agents.length} total</span>
             </div>
           </div>
         </section>
@@ -66,14 +66,14 @@ export default function OverviewPage() {
 
       {/* Startups */}
       <section>
-        <h2 className="text-[13px] font-semibold text-text-primary mb-3">Startups</h2>
+        <h2 className="text-base font-semibold text-text-primary mb-3">Startups</h2>
         {startupsLoading ? (
-          <p className="text-[13px] text-text-tertiary">Scanning project directories...</p>
+          <p className="text-base text-text-tertiary">Scanning project directories...</p>
         ) : startups.length === 0 ? (
           <div className="border border-border-subtle rounded-md px-4 py-5">
-            <p className="text-[13px] text-text-secondary">No startups found.</p>
-            <p className="text-[12px] text-text-tertiary mt-1">
-              Run <code className="font-mono text-[12px] text-text-secondary bg-bg px-1 py-0.5 rounded">harness init</code> to create your first startup.
+            <p className="text-base text-text-secondary">No startups found.</p>
+            <p className="text-sm text-text-tertiary mt-1">
+              Run <code className="font-mono text-sm text-text-secondary bg-bg px-1 py-0.5 rounded">harness init</code> to create your first startup.
             </p>
           </div>
         ) : (
@@ -81,17 +81,17 @@ export default function OverviewPage() {
             {startups.map((startup) => (
               <div key={startup.id} className="px-4 py-3 hover:bg-surface-hover transition-colors">
                 <div className="flex items-center gap-2 mb-0.5">
-                  <span className="text-[13px] font-semibold text-text-primary">{startup.name}</span>
-                  <span className="text-[11px] font-medium text-text-tertiary bg-bg px-1.5 py-0.5 rounded uppercase tracking-wide">
+                  <span className="text-base font-semibold text-text-primary">{startup.name}</span>
+                  <span className="text-xs font-medium text-text-tertiary bg-bg px-1.5 py-0.5 rounded uppercase tracking-wide">
                     {startup.type}
                   </span>
                   {startup.deployUrl && (
-                    <a href={startup.deployUrl} target="_blank" rel="noopener noreferrer" className="text-[11px] font-medium text-accent hover:underline ml-auto">
+                    <a href={startup.deployUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-medium text-accent hover:underline ml-auto">
                       Live
                     </a>
                   )}
                 </div>
-                <p className="text-[12px] text-text-tertiary truncate">{startup.idea}</p>
+                <p className="text-sm text-text-tertiary truncate">{startup.idea}</p>
               </div>
             ))}
           </div>

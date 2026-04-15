@@ -14,8 +14,8 @@ export function MetricCard({ label, value, sparklineData, color }: MetricCardPro
     <div className="border border-border-subtle rounded-md px-4 py-3 hover:bg-surface-hover transition-colors">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-[11px] font-medium text-text-tertiary uppercase tracking-wide mb-1">{label}</p>
-          <p className="text-[20px] font-semibold tabular text-text-primary leading-tight">{value}</p>
+          <p className="text-xs font-medium text-text-tertiary uppercase tracking-wide mb-1">{label}</p>
+          <p className="text-2xl font-semibold tabular text-text-primary leading-tight">{value}</p>
         </div>
         {sparklineData && sparklineData.length >= 2 && (
           <Sparkline

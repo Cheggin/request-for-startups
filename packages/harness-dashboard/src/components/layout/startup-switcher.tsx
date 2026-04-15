@@ -41,7 +41,7 @@ export function StartupSwitcher() {
 
   if (loading) {
     return (
-      <div className="px-3 py-1.5 text-[13px] text-text-tertiary">
+      <div className="px-3 py-1.5 text-base text-text-tertiary">
         Loading startups...
       </div>
     );
@@ -49,7 +49,7 @@ export function StartupSwitcher() {
 
   if (!selected) {
     return (
-      <div className="px-3 py-1.5 text-[13px] text-text-tertiary">
+      <div className="px-3 py-1.5 text-base text-text-tertiary">
         No startups found
       </div>
     );
@@ -64,10 +64,10 @@ export function StartupSwitcher() {
         className="flex items-center gap-2.5 px-3 py-1.5 rounded-md border border-border hover:border-text-tertiary transition-colors bg-surface"
       >
         <span className="w-1.5 h-1.5 rounded-full bg-positive shrink-0" />
-        <span className="text-[13px] font-medium text-text-primary">
+        <span className="text-base font-medium text-text-primary">
           {selected.name}
         </span>
-        <span className="text-[11px] font-medium text-text-tertiary bg-bg px-1.5 py-0.5 rounded">
+        <span className="text-xs font-medium text-text-tertiary bg-bg px-1.5 py-0.5 rounded">
           {TYPE_BADGES[selected.type] || selected.type}
         </span>
         <svg
@@ -105,20 +105,20 @@ export function StartupSwitcher() {
             >
               <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-positive" />
               <div className="flex-1 text-left min-w-0">
-                <div className="text-[13px] font-medium text-text-primary">
+                <div className="text-base font-medium text-text-primary">
                   {startup.name}
                 </div>
-                <div className="text-[11px] text-text-tertiary truncate">
+                <div className="text-xs text-text-tertiary truncate">
                   {startup.idea}
                 </div>
               </div>
-              <span className="text-[11px] font-medium text-text-tertiary bg-bg px-1.5 py-0.5 rounded shrink-0">
+              <span className="text-xs font-medium text-text-tertiary bg-bg px-1.5 py-0.5 rounded shrink-0">
                 {TYPE_BADGES[startup.type] || startup.type}
               </span>
             </button>
           ))}
           <div className="border-t border-border-subtle mt-1 pt-1">
-            <button className="w-full flex items-center gap-3 px-3 py-2 hover:bg-surface-hover transition-colors text-text-secondary text-[13px]">
+            <button className="w-full flex items-center gap-3 px-3 py-2 hover:bg-surface-hover transition-colors text-text-secondary text-base">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
                 <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
               </svg>

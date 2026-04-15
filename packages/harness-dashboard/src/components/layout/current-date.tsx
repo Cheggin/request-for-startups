@@ -16,6 +16,6 @@ export function CurrentDate() {
   }, []);
 
   return (
-    <span className="text-[12px] text-muted-foreground">{date}</span>
+    <span className="text-sm text-muted-foreground">{date}</span>
   );
 }
