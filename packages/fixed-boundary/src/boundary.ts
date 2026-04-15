@@ -17,9 +17,15 @@ export interface BoundaryResult {
   reason: string;
 }
 
+export interface FileScope {
+  writable: string[];
+  readonly: string[];
+  blocked: string[];
+}
+
 export interface AgentConfig {
   name: string;
-  fileScope?: string[];
+  fileScope?: string[] | FileScope;
 }
 
 // ─── Constants ──────────────────────────────────────────────────────────────
@@ -60,7 +66,11 @@ export function loadAgentScopes(agentsDir: string): Map<string, string[]> {
         const content = readFileSync(join(agentsDir, file), "utf-8");
         const config = JSON.parse(content) as AgentConfig;
         if (config.name && config.fileScope) {
-          scopes.set(config.name, config.fileScope);
+          // Handle both shapes: string[] (legacy) and {writable, readonly, blocked} (rich)
+          const scope = Array.isArray(config.fileScope)
+            ? config.fileScope
+            : config.fileScope.writable || [];
+          scopes.set(config.name, scope);
         }
       } catch {
         // Skip unparseable files

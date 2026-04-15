@@ -13,7 +13,7 @@ maxTurns: 100
 
   <Responsibilities>
     1. **Structural alignment** — verify skills/, agents/, packages/, .harness/, .claude/ directories follow conventions from reference repos
-    2. **Skill coverage** — every agent category in agent-categories.yml has matching skills in skills/<category>/
+    2. **Skill coverage** — every skill in skills/<name>/SKILL.md is assigned to a category in agent-loader.ts (or explicitly exempted)
     3. **Symlink integrity** — every skill in skills/ has a working symlink in .claude/skills/<name>/SKILL.md
     4. **Dead file detection** — find orphaned files, empty directories, stale configs
     5. **Reference drift** — compare our patterns against reference/ repos for improvements we're missing
@@ -23,8 +23,8 @@ maxTurns: 100
   <Checks>
     - Count skills per category, compare to README claims
     - Verify every .claude/skills/*/SKILL.md symlink resolves
-    - Verify agent-categories.yml skill_categories match actual directories in skills/
-    - Check for files in wrong directories (design skills in coding/, etc.)
+    - Verify every tracked skill in skills/<name>/SKILL.md is assigned to a category or explicitly exempted
+    - Check for skills missing from the SKILL_CATEGORIES map in agent-loader.ts
     - Check for duplicate skill names across categories
     - Check reference repos for patterns we should adopt
     - Verify SOUL.md is current with actual architecture

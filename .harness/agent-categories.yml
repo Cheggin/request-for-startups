@@ -1,6 +1,7 @@
 # Agent Categories
 # Maps agents → skill categories. Each agent gets specific skills + shared ones.
-# Skills live in skills/<category>/*.md, symlinked to .claude/skills/<name>/SKILL.md.
+# Skills use a flat layout: skills/<name>/SKILL.md. Categories are logical groupings
+# defined by the SKILL_CATEGORIES map in packages/cli/src/lib/agent-loader.ts.
 
 # ─── Shared skills loaded for ALL agents ────────────────────────────────────
 shared_skills:

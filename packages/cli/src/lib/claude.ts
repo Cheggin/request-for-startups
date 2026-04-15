@@ -1,8 +1,6 @@
 import { readFileSync, existsSync } from "fs";
 import { join } from "path";
 import { AGENTS_DIR, ROOT_DIR } from "./constants.js";
-import { generateAgentPrompt } from "./agent-loader.js";
-
 interface AgentLike {
   name: string;
   model: string;
@@ -23,13 +21,17 @@ function loadAgentSystemPrompt(name: string): string {
   return match ? match[1].trim() : content.trim();
 }
 
+/**
+ * Build the base system prompt from the agent's .md file.
+ * Category-specific skills/ground-truth are injected by spawnAgent
+ * via generateAgentPrompt() from agent-loader.ts.
+ */
 export function buildAgentSystemPrompt(
   agentName: string,
   extraSystemPrompt?: string
 ): string {
   return [
     loadAgentSystemPrompt(agentName),
-    generateAgentPrompt(agentName),
     extraSystemPrompt?.trim() || "",
   ]
     .filter(Boolean)

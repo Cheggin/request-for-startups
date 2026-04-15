@@ -31,7 +31,6 @@ export default function AgentsPage() {
   const { agents, loading, error, refetch } = useAgents(5000);
 
   const filtered = filter === "all" ? agents : agents.filter((a) => a.status === filter);
-  const running = agents.filter((a) => a.status === "running");
 
   return (
     <div className="px-6 py-5 max-w-5xl">
@@ -40,14 +39,6 @@ export default function AgentsPage() {
         <button onClick={refetch} className="text-[12px] font-medium text-text-secondary hover:text-text-primary border border-border px-3 py-1.5 rounded-md hover:bg-surface-hover transition-colors">
           Refresh
         </button>
-      </div>
-
-      <div className="flex items-baseline gap-6 mb-5">
-        <div>
-          <span className="text-[24px] font-semibold tabular text-text-primary">{running.length}</span>
-          <span className="text-[13px] text-text-tertiary ml-1.5">running</span>
-        </div>
-        <div className="text-[13px] text-text-tertiary">{agents.length} total</div>
       </div>
 
       {loading ? (

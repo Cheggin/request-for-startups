@@ -126,4 +126,44 @@ describe("loadAgentScopes", () => {
     const scopes = loadAgentScopes("/non/existent/path");
     expect(scopes.size).toBe(0);
   });
+
+  test("loads scopes from tracked .harness/agents/ with object fileScope", () => {
+    // The tracked agent configs use { writable, readonly, blocked } shape
+    const { join } = require("path");
+    const agentsDir = join(process.cwd(), ".harness", "agents");
+    const scopes = loadAgentScopes(agentsDir);
+    // Should have loaded at least the agents with fileScope
+    expect(scopes.size).toBeGreaterThan(0);
+    // Each scope should be a flat string[] (writable paths extracted from the object)
+    for (const [, scope] of scopes) {
+      expect(Array.isArray(scope)).toBe(true);
+      for (const entry of scope) {
+        expect(typeof entry).toBe("string");
+      }
+    }
+  });
+});
+
+describe("checkBoundary with object-shaped fileScope", () => {
+  test("blocks agent outside writable scope when fileScope is object-shaped", () => {
+    // Simulate what loadAgentScopes produces from { writable: ["src/**"], ... }
+    const scopes = new Map([["writing", ["content/", "docs/", "blog/"]]]);
+    const result = checkBoundary("writing", "src/app/page.tsx", "Edit", scopes);
+    expect(result.allowed).toBe(false);
+    expect(result.reason).toContain("scope");
+  });
+
+  test("allows agent within writable scope when fileScope is object-shaped", () => {
+    const scopes = new Map([["writing", ["content/", "docs/", "blog/"]]]);
+    const result = checkBoundary("writing", "content/blog/post.md", "Edit", scopes);
+    expect(result.allowed).toBe(true);
+  });
+
+  test("agent with empty writable scope can only read", () => {
+    // alignment agent has writable: [] — should block all writes
+    const scopes = new Map([["alignment", []]]);
+    const result = checkBoundary("alignment", "some/random/file.ts", "Edit", scopes);
+    expect(result.allowed).toBe(false);
+    expect(result.reason).toContain("scope");
+  });
 });

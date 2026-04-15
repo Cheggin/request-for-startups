@@ -46,14 +46,14 @@ The harness is a **Claude Code plugin**. Install it in any project:
 claude plugins add Cheggin/request-for-startups
 ```
 
-All 93 skills become available as `/startup-harness:<skill-name>` in any Claude Code session. Skills auto-update when the repo is pushed.
+All 94 skills become available as `/startup-harness:<skill-name>` in any Claude Code session. Skills auto-update when the repo is pushed.
 
 ## Architecture
 
 ```
 commands/          Entry points (startup-init, resume)
 agents/            12 agent definitions (website, backend, growth, writing, ops, commander, researcher, docs, slop-cleaner, harness-researcher, alignment, paper-reader)
-skills/            93 skills as Claude Code plugin format (skills/<name>/SKILL.md)
+skills/            94 skills as Claude Code plugin format (skills/<name>/SKILL.md)
 templates/         Integration templates (Stripe, Clerk auth, Resend email)
 packages/          27 packages with 590+ tests (includes harness-dashboard)
 features/          Checklist-driven development tracking
@@ -70,7 +70,7 @@ features/          Checklist-driven development tracking
 
 An agent is a blank Claude Code session. Its identity comes entirely from which skills are loaded. A "website agent" is just: coding ground truth + design skills + coding skills + convex skills. Agent-to-skill mapping is defined in `.harness/agent-categories.yml`.
 
-The harness is a **Claude Code plugin**. Install it and all 93 skills are available as `/startup-harness:<skill-name>` in any Claude Code session. Skills auto-update when the repo is pushed.
+The harness is a **Claude Code plugin**. Install it and all 94 skills are available as `/startup-harness:<skill-name>` in any Claude Code session. Skills auto-update when the repo is pushed.
 
 ### Mechanical Enforcement
 
@@ -284,7 +284,7 @@ Legal pages (ToS, Privacy Policy), SEO setup (sitemap, meta tags, structured dat
 │   ├── alignment.md           Repo structure auditor (sonnet, level 2) → orchestration category
 │   └── slop-cleaner.md        AI slop detection/removal (sonnet, level 2) → quality category
 │
-├── skills/                    93 skills in Claude Code plugin format (skills/<name>/SKILL.md)
+├── skills/                    94 skills in Claude Code plugin format (skills/<name>/SKILL.md)
 │   │                          Each agent category loads specific skills:
 │   │                          coding agents → design + coding + convex skills
 │   │                          content agents → content skills
