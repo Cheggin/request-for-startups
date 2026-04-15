@@ -50,6 +50,11 @@ ${bold}Loops:${reset}
   ${green}loop start-all${reset}                    Start all loops
   ${green}loop stop-all${reset}                     Stop all loops
 
+${bold}CEO Monitor:${reset}
+  ${green}ceo-monitor once${reset} [--json] [--verbose]  Run one monitoring cycle
+  ${green}ceo-monitor status${reset} [--json]            Fleet status (verbose)
+  ${green}ceo-monitor tick${reset}                       Alias for once
+
 ${bold}Features:${reset}
   ${green}feature list${reset} [--done|--todo|...]  List with counts
   ${green}feature new${reset} <name>                Create feature
@@ -142,6 +147,11 @@ async function main(): Promise<void> {
     }
     case "loop": {
       const mod = await import("./commands/loop.js");
+      mod.run(commandArgs);
+      break;
+    }
+    case "ceo-monitor": {
+      const mod = await import("./commands/ceo-monitor.js");
       mod.run(commandArgs);
       break;
     }

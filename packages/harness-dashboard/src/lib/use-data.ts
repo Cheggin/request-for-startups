@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import type { RealAgent, RealLoop, RealStartup, GitHubIssue } from "./data";
+import type { RealAgent, RealLoop, RealStartup, GitHubIssue, GrowthSnapshot } from "./data";
 
 /**
  * Fetch real agent data from the API route.
@@ -125,4 +125,30 @@ export function useLoops(pollInterval = 5000) {
   }, [fetchLoops, pollInterval]);
 
   return { loops, loading, error, refetch: fetchLoops };
+}
+
+/**
+ * Fetch growth snapshot from the API route.
+ */
+export function useGrowth() {
+  const [snapshot, setSnapshot] = useState<GrowthSnapshot | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetch_() {
+      try {
+        const res = await fetch("/api/growth");
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        setSnapshot(data);
+      } catch {
+        // Growth data is optional — fail silently
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetch_();
+  }, []);
+
+  return { snapshot, loading };
 }

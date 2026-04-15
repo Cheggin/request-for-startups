@@ -11,7 +11,7 @@
  */
 
 import { readFileSync, existsSync } from "fs";
-import { join, resolve } from "path";
+import { join } from "path";
 
 const HARNESS_DIR = join(process.cwd(), ".harness");
 
@@ -44,7 +44,7 @@ const CATEGORY_SCOPES: Record<string, { allow: string[]; deny: string[] }> = {
   },
 };
 
-function getAgentCategory(): string | null {
+function getAgentCategories(): string[] | null {
   const agentName = process.env.HARNESS_AGENT;
   if (!agentName) return null;
 
@@ -53,28 +53,44 @@ function getAgentCategory(): string | null {
 
   try {
     const config = JSON.parse(readFileSync(configPath, "utf-8"));
-    return config.category || null;
+    if (!config.category) return null;
+    // Handle both string and string[] category values
+    return Array.isArray(config.category) ? config.category : [config.category];
   } catch {
     return null;
   }
 }
 
-function isPathAllowed(filePath: string, category: string): boolean {
-  const scope = CATEGORY_SCOPES[category];
-  if (!scope) return true; // unknown category = allow
-
+function isPathAllowed(filePath: string, categories: string[]): boolean {
   const relative = filePath.replace(process.cwd() + "/", "");
 
-  // Check deny list first
-  for (const pattern of scope.deny) {
+  // Merge scopes from all categories (union of allow, union of deny)
+  const mergedAllow: string[] = [];
+  const mergedDeny: string[] = [];
+  let hasKnownCategory = false;
+
+  for (const category of categories) {
+    const scope = CATEGORY_SCOPES[category];
+    if (!scope) continue;
+    hasKnownCategory = true;
+    mergedAllow.push(...scope.allow);
+    mergedDeny.push(...scope.deny);
+  }
+
+  if (!hasKnownCategory) return true; // all unknown categories = allow
+
+  // Check deny list first — but skip denies that are also in allow (multi-category override)
+  const allowSet = new Set(mergedAllow);
+  for (const pattern of mergedDeny) {
+    if (allowSet.has(pattern)) continue; // explicitly allowed by another category
     if (relative.startsWith(pattern) || relative.includes(`/${pattern}`)) {
       return false;
     }
   }
 
   // If allow list exists, file must match at least one pattern
-  if (scope.allow.length > 0) {
-    return scope.allow.some(pattern => {
+  if (mergedAllow.length > 0) {
+    return mergedAllow.some(pattern => {
       if (pattern.startsWith("*.")) {
         return relative.endsWith(pattern.slice(1));
       }
@@ -100,15 +116,15 @@ process.stdin.on("end", () => {
       return;
     }
 
-    const category = getAgentCategory();
-    if (!category) {
+    const categories = getAgentCategories();
+    if (!categories) {
       // No agent context (running manually, not via harness) — allow everything
       console.log(raw);
       return;
     }
 
-    if (!isPathAllowed(filePath, category)) {
-      console.error(`[ScopeEnforcer] ${process.env.HARNESS_AGENT} (${category}) cannot modify ${filePath} — outside allowed scope`);
+    if (!isPathAllowed(filePath, categories)) {
+      console.error(`[ScopeEnforcer] ${process.env.HARNESS_AGENT} (${categories.join(", ")}) cannot modify ${filePath} — outside allowed scope`);
       process.exit(2);
     }
 

@@ -546,6 +546,84 @@ export function getGrowthSnapshot(): GrowthSnapshot {
   };
 }
 
+// ─── Mentions: Read cached mention monitor data ───────────────────────────
+
+export interface MentionItem {
+  platform: string;
+  externalId: string;
+  keyword: string;
+  title: string;
+  url: string;
+  author: string;
+  engagement: number;
+  commentCount: number;
+  score: number;
+  sentiment: "positive" | "negative" | "neutral";
+  status: string;
+  dedupKey: string;
+  createdAt: string;
+}
+
+export interface ResponseQueueItem {
+  mentionId: string;
+  platform: string;
+  url: string;
+  replyAngle: string;
+  priority: number;
+  status: "queued" | "drafted" | "posted" | "attributed";
+  responseText?: string;
+  postedAt?: string;
+}
+
+export interface MentionSnapshot {
+  source: "cache" | "none";
+  lastUpdated: string | null;
+  mentions: MentionItem[];
+  responseQueue: ResponseQueueItem[];
+  platformCounts: Record<string, number>;
+  sentimentCounts: Record<string, number>;
+}
+
+export function getMentionSnapshot(): MentionSnapshot {
+  const mentionsCachePath = join(REPO_ROOT, ".harness", "metrics", "mentions-cache.json");
+  const responseQueuePath = join(REPO_ROOT, ".harness", "metrics", "response-queue.json");
+
+  let mentions: MentionItem[] = [];
+  let responseQueue: ResponseQueueItem[] = [];
+  let lastUpdated: string | null = null;
+
+  if (existsSync(mentionsCachePath)) {
+    const parsed = safeReadJson(mentionsCachePath) as Record<string, unknown> | null;
+    if (parsed && Array.isArray(parsed.mentions)) {
+      mentions = parsed.mentions as MentionItem[];
+      lastUpdated = (parsed.lastUpdated as string) ?? null;
+    }
+  }
+
+  if (existsSync(responseQueuePath)) {
+    const parsed = safeReadJson(responseQueuePath) as Record<string, unknown> | null;
+    if (parsed && Array.isArray(parsed.items)) {
+      responseQueue = parsed.items as ResponseQueueItem[];
+    }
+  }
+
+  const platformCounts: Record<string, number> = {};
+  const sentimentCounts: Record<string, number> = {};
+  for (const m of mentions) {
+    platformCounts[m.platform] = (platformCounts[m.platform] ?? 0) + 1;
+    sentimentCounts[m.sentiment] = (sentimentCounts[m.sentiment] ?? 0) + 1;
+  }
+
+  return {
+    source: mentions.length > 0 ? "cache" : "none",
+    lastUpdated,
+    mentions,
+    responseQueue,
+    platformCounts,
+    sentimentCounts,
+  };
+}
+
 // ─── Settings: Read .harness config + env + agent definitions ─────────────
 
 export function getSettingsSnapshot(): SettingsSnapshot {
