@@ -18,18 +18,15 @@ import { dirname, join, relative, resolve } from "path";
 
 // ─── Repo Paths ────────────────────────────────────────────────────────────
 
-function findHarnessRoot(startPath: string): string {
-  let current = resolve(startPath);
+const REPO_ROOT_CANDIDATES = [
+  resolve(process.cwd(), "../.."),
+  resolve(process.cwd(), ".."),
+  resolve(process.cwd()),
+];
 
-  while (true) {
-    if (existsSync(join(current, ".harness"))) return current;
-    const parent = dirname(current);
-    if (parent === current) return resolve(startPath);
-    current = parent;
-  }
-}
-
-const REPO_ROOT = findHarnessRoot(process.cwd());
+const REPO_ROOT =
+  REPO_ROOT_CANDIDATES.find((candidate) => existsSync(join(candidate, ".harness"))) ||
+  REPO_ROOT_CANDIDATES[0];
 const WORKSPACE_ROOT = dirname(REPO_ROOT);
 const ROOT_HARNESS_DIR = join(REPO_ROOT, ".harness");
 const LOOPS_YML_PATH = join(ROOT_HARNESS_DIR, "loops.yml");
@@ -326,7 +323,7 @@ export function getDeployments(): RealDeployment[] {
     });
 
     const parsed = JSON.parse(raw);
-    const items = Array.isArray(parsed)
+    const items: unknown[] = Array.isArray(parsed)
       ? parsed
       : Array.isArray(parsed?.deployments)
         ? parsed.deployments
@@ -334,12 +331,16 @@ export function getDeployments(): RealDeployment[] {
           ? parsed.projects
           : [];
 
-    return items.map((deployment: any) => ({
-      name: deployment.name || deployment.project || "unknown",
-      url: deployment.url || "",
-      state: deployment.state || deployment.readyState || "unknown",
-      createdAt: deployment.createdAt || deployment.created || "",
-    }));
+    return items.map((deployment) => {
+      const record = isPlainObject(deployment) ? deployment : {};
+      return {
+        name: findStringValue(record, ["name", "project"]) || "unknown",
+        url: findStringValue(record, ["url"]) || "",
+        state: findStringValue(record, ["state", "readyState"]) || "unknown",
+        createdAt:
+          findStringValue(record, ["createdAt", "created"]) || "",
+      };
+    });
   } catch {
     return [];
   }
@@ -441,22 +442,24 @@ export function getGitHubIssues(): GitHubIssue[] {
     const issues = JSON.parse(raw);
     if (!Array.isArray(issues)) return [];
 
-    return issues.map((issue: any) => {
-      const body = issue.body || "";
+    return issues.map((issue) => {
+      const record = isPlainObject(issue) ? issue : {};
+      const author = isPlainObject(record.author) ? record.author : {};
+      const body = findStringValue(record, ["body"]) || "";
       const severityMatch = body.match(/##\s*Severity\s*\n\s*(P[0-3])/i);
       const typeMatch = body.match(/##\s*Type\s*\n\s*(\w+)/i);
 
       return {
-        number: issue.number,
-        title: issue.title,
-        url: issue.url,
+        number: findNumericValue(record, ["number"]) || 0,
+        title: findStringValue(record, ["title"]) || "Untitled issue",
+        url: findStringValue(record, ["url"]) || "",
         severity: severityMatch
           ? (severityMatch[1] as GitHubIssue["severity"])
           : "unknown",
         type: typeMatch ? typeMatch[1] : "unknown",
-        author: issue.author?.login || "unknown",
-        createdAt: issue.createdAt,
-        state: issue.state || "OPEN",
+        author: findStringValue(author, ["login"]) || "unknown",
+        createdAt: findStringValue(record, ["createdAt"]) || "",
+        state: findStringValue(record, ["state"]) || "OPEN",
       };
     });
   } catch {
@@ -870,7 +873,7 @@ function parseCompetitorReport(
 
       const rows = Array.isArray(parsed)
         ? parsed
-        : Array.isArray(parsed.competitors)
+        : isPlainObject(parsed) && Array.isArray(parsed.competitors)
           ? parsed.competitors
           : [];
 
@@ -1027,7 +1030,7 @@ function getGrowthCacheFiles(startupPath: string): string[] {
   return files;
 }
 
-function safeReadJson(filePath: string): any | null {
+function safeReadJson(filePath: string): unknown | null {
   try {
     return JSON.parse(readFileSync(filePath, "utf-8"));
   } catch {
@@ -1179,7 +1182,7 @@ function findStringValue(
   return null;
 }
 
-function isPlainObject(value: unknown): value is Record<string, any> {
+function isPlainObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
