@@ -6,6 +6,15 @@ import type { RealAgent } from "@/lib/data";
 
 type StatusFilter = RealAgent["status"] | "all";
 
+async function restartAgent(paneId: string): Promise<boolean> {
+  try {
+    const res = await fetch(`/api/agents/${encodeURIComponent(paneId)}/restart`, { method: "POST" });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
 const STATUS_FILTERS: { label: string; value: StatusFilter }[] = [
   { label: "All", value: "all" },
   { label: "Running", value: "running" },
@@ -28,7 +37,16 @@ function StatusIndicator({ status }: { status: RealAgent["status"] }) {
 
 export default function AgentsPage() {
   const [filter, setFilter] = useState<StatusFilter>("all");
+  const [restarting, setRestarting] = useState<string | null>(null);
   const { agents, loading, error, refetch } = useAgents(5000);
+
+  async function handleRestart(paneId: string) {
+    setRestarting(paneId);
+    console.log(`[AgentsPage] Restarting agent: ${paneId}`);
+    const ok = await restartAgent(paneId);
+    if (!ok) console.error(`[AgentsPage] Failed to restart ${paneId}`);
+    setTimeout(() => { refetch(); setRestarting(null); }, 2000);
+  }
 
   const filtered = filter === "all" ? agents : agents.filter((a) => a.status === filter);
 
@@ -76,6 +94,7 @@ export default function AgentsPage() {
                   <th className="px-4 py-2 text-xs font-medium text-text-tertiary uppercase tracking-wider">Last Output</th>
                   <th className="px-4 py-2 text-xs font-medium text-text-tertiary uppercase tracking-wider">Project</th>
                   <th className="px-4 py-2 text-xs font-medium text-text-tertiary uppercase tracking-wider text-right">Status</th>
+                  <th className="px-4 py-2 text-xs font-medium text-text-tertiary uppercase tracking-wider text-right w-20">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -101,6 +120,19 @@ export default function AgentsPage() {
                       <span className={`text-sm font-medium capitalize ${agent.status === "running" ? "text-positive" : "text-text-tertiary"}`}>
                         {agent.status}
                       </span>
+                    </td>
+                    <td className="px-4 py-2.5 text-right">
+                      <button
+                        onClick={() => handleRestart(agent.paneId)}
+                        disabled={restarting === agent.paneId}
+                        className={`text-xs font-medium px-2 py-1 rounded-md transition-colors ${
+                          restarting === agent.paneId
+                            ? "text-text-tertiary bg-bg cursor-not-allowed"
+                            : "text-accent hover:bg-surface-hover border border-border"
+                        }`}
+                      >
+                        {restarting === agent.paneId ? "Restarting..." : "Restart"}
+                      </button>
                     </td>
                   </tr>
                 ))}

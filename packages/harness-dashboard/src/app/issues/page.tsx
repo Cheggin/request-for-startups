@@ -1,8 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import { useIssues } from "@/lib/use-data";
 import type { GitHubIssue } from "@/lib/data";
 import { formatRelativeTime } from "@/lib/format";
+
+async function dismissIssue(number: number): Promise<boolean> {
+  try {
+    const res = await fetch(`/api/issues/${number}/dismiss`, { method: "POST" });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
 
 const SEVERITY_ORDER = ["P0", "P1", "P2", "P3", "unknown"] as const;
 
@@ -37,7 +47,16 @@ function groupBySeverity(issues: GitHubIssue[]): Record<string, GitHubIssue[]> {
 }
 
 export default function IssuesPage() {
-  const { issues, loading, error } = useIssues(30000);
+  const { issues, loading, error, refetch } = useIssues(30000);
+  const [dismissing, setDismissing] = useState<number | null>(null);
+
+  async function handleDismiss(issueNumber: number) {
+    setDismissing(issueNumber);
+    console.log(`[IssuesPage] Dismissing issue #${issueNumber}`);
+    const ok = await dismissIssue(issueNumber);
+    if (!ok) console.error(`[IssuesPage] Failed to dismiss #${issueNumber}`);
+    setTimeout(() => { refetch(); setDismissing(null); }, 2000);
+  }
 
   const grouped = groupBySeverity(issues);
   const totalOpen = issues.length;
@@ -122,6 +141,17 @@ export default function IssuesPage() {
                         <span className="text-xs text-text-tertiary shrink-0 tabular">
                           {formatRelativeTime(issue.createdAt)}
                         </span>
+                        <button
+                          onClick={() => handleDismiss(issue.number)}
+                          disabled={dismissing === issue.number}
+                          className={`text-xs font-medium px-2 py-1 rounded-md transition-colors shrink-0 ${
+                            dismissing === issue.number
+                              ? "text-text-tertiary bg-bg cursor-not-allowed"
+                              : "text-text-tertiary hover:text-negative hover:bg-surface-hover border border-border"
+                          }`}
+                        >
+                          {dismissing === issue.number ? "Closing..." : "Dismiss"}
+                        </button>
                       </div>
                     );
                   })}
