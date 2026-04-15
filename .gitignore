@@ -19,6 +19,7 @@ out/
 
 # Harness state (local only)
 .harness/secrets.env
+.harness/signals/
 
 # OMC state
 .omc/state/

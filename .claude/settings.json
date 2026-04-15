@@ -5,7 +5,25 @@
         "hooks": [
           {
             "type": "command",
+            "command": "bun run packages/hooks/src/run-inter-agent-signal.ts"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
             "command": "bun run packages/hooks/src/run-context-handoff.ts"
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun run packages/hooks/src/run-inter-agent-signal.ts"
           }
         ]
       }
