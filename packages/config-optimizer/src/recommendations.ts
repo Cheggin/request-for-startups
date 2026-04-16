@@ -1,7 +1,5 @@
 import {
   ERROR_RATE_THRESHOLD,
-  TURN_UNDERUSE_FACTOR,
-  BUDGET_HIT_RATE_THRESHOLD,
   HIGH_COST_THRESHOLD,
   LOW_COST_THRESHOLD,
   GOOD_QUALITY_THRESHOLD,
@@ -30,77 +28,11 @@ export function generateRecommendations(metrics: AgentMetrics[]): Recommendation
 function analyzeAgent(m: AgentMetrics): Recommendation[] {
   const recs: Recommendation[] = [];
 
-  recs.push(...checkTurnUnderuse(m));
-  recs.push(...checkBudgetHits(m));
   recs.push(...checkErrorRate(m));
   recs.push(...checkModelDowngrade(m));
   recs.push(...checkModelUpgrade(m));
 
   return recs;
-}
-
-/**
- * If agent consistently uses fewer turns than maxTurns, suggest lowering.
- */
-function checkTurnUnderuse(m: AgentMetrics): Recommendation[] {
-  const threshold = m.avgMaxTurns * TURN_UNDERUSE_FACTOR;
-
-  if (m.avgTurnsPerTask < threshold) {
-    const suggestedMax = Math.ceil(m.avgTurnsPerTask * 1.5);
-    const ratio = m.avgTurnsPerTask / m.avgMaxTurns;
-
-    return [
-      {
-        type: "lower_max_turns",
-        agent: m.agent,
-        description: `Agent "${m.agent}" averages ${m.avgTurnsPerTask.toFixed(1)} turns but maxTurns is ${m.avgMaxTurns}. Suggest lowering to ${suggestedMax}.`,
-        confidence: ratio < 0.25 ? CONFIDENCE_HIGH : CONFIDENCE_MEDIUM,
-        evidence: [
-          `Avg turns per task: ${m.avgTurnsPerTask.toFixed(1)}`,
-          `Current maxTurns: ${m.avgMaxTurns}`,
-          `Turn utilization: ${(ratio * 100).toFixed(0)}%`,
-          `Tasks analyzed: ${m.taskCount}`,
-        ],
-        suggestedChange: {
-          path: "hooks.budget-enforcer.turnLimit",
-          from: m.avgMaxTurns,
-          to: suggestedMax,
-        },
-      },
-    ];
-  }
-
-  return [];
-}
-
-/**
- * If agent frequently hits budget limit, suggest raising maxTurns.
- */
-function checkBudgetHits(m: AgentMetrics): Recommendation[] {
-  if (m.budgetHitRate > BUDGET_HIT_RATE_THRESHOLD) {
-    const suggestedMax = Math.ceil(m.avgMaxTurns * 1.5);
-
-    return [
-      {
-        type: "raise_max_turns",
-        agent: m.agent,
-        description: `Agent "${m.agent}" hits budget limit ${(m.budgetHitRate * 100).toFixed(0)}% of the time. Suggest raising maxTurns to ${suggestedMax}.`,
-        confidence: m.budgetHitRate > 0.5 ? CONFIDENCE_HIGH : CONFIDENCE_MEDIUM,
-        evidence: [
-          `Budget hit rate: ${(m.budgetHitRate * 100).toFixed(0)}%`,
-          `Current maxTurns: ${m.avgMaxTurns}`,
-          `Tasks analyzed: ${m.taskCount}`,
-        ],
-        suggestedChange: {
-          path: "hooks.budget-enforcer.turnLimit",
-          from: m.avgMaxTurns,
-          to: suggestedMax,
-        },
-      },
-    ];
-  }
-
-  return [];
 }
 
 /**

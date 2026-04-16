@@ -1,12 +1,6 @@
 /** Threshold above which error rate triggers a recommendation */
 export const ERROR_RATE_THRESHOLD = 0.2;
 
-/** If avg turns < maxTurns * this factor, suggest lowering maxTurns */
-export const TURN_UNDERUSE_FACTOR = 0.5;
-
-/** If agent hits budget limit more than this fraction of tasks, suggest raising */
-export const BUDGET_HIT_RATE_THRESHOLD = 0.3;
-
 /** Cost per task threshold (USD) above which we consider downgrading model */
 export const HIGH_COST_THRESHOLD = 2.0;
 

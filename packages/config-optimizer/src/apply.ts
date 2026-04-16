@@ -53,19 +53,6 @@ function applyChange(config: AgentConfig, recommendation: Recommendation): Agent
   const change = recommendation.suggestedChange;
 
   switch (recommendation.type) {
-    case "lower_max_turns":
-    case "raise_max_turns": {
-      if (!updated.hooks || typeof updated.hooks !== "object") {
-        updated.hooks = {};
-      }
-      const hooks = updated.hooks as Record<string, Record<string, unknown>>;
-      if (!hooks["budget-enforcer"]) {
-        hooks["budget-enforcer"] = {};
-      }
-      hooks["budget-enforcer"].turnLimit = change.to;
-      break;
-    }
-
     case "add_hooks": {
       if (!updated.hooks || typeof updated.hooks !== "object") {
         updated.hooks = {};

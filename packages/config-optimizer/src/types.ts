@@ -31,8 +31,6 @@ export interface AgentMetrics {
 
 /** Types of recommendations the optimizer can make */
 export type RecommendationType =
-  | "lower_max_turns"
-  | "raise_max_turns"
   | "add_hooks"
   | "upgrade_model"
   | "downgrade_model";
