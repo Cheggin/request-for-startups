@@ -5,7 +5,7 @@
  * Uses fuzzy substring matching for keywords (case-insensitive).
  */
 
-import type { Issue } from "@startup-harness/github-state";
+import type { Issue } from "@harness/github-state";
 import type { Task, ClassificationResult, ClassificationSignal } from "./types.js";
 import {
   AGENT_NAMES,

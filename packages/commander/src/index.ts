@@ -14,7 +14,7 @@ import type {
   CommanderEventSink,
   RunningAgent,
 } from "./types.js";
-import type { Issue } from "@startup-harness/github-state";
+import type { Issue } from "@harness/github-state";
 import { classifyTask, buildTaskFromIssue } from "./dispatcher.js";
 import { monitorTick } from "./monitor.js";
 import { buildDependencyGraph, getUnblockedTasks, processHandoff } from "./handoff.js";

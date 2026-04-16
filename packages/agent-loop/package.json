@@ -11,7 +11,7 @@
     "typescript": "^5.7.0"
   },
   "dependencies": {
-    "@rfs/hooks": "workspace:*",
+    "@harness/hooks": "workspace:*",
     "gray-matter": "^4.0.3"
   }
 }

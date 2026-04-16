@@ -14,6 +14,6 @@
   },
   "dependencies": {
     "@harness/agent-loop": "workspace:*",
-    "@startup-harness/github-state": "workspace:*"
+    "@harness/github-state": "workspace:*"
   }
 }

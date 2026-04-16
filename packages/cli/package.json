@@ -17,10 +17,10 @@
     "@harness/eval-framework": "workspace:*",
     "@harness/feature-decomposer": "workspace:*",
     "@harness/spec-generator": "workspace:*",
-    "@rfs/hooks": "workspace:*",
-    "@rfs/repo-setup": "workspace:*",
-    "@rfs/service-validator": "workspace:*",
-    "@startup-harness/github-state": "workspace:*",
+    "@harness/hooks": "workspace:*",
+    "@harness/repo-setup": "workspace:*",
+    "@harness/service-validator": "workspace:*",
+    "@harness/github-state": "workspace:*",
     "yaml": "^2.7.0"
   },
   "devDependencies": {
