@@ -59,3 +59,7 @@ skills-lock.json
 
 # Product references — large cloned repos, not committed
 reference/products/
+
+# Personal planning/working documents
+reagan_*.md
+reagan_*.mjs
