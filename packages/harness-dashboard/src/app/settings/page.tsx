@@ -13,8 +13,8 @@ export default function SettingsPage() {
   const configuredServices = snapshot.services.filter((s) => s.configured).length;
 
   return (
-    <div className="px-6 py-5 max-w-6xl space-y-8">
-      <h1 className="text-xl heading-page text-text-primary leading-tight">Settings</h1>
+    <div className="px-8 py-6 max-w-[1200px] space-y-8">
+      <h1 className="text-lg heading-page text-text-primary leading-tight">Settings</h1>
 
       <section>
         <div className="flex items-center justify-between mb-2">

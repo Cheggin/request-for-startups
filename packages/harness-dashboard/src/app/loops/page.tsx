@@ -24,10 +24,10 @@ export default function LoopsPage() {
   }
 
   return (
-    <div className="px-6 py-5 max-w-6xl">
+    <div className="px-8 py-6 max-w-[1200px]">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl heading-page text-text-primary leading-tight">Loops</h1>
-        <button onClick={refetch} className="text-sm font-medium text-text-tertiary hover:text-text-primary border border-border px-3 py-1.5 rounded-md hover:bg-surface-hover transition-colors">
+        <h1 className="text-lg heading-page text-text-primary leading-tight">Loops</h1>
+        <button onClick={refetch} className="text-xs font-medium text-text-secondary hover:text-text-primary border border-border-subtle px-2.5 py-1 rounded-md hover:bg-surface-hover transition-colors">
           Refresh
         </button>
       </div>
@@ -45,14 +45,14 @@ export default function LoopsPage() {
       ) : error ? (
         <p className="text-base text-negative py-4">Failed to load loops: {error}</p>
       ) : loops.length === 0 ? (
-        <div className="border border-border-subtle rounded-md px-4 py-5">
-          <p className="text-base text-text-secondary">No loops defined.</p>
-          <p className="text-sm text-text-tertiary mt-1">
+        <div className="rounded-lg border border-border-subtle bg-surface px-5 py-8 text-center">
+          <p className="text-sm font-semibold text-text-secondary">No loops defined</p>
+          <p className="text-xs text-text-tertiary mt-1">
             Define loops in <code className="font-mono text-sm text-text-secondary bg-bg px-1 py-0.5 rounded">.harness/loops.yml</code>
           </p>
         </div>
       ) : (
-        <div className="border border-border-subtle rounded-md overflow-hidden">
+        <div className="rounded-lg border border-border-subtle bg-surface overflow-hidden">
           <table className="w-full">
             <thead>
               <tr className="border-b border-border text-left">

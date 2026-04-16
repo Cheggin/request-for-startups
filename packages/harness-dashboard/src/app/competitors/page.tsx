@@ -17,9 +17,9 @@ export default function CompetitorsPage() {
   const reports = getCompetitorReports();
 
   return (
-    <div className="px-6 py-5 max-w-6xl">
+    <div className="px-8 py-6 max-w-[1200px]">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl heading-page text-text-primary leading-tight">
+        <h1 className="text-lg heading-page text-text-primary leading-tight">
           Competitors
         </h1>
         {reports.length > 0 && (
