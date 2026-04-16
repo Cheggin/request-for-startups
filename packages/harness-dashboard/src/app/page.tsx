@@ -30,7 +30,7 @@ function HealthSignal({ label, value, level, subtext, href }: {
   href: string;
 }) {
   return (
-    <Link href={href} className="group flex items-center gap-3 py-2.5 px-3 rounded-md hover:bg-surface-hover transition-colors">
+    <Link href={href} className="group flex items-center gap-3 py-3.5 px-4 rounded-md hover:bg-surface-hover transition-colors">
       <span className={`inline-block w-2 h-2 rounded-full shrink-0 ${healthDotClass(level)}`} />
       <div className="min-w-0 flex-1">
         <p className="text-xs font-medium text-text-tertiary uppercase tracking-wide">{label}</p>
@@ -96,11 +96,11 @@ export default function OverviewPage() {
     : "healthy";
 
   return (
-    <div className="px-6 py-5">
-      <h1 className="text-lg heading-page text-text-primary leading-tight mb-5">Overview</h1>
+    <div className="px-8 py-6 max-w-[1200px]">
+      <h1 className="text-lg heading-page text-text-primary leading-tight mb-6">Overview</h1>
 
       {/* ── Health strip ─────────────────────────────────────────── */}
-      <section className="grid grid-cols-3 gap-px bg-border-subtle rounded-lg overflow-hidden mb-6">
+      <section className="grid grid-cols-3 gap-px bg-border-subtle rounded-lg overflow-hidden mb-4">
         <div className="bg-surface">
           <HealthSignal
             label="Agents"
@@ -130,8 +130,8 @@ export default function OverviewPage() {
         </div>
       </section>
 
-      {/* ── Traffic chart (hero) ─────────────────────────────────── */}
-      <section className="mb-6">
+      {/* ── Traffic chart (hero) — tight to health strip ──────────── */}
+      <section className="mb-8">
         {growthLoading ? (
           <div className="h-64 rounded-lg border border-border-subtle bg-surface animate-pulse" />
         ) : trafficData.length >= 2 ? (
@@ -146,11 +146,11 @@ export default function OverviewPage() {
         )}
       </section>
 
-      {/* ── Two-column: Agents + Issues ──────────────────────────── */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
+      {/* ── Two-column: Agents + Issues — more space between columns ── */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
         {/* Active agents */}
         <div>
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-3">
             <h2 className="text-xs font-semibold uppercase tracking-wide text-text-tertiary">Active Agents</h2>
             <Link href="/agents" className="text-xs font-medium text-text-tertiary hover:text-accent transition-colors">
               View all
@@ -184,7 +184,7 @@ export default function OverviewPage() {
 
         {/* Issues by severity */}
         <div>
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-3">
             <h2 className="text-xs font-semibold uppercase tracking-wide text-text-tertiary">Issues</h2>
             <Link href="/issues" className="text-xs font-medium text-text-tertiary hover:text-accent transition-colors">
               View all
