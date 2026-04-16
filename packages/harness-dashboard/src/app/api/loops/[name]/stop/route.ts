@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
-import { execSync } from "child_process";
+import { execFileSync } from "child_process";
 
 export const dynamic = "force-dynamic";
+
+const VALID_NAME_RE = /^[a-z0-9_-]+$/i;
 
 export async function POST(
   _request: Request,
@@ -10,16 +12,20 @@ export async function POST(
   const { name } = await params;
   console.log("[loops/stop] Stopping loop:", name);
 
+  if (!VALID_NAME_RE.test(name)) {
+    return NextResponse.json({ ok: false, error: "Invalid loop name" }, { status: 400 });
+  }
+
   try {
     // Check if session exists first
     try {
-      execSync(`tmux has-session -t "${name}" 2>/dev/null`, { encoding: "utf-8" });
+      execFileSync("tmux", ["has-session", "-t", name], { encoding: "utf-8", stdio: "pipe" });
     } catch {
       return NextResponse.json({ ok: false, error: `Session "${name}" not found` }, { status: 404 });
     }
 
     // Kill the tmux session
-    execSync(`tmux kill-session -t "${name}" 2>/dev/null`, {
+    execFileSync("tmux", ["kill-session", "-t", name], {
       encoding: "utf-8",
       timeout: 10000,
     });

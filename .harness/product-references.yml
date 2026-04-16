@@ -17,6 +17,16 @@ categories:
           - test-coverage
           - api-endpoint-count
           - integration-count
+      - name: Plane
+        repo: https://github.com/makeplane/plane
+        dir: reference/products/plane
+        stack: Next.js, TypeScript, Django, PostgreSQL, Tailwind
+        why: Open-source project management (Jira alternative). Complex issue tracking, cycles, modules, pages. Good benchmark for data-heavy SaaS with real-time collaboration.
+        metrics:
+          - feature-count
+          - page-count
+          - test-coverage
+          - api-endpoint-count
 
   cli:
     description: Command-line interface tools
@@ -26,6 +36,16 @@ categories:
         dir: reference/products/gh-cli
         stack: Go
         why: GitHub's official CLI. Production-grade command structure, help system, auth flows, output formatting, and test suite. Gold standard for CLI UX and composability.
+        metrics:
+          - command-count
+          - test-coverage
+          - help-completeness
+          - error-handling-depth
+      - name: Stripe CLI
+        repo: https://github.com/stripe/stripe-cli
+        dir: reference/products/stripe-cli
+        stack: Go
+        why: Stripe's official CLI. Webhook forwarding, resource management, login flows, plugin system. Good benchmark for API-driven CLI tools with complex auth.
         metrics:
           - command-count
           - test-coverage
@@ -47,8 +67,5 @@ categories:
           - performance-benchmarks
 
 # Planned additions (not yet cloned):
-# - Plane (saas) — https://github.com/makeplane/plane
 # - Twenty CRM (saas) — https://github.com/twentyhq/twenty
-# - Stripe CLI (cli) — https://github.com/stripe/stripe-cli
-# - Vimium (chrome-extension) — https://github.com/philc/vimium
-# - React DevTools (chrome-extension) — https://github.com/nicehash/AOS-uBlock (find correct repo)
+# - Vimium (chrome-extension) — needs correct repo URL
