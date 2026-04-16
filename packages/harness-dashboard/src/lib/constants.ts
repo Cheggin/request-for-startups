@@ -48,3 +48,19 @@ export const NAV_ITEMS = [
   ...NAV_GROUPS.flatMap((g) => g.items),
   SETTINGS_NAV,
 ] as const;
+
+/** Platform short labels for mention tables */
+export const PLATFORM_LABELS_SHORT: Record<string, string> = {
+  hn: "HN",
+  reddit: "Reddit",
+  twitter: "X",
+  linkedin: "LI",
+};
+
+/** Platform full labels for mention summaries */
+export const PLATFORM_LABELS_FULL: Record<string, string> = {
+  hn: "Hacker News",
+  reddit: "Reddit",
+  twitter: "Twitter/X",
+  linkedin: "LinkedIn",
+};

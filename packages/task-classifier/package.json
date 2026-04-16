@@ -1,5 +1,5 @@
 {
-  "name": "@rfs/task-classifier",
+  "name": "@harness/task-classifier",
   "version": "0.1.0",
   "type": "module",
   "scripts": {

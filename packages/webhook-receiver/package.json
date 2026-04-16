@@ -1,5 +1,5 @@
 {
-  "name": "@startup-harness/webhook-receiver",
+  "name": "@harness/webhook-receiver",
   "version": "0.0.1",
   "private": true,
   "type": "module",

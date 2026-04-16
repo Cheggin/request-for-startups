@@ -1,5 +1,5 @@
 /**
- * @rfs/task-classifier — Classifies task size to prevent over-orchestration.
+ * @harness/task-classifier — Classifies task size to prevent over-orchestration.
  */
 
 export { classifyTask } from "./classifier.js";
