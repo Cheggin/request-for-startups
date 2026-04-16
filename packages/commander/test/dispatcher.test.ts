@@ -1,6 +1,6 @@
 import { describe, it, expect } from "bun:test";
 import { classifyTask, buildTaskFromIssue, buildTaskFromPrompt } from "../src/dispatcher.js";
-import type { Issue } from "@startup-harness/github-state";
+import type { Issue } from "@harness/github-state";
 import type { Task } from "../src/types.js";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────

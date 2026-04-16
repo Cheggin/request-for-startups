@@ -5,7 +5,7 @@ import {
   runTick,
 } from "../src/index.js";
 import type { Task, CommanderState } from "../src/types.js";
-import type { Issue } from "@startup-harness/github-state";
+import type { Issue } from "@harness/github-state";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 

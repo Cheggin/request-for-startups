@@ -1,5 +1,5 @@
 {
-  "name": "@startup-harness/cubic-channel",
+  "name": "@harness/cubic-channel",
   "version": "0.0.1",
   "private": true,
   "type": "module",

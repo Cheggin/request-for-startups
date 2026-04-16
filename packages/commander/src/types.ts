@@ -3,7 +3,7 @@
  */
 
 import type { AgentName } from "./constants.js";
-import type { Issue } from "@startup-harness/github-state";
+import type { Issue } from "@harness/github-state";
 import type { ModeResult } from "@harness/agent-loop";
 
 // ─── Task ───────────────────────────────────────────────────────────────────

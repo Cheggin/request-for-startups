@@ -1,5 +1,5 @@
 {
-  "name": "@rfs/fixed-boundary",
+  "name": "@harness/fixed-boundary",
   "version": "0.1.0",
   "type": "module",
   "scripts": {
