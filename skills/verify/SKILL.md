@@ -2,6 +2,11 @@
 name: verify
 description: Verify that a change really works before you claim completion
 user-invocable: true
+group: quality
+prerequisites: []
+next: [deploy-pipeline]
+workflows: [all]
+always-load: true
 ---
 
 # Verify

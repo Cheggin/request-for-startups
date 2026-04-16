@@ -2,6 +2,10 @@
 name: website-creation
 description: Build production-quality SaaS websites with opinionated design presets. Use when creating any startup website. The user MUST pick a design style before building. Enforces shadcn/ui, Figma design principles, specific CSS values per style, and anti-AI-writing. Load alongside anti-ai-writing skill. LIGHT MODE ONLY.
 user-invocable: true
+group: design
+prerequisites: [shape, brand-guidelines, anti-ai-writing]
+next: [seo-setup, audit, polish]
+workflows: [build-lander, build-saas, full-startup]
 ---
 
 # Website Creation

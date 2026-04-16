@@ -4,6 +4,10 @@ description: Plan the UX and UI for a feature before writing code. Runs a struct
 version: 2.1.1
 user-invocable: true
 argument-hint: "[feature to shape]"
+group: strategy
+prerequisites: [impeccable]
+next: [website-creation, impeccable]
+workflows: [build-lander, full-startup, ship-feature]
 ---
 
 ## MANDATORY PREPARATION

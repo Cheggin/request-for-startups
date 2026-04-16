@@ -5,6 +5,10 @@ version: 2.1.1
 user-invocable: true
 argument-hint: "[craft|teach|extract]"
 license: Apache 2.0. Based on Anthropic's frontend-design skill. See NOTICE.md for attribution.
+group: design
+prerequisites: []
+next: [shape, layout, typeset, colorize, animate, adapt, critique, audit]
+workflows: [build-lander, design-review, full-startup]
 ---
 
 <post-update-cleanup>
