@@ -1,7 +1,7 @@
 {
   "name": "@harness/hooks",
   "version": "1.0.0",
-  "description": "Claude Code hook implementations: GateGuard, config-protection, budget-enforcer",
+  "description": "Claude Code hook implementations: GateGuard, config-protection, deploy-gate, metrics-gate, inter-agent-signal",
   "type": "module",
   "scripts": {
     "test": "vitest run",
