@@ -23,6 +23,8 @@ export type LoopStep =
 export interface ImplementationConfig {
   /** GitHub issue number with acceptance criteria */
   issueNumber: number;
+  /** Human-readable feature name (sanitized before shell use) */
+  featureName: string;
   /** Working directory for the feature */
   cwd: string;
   /** Max TDD green iterations (default: 10) */
@@ -77,6 +79,26 @@ const DEFAULT_VISUAL_THRESHOLD = 1.0;
 
 /** All gates that must pass before shipping */
 export const ALL_GATES = ["tests", "cubic", "visual_qa"] as const;
+
+// ─── Input Sanitization ────────────────────────────────────────────────────
+
+/** Strip shell metacharacters, keep only safe branch-name characters */
+function sanitizeBranchName(input: string): string {
+  return input
+    .replace(/[^a-zA-Z0-9\s_-]/g, "")
+    .replace(/\s+/g, "-")
+    .toLowerCase()
+    .slice(0, 80);
+}
+
+/** Validate that a value is a positive integer */
+function validateIssueNumber(value: number): number {
+  const n = Math.floor(value);
+  if (!Number.isFinite(n) || n <= 0) {
+    throw new Error(`[implementation-loop] Invalid issue number: ${value}`);
+  }
+  return n;
+}
 
 // ─── Advance Guard ──────────────────────────────────────────────────────────
 
