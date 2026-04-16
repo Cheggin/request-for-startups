@@ -62,7 +62,7 @@ export function MentionTable({ mentions }: MentionTableProps) {
                 {mention.score.toFixed(1)}
               </td>
               <td className="px-4 py-2.5 text-xs font-medium text-text-secondary">
-                {PLATFORM_LABELS[mention.platform] ?? mention.platform}
+                {PLATFORM_LABELS_SHORT[mention.platform] ?? mention.platform}
               </td>
               <td className="px-4 py-2.5 text-sm text-text-primary max-w-md truncate">
                 <a

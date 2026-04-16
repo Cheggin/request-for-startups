@@ -1,17 +1,11 @@
 import { MetricCard } from "@/components/metrics/metric-card";
 import { getMentionSnapshot } from "@/lib/data";
 import { formatNumber } from "@/lib/format";
+import { PLATFORM_LABELS_FULL } from "@/lib/constants";
 import { MentionTable } from "./mention-table";
 import { ResponseQueue } from "./response-queue";
 
 export const dynamic = "force-dynamic";
-
-const PLATFORM_LABELS: Record<string, string> = {
-  hn: "Hacker News",
-  reddit: "Reddit",
-  twitter: "Twitter/X",
-  linkedin: "LinkedIn",
-};
 
 export default function MentionsPage() {
   const snapshot = getMentionSnapshot();
@@ -41,7 +35,7 @@ export default function MentionsPage() {
             <MetricCard
               label="Platforms"
               value={Object.keys(snapshot.platformCounts)
-                .map((p) => PLATFORM_LABELS[p] ?? p)
+                .map((p) => PLATFORM_LABELS_FULL[p] ?? p)
                 .join(", ")}
             />
             <MetricCard

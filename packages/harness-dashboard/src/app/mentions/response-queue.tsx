@@ -1,13 +1,7 @@
 "use client";
 
 import type { ResponseQueueItem } from "@/lib/data";
-
-const PLATFORM_LABELS: Record<string, string> = {
-  hn: "HN",
-  reddit: "Reddit",
-  twitter: "X",
-  linkedin: "LI",
-};
+import { PLATFORM_LABELS_SHORT } from "@/lib/constants";
 
 const STATUS_STYLES: Record<string, string> = {
   queued: "bg-caution/10 text-caution",
@@ -53,7 +47,7 @@ export function ResponseQueue({ items }: ResponseQueueProps) {
                 {item.priority.toFixed(1)}
               </td>
               <td className="px-4 py-2.5 text-xs font-medium text-text-secondary">
-                {PLATFORM_LABELS[item.platform] ?? item.platform}
+                {PLATFORM_LABELS_SHORT[item.platform] ?? item.platform}
               </td>
               <td className="px-4 py-2.5 text-sm text-text-secondary">
                 {item.replyAngle}
