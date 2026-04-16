@@ -64,6 +64,10 @@
           {
             "type": "command",
             "command": "bun run packages/hooks/src/run-metrics-gate.ts"
+          },
+          {
+            "type": "command",
+            "command": "bun run packages/hooks/src/run-skill-chain-enforcer.ts"
           }
         ]
       },
@@ -81,6 +85,10 @@
           {
             "type": "command",
             "command": "bun run packages/hooks/src/run-metrics-gate.ts"
+          },
+          {
+            "type": "command",
+            "command": "bun run packages/hooks/src/run-skill-chain-enforcer.ts"
           }
         ]
       },
