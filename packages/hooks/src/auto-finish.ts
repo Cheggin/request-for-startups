@@ -59,6 +59,7 @@ const SCOPE_PREFIXES: Array<{ prefix: string; scope: string }> = [
   { prefix: "packages/task-classifier/", scope: "classifier" },
   { prefix: "packages/fixed-boundary/", scope: "boundary" },
   { prefix: "packages/cubic-channel/", scope: "cubic" },
+  { prefix: "packages/webhook-receiver/", scope: "webhook" },
   { prefix: "packages/harness-dashboard/", scope: "dashboard" },
   { prefix: ".harness/", scope: "harness" },
   { prefix: ".claude/skills/", scope: "skills" },

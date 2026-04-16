@@ -438,7 +438,7 @@ export function run(args: string[]): void {
       if (repoName) {
         console.log(muted(`  Setting up Cubic code review for ${repoName}...`));
         // Cubic auto-reviews PRs when installed as a GitHub App
-        // The webhook receiver at packages/cubic-channel handles findings
+        // Cubic findings route via packages/cubic-channel; external webhooks via packages/webhook-receiver
         console.log(muted("  Cubic reviews PRs automatically. Findings route to agents via MCP."));
       }
     } catch {}
