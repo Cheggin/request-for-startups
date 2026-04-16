@@ -1,5 +1,5 @@
 {
-  "name": "@rfs/hooks",
+  "name": "@harness/hooks",
   "version": "1.0.0",
   "description": "Claude Code hook implementations: GateGuard, config-protection, budget-enforcer",
   "type": "module",

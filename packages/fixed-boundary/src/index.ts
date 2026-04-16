@@ -1,5 +1,5 @@
 /**
- * @rfs/fixed-boundary — Enforces which files agents can modify.
+ * @harness/fixed-boundary — Enforces which files agents can modify.
  */
 
 export {

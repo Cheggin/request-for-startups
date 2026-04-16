@@ -1,5 +1,5 @@
 /**
- * @rfs/implementation-loop — Core build cycle for each feature.
+ * @harness/implementation-loop — Core build cycle for each feature.
  *
  * Orchestrates: TDD → Cubic Review → Visual QA → Ship
  * with advance guard ensuring all gates pass before shipping.
