@@ -38,6 +38,11 @@
     ],
     "PreToolUse": [
       {
+        "hooks": [
+          {
+            "type": "command",
+      },
+      {
         "matcher": "Read",
         "hooks": [
           {
