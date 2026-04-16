@@ -44,6 +44,50 @@ import {
   info,
 } from "../lib/format.js";
 import { ROOT_DIR } from "../lib/constants.js";
+import { execFileSync } from "child_process";
+
+// ─── Branch Isolation ──────────────────────────────────────────────────────
+
+/**
+ * Create a feature branch for the agent to work on.
+ * Pattern: agent/<name>/<issue-or-task>
+ * If already on a feature branch for this agent, reuse it.
+ */
+function ensureAgentBranch(agentName: string, prompt: string): string | null {
+  try {
+    const currentBranch = execFileSync("git", ["branch", "--show-current"], {
+      cwd: ROOT_DIR,
+      encoding: "utf-8",
+    }).trim();
+
+    // Extract issue number from prompt if present (e.g., "gh issue view 42 then fix it")
+    const issueMatch = prompt.match(/(?:issue\s+#?|issue view\s+)(\d+)/i);
+    const suffix = issueMatch ? issueMatch[1] : "task";
+    const branchName = `agent/${agentName}/${suffix}`;
+
+    // If already on this agent's branch, reuse it
+    if (currentBranch === branchName) {
+      return branchName;
+    }
+
+    // If on main, create feature branch
+    if (currentBranch === "main" || currentBranch === "master") {
+      execFileSync("git", ["checkout", "-b", branchName], {
+        cwd: ROOT_DIR,
+        encoding: "utf-8",
+      });
+      console.log(info(`  Created branch: ${branchName}`));
+      return branchName;
+    }
+
+    // Already on some other branch — don't interfere
+    console.log(warn(`  Already on branch '${currentBranch}', skipping branch creation.`));
+    return currentBranch;
+  } catch (e) {
+    console.log(warn(`  Could not create feature branch: ${e instanceof Error ? e.message : "unknown error"}`));
+    return null;
+  }
+}
 
 // ─── Subcommand Routing ─────────────────────────────────────────────────────
 
@@ -165,6 +209,13 @@ function spawnAgent(args: string[]): void {
   }
 
   ensureSession();
+
+  // Branch isolation: each agent works on its own feature branch
+  const branch = ensureAgentBranch(name, prompt);
+  if (branch) {
+    console.log(muted(`  Working on branch: ${branch}`));
+  }
+
   const runtime = resolveAgentRuntime(name, { override: runtimeOverride });
 
   // Generate category-specific prompt (skills, ground truth) from agent-categories.yml
