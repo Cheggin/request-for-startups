@@ -3,6 +3,10 @@
  * Runs as a PreToolUse hook on Bash commands containing "gh issue create".
  * Validates that the issue body follows the schema in .harness/issue-schema.md.
  *
+ * Accepts two body formats:
+ *  1. Markdown template: ## Type, ## Severity, ## Description, etc.
+ *  2. GitHub form output: ### Severity, ### What happened / ### Description, etc.
+ *
  * Exit 0 = allow, Exit 2 = block with message.
  */
 
@@ -47,7 +51,22 @@ function extractBody(command: string): string | null {
   return null;
 }
 
-function validateIssue(title: string | null, body: string | null): string[] {
+/** Check if body contains a section heading (## or ### prefix) */
+function hasSection(body: string, ...names: string[]): boolean {
+  const lower = body.toLowerCase();
+  return names.some(
+    (name) =>
+      lower.includes(`## ${name.toLowerCase()}`) ||
+      lower.includes(`### ${name.toLowerCase()}`)
+  );
+}
+
+/** Detect if the title already encodes the type via [type] prefix */
+function titleHasType(title: string | null): boolean {
+  return title !== null && TITLE_PATTERN.test(title);
+}
+
+export function validateIssue(title: string | null, body: string | null): string[] {
   const errors: string[] = [];
 
   // Validate title format
@@ -66,36 +85,36 @@ function validateIssue(title: string | null, body: string | null): string[] {
   }
 
   if (!body) {
-    errors.push("Missing --body flag. Issues require a body with type, severity, description, and acceptance criteria.");
+    errors.push("Missing --body flag. Issues require a body with severity, description, and acceptance criteria.");
     return errors;
   }
 
-  // Check required sections in body
-  const bodyLower = body.toLowerCase();
-
-  // Check for type section
-  const hasType = VALID_TYPES.some(
-    (t) => bodyLower.includes(`## type`) || bodyLower.includes(`type: ${t}`) || bodyLower.includes(`**type:** ${t}`)
-  );
-  if (!hasType && !bodyLower.includes("## type")) {
-    errors.push("Body missing '## Type' section (feat, fix, refactor, test, docs, chore, perf, ci)");
+  // Check for type — required in body only when title doesn't carry it
+  if (!titleHasType(title)) {
+    const bodyLower = body.toLowerCase();
+    const hasType = VALID_TYPES.some(
+      (t) =>
+        bodyLower.includes(`type: ${t}`) ||
+        bodyLower.includes(`**type:** ${t}`)
+    );
+    if (!hasType && !hasSection(body, "type")) {
+      errors.push("Body missing '## Type' section (feat, fix, refactor, test, docs, chore, perf, ci)");
+    }
   }
 
-  // Check for severity
-  const hasSeverity = VALID_SEVERITIES.some(
-    (s) => body.includes(s)
-  );
+  // Check for severity (P0-P3 anywhere in body)
+  const hasSeverity = VALID_SEVERITIES.some((s) => body.includes(s));
   if (!hasSeverity) {
     errors.push("Body missing severity (P0, P1, P2, or P3)");
   }
 
-  // Check for description
-  if (!bodyLower.includes("## description") && !bodyLower.includes("**description:**")) {
-    errors.push("Body missing '## Description' section");
+  // Check for description — accept "Description", "What happened" (bug form)
+  if (!hasSection(body, "description", "what happened")) {
+    errors.push("Body missing '## Description' or '### What happened' section");
   }
 
   // Check for acceptance criteria
-  if (!bodyLower.includes("## acceptance criteria") && !bodyLower.includes("acceptance criteria")) {
+  if (!hasSection(body, "acceptance criteria", "acceptance")) {
     errors.push("Body missing '## Acceptance Criteria' section");
   }
 
@@ -105,7 +124,7 @@ function validateIssue(title: string | null, body: string | null): string[] {
   }
 
   // Check for verification steps
-  if (!bodyLower.includes("## verification") && !bodyLower.includes("verification steps")) {
+  if (!hasSection(body, "verification steps", "verification")) {
     errors.push("Body missing '## Verification Steps' section");
   }
 

@@ -2,14 +2,20 @@
 
 Normalized format for all GitHub Issues created by agents or humans.
 
+Two body formats are accepted:
+1. **Markdown template** — `## Type`, `## Severity`, `## Description`, etc. (agent-created)
+2. **GitHub form output** — `### Severity`, `### Description` / `### What happened`, etc. (form-created via `.github/ISSUE_TEMPLATE/*.yml`)
+
+Both formats are validated by `packages/hooks/src/validate-issue-create.ts`.
+
 ## Required Fields
 
 | Field | Format | Description |
 |-------|--------|-------------|
 | **Title** | `[TYPE] Short imperative description` | e.g., `[feat] Add commit message validation hook` |
-| **Type** | `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `perf`, `ci` | Matches commit types |
-| **Severity** | `P0`, `P1`, `P2`, `P3` | See severity matrix below |
-| **Description** | Markdown paragraph | What and why — not how |
+| **Type** | `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `perf`, `ci` | Carried in title `[type]` prefix. Body `## Type` section only required if title omits the prefix. |
+| **Severity** | `P0`, `P1`, `P2`, `P3` | See severity matrix below. Form dropdowns include descriptions (e.g., `P0 — System broken`). |
+| **Description** | Markdown paragraph | What and why — not how. Bug forms use `### What happened` instead. |
 | **Acceptance Criteria** | Checklist | Machine-verifiable conditions for done |
 | **Verification** | Checklist | How to confirm the criteria are met |
 
