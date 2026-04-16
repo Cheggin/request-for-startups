@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { execSync } from "child_process";
+import { execFileSync } from "child_process";
 
 export const dynamic = "force-dynamic";
 
@@ -15,11 +15,10 @@ export async function POST(
   }
 
   try {
-    // Close the issue via gh CLI with a "dismissed from dashboard" comment
-    execSync(
-      `gh issue close ${issueNum} --comment "Dismissed from Harness Dashboard" 2>&1`,
-      { encoding: "utf-8", timeout: 10000 }
-    );
+    execFileSync("gh", [
+      "issue", "close", String(issueNum),
+      "--comment", "Dismissed from Harness Dashboard",
+    ], { encoding: "utf-8", timeout: 10000 });
 
     console.log(`[issues/dismiss] Closed issue #${issueNum}`);
     return NextResponse.json({ ok: true, number: issueNum });
