@@ -34,7 +34,7 @@ function HealthSignal({ label, value, level, subtext, href }: {
       <span className={`inline-block w-2 h-2 rounded-full shrink-0 ${healthDotClass(level)}`} />
       <div className="min-w-0 flex-1">
         <p className="text-xs font-medium text-text-tertiary uppercase tracking-wide">{label}</p>
-        <p className={`text-2xl font-display font-bold tabular leading-tight ${healthColor(level)}`}>
+        <p className={`text-2xl number-hero ${healthColor(level)}`}>
           {value}
         </p>
       </div>
@@ -151,7 +151,7 @@ export default function OverviewPage() {
         {/* Active agents */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-text-tertiary">Active Agents</h2>
+            <h2 className="label-section text-text-tertiary">Active Agents</h2>
             <Link href="/agents" className="text-xs font-medium text-text-tertiary hover:text-accent transition-colors">
               View all
             </Link>
@@ -185,7 +185,7 @@ export default function OverviewPage() {
         {/* Issues by severity */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-text-tertiary">Issues</h2>
+            <h2 className="label-section text-text-tertiary">Issues</h2>
             <Link href="/issues" className="text-xs font-medium text-text-tertiary hover:text-accent transition-colors">
               View all
             </Link>
@@ -237,7 +237,7 @@ export default function OverviewPage() {
       {/* ── Startups ─────────────────────────────────────────────── */}
       {!startupsLoading && startups.length > 0 && (
         <section>
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-text-tertiary mb-2">Startups</h2>
+          <h2 className="label-section text-text-tertiary mb-2">Startups</h2>
           <div className="flex flex-wrap gap-2">
             {startups.map((startup) => (
               <div

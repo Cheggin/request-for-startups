@@ -139,7 +139,7 @@ export default function AgentsPage() {
               <section key={category}>
                 <div className="flex items-center gap-2 mb-2">
                   <span className={`inline-block w-2 h-2 rounded-full ${meta.dot}`} />
-                  <h2 className="text-xs font-semibold uppercase tracking-[0.12em] text-text-secondary">
+                  <h2 className="label-section text-text-secondary">
                     {meta.label}
                   </h2>
                   <span className="text-xs text-text-tertiary tabular">{groupAgents.length}</span>

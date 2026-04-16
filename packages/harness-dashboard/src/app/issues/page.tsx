@@ -62,7 +62,7 @@ export default function IssuesPage() {
               <section key={sev}>
                 <div className="flex items-center gap-2 mb-2">
                   <span className={`inline-block w-2 h-2 rounded-full ${config.dot}`} />
-                  <h2 className="text-xs font-semibold uppercase tracking-[0.12em] text-text-secondary">
+                  <h2 className="label-section text-text-secondary">
                     {sev === "unknown" ? "Unsorted" : sev} — {config.label}
                   </h2>
                   <span className={`text-xs font-medium px-1.5 py-0.5 rounded tabular ${config.badge}`}>

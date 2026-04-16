@@ -35,28 +35,28 @@ export default function GrowthPage() {
           {/* Metric row below chart */}
           <section className="grid grid-cols-3 gap-3 mb-6">
             <div className="rounded-lg border border-border-subtle bg-surface px-4 py-3">
-              <p className="text-xs font-medium text-text-tertiary uppercase tracking-wide mb-0.5">Total Visitors</p>
+              <p className="label-section text-text-tertiary mb-0.5">Total Visitors</p>
               <div className="flex items-end justify-between">
-                <p className="text-2xl font-display font-bold tabular text-text-primary leading-tight">{fmt(totalTraffic)}</p>
+                <p className="text-2xl number-hero text-text-primary">{fmt(totalTraffic)}</p>
                 {sparkline.length >= 2 && (
                   <Sparkline data={sparkline} width={64} height={28} color="var(--text-primary)" />
                 )}
               </div>
             </div>
             <div className="rounded-lg border border-border-subtle bg-surface px-4 py-3">
-              <p className="text-xs font-medium text-text-tertiary uppercase tracking-wide mb-0.5">Latest Day</p>
-              <p className="text-2xl font-display font-bold tabular text-text-primary leading-tight">{fmt(latestTraffic)}</p>
+              <p className="label-section text-text-tertiary mb-0.5">Latest Day</p>
+              <p className="text-2xl number-hero text-text-primary">{fmt(latestTraffic)}</p>
             </div>
             <div className="rounded-lg border border-border-subtle bg-surface px-4 py-3">
-              <p className="text-xs font-medium text-text-tertiary uppercase tracking-wide mb-0.5">Top Pages</p>
-              <p className="text-2xl font-display font-bold tabular text-text-primary leading-tight">{fmt(snapshot.topPages.length)}</p>
+              <p className="label-section text-text-tertiary mb-0.5">Top Pages</p>
+              <p className="text-2xl number-hero text-text-primary">{fmt(snapshot.topPages.length)}</p>
             </div>
           </section>
 
           {/* Top pages as compact list */}
           {snapshot.topPages.length > 0 && (
             <section>
-              <h2 className="text-xs font-semibold uppercase tracking-wide text-text-tertiary mb-2">Top Pages</h2>
+              <h2 className="label-section text-text-tertiary mb-2">Top Pages</h2>
               <div className="rounded-lg border border-border-subtle bg-surface divide-y divide-border-subtle">
                 {snapshot.topPages.map((page) => (
                   <div key={page.path} className="flex items-center justify-between px-3 py-2 hover:bg-surface-hover transition-colors">
