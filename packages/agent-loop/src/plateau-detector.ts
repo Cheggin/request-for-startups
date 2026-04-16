@@ -42,10 +42,16 @@ export class PlateauDetector {
       timestamp: Date.now(),
     };
     this.entries.push(entry);
+    if (this.entries.length > PLATEAU_WINDOW) {
+      this.entries.splice(0, this.entries.length - PLATEAU_WINDOW);
+    }
 
     // Check repetition first (most severe)
     if (output !== undefined) {
       this.recentOutputs.push(output);
+      if (this.recentOutputs.length > REPETITION_COUNT) {
+        this.recentOutputs.splice(0, this.recentOutputs.length - REPETITION_COUNT);
+      }
       if (this.isRepeating()) {
         return "plateau";
       }
