@@ -56,3 +56,6 @@ out/
 .agents/
 .playwright-mcp/
 skills-lock.json
+
+# Product references — large cloned repos, not committed
+reference/products/
