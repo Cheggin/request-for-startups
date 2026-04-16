@@ -1,14 +1,17 @@
 #!/usr/bin/env bun
 /**
  * CLI wrapper for GateGuard hook.
- * Uses file-based state (/tmp/gateguard-reads-<session>.json) to persist
+ * Uses file-based state (/tmp/gateguard-reads-<session>-<repo>.json) to persist
  * which files have been Read across hook invocations.
- * State is scoped per session (CLAUDE_SESSION_ID) to avoid races between concurrent agents.
+ * State is scoped per session (CLAUDE_SESSION_ID) AND repository (cwd hash)
+ * to prevent cross-session and cross-repo permission leaks.
  */
 import { readFileSync, writeFileSync, existsSync } from "fs";
+import { createHash } from "crypto";
 
 const sessionId = process.env.CLAUDE_SESSION_ID || `pid-${process.ppid}`;
-const STATE_FILE = `/tmp/gateguard-reads-${sessionId}.json`;
+const repoHash = createHash("sha256").update(process.cwd()).digest("hex").slice(0, 8);
+const STATE_FILE = `/tmp/gateguard-reads-${sessionId}-${repoHash}.json`;
 
 function loadReadFiles(): Set<string> {
   try {
