@@ -26,8 +26,8 @@ import {
 
 // ─── Types ────────────────────────────────────────────────────────────────
 
-const VALID_SUBCOMMANDS = ["once", "tick", "status", "help"] as const;
-type Subcommand = "once" | "status" | "help";
+const VALID_SUBCOMMANDS = ["once", "tick", "status", "doctor", "help"] as const;
+type Subcommand = "once" | "status" | "doctor" | "help";
 
 export type FleetHealth = "healthy" | "degraded" | "critical" | "idle";
 
@@ -48,6 +48,8 @@ export function parseMonitorArgs(args: string[]): MonitorArgs {
     subcommand = "once";
   } else if (raw === "status") {
     subcommand = "status";
+  } else if (raw === "doctor") {
+    subcommand = "doctor";
   } else {
     subcommand = "help";
   }
@@ -208,6 +210,31 @@ function showStatus(args: MonitorArgs): void {
   }
 }
 
+function runDoctorCheck(): void {
+  console.log(muted("  Running claude-doctor session analysis..."));
+
+  try {
+    const { runDoctorRules } = require("./analyze.js");
+    runDoctorRules();
+  } catch (err) {
+    const { execSync } = require("child_process");
+    try {
+      const output = execSync("npx claude-doctor --rules", {
+        encoding: "utf-8",
+        timeout: 60000,
+      });
+      if (output.trim()) {
+        console.log(success("  Doctor rules generated."));
+        console.log(output);
+      } else {
+        console.log(muted("  No anti-patterns detected."));
+      }
+    } catch {
+      console.log(warn("  claude-doctor not available. Install: npm i -g claude-doctor"));
+    }
+  }
+}
+
 function showHelp(): void {
   console.log(heading("harness ceo-monitor"));
   console.log("  CEO zero-action monitor for agent fleet supervision.");
@@ -216,6 +243,7 @@ function showHelp(): void {
   console.log("    harness ceo-monitor once [--json] [--verbose]  Run one monitoring cycle");
   console.log("    harness ceo-monitor tick                       Alias for once");
   console.log("    harness ceo-monitor status [--json]            Fleet status (verbose)");
+  console.log("    harness ceo-monitor doctor                     Run claude-doctor analysis");
   console.log();
   console.log("  Monitors tmux panes, classifies agents as working/idle/stuck/needs-approval,");
   console.log("  auto-approves safe permission prompts, and reports fleet health.");
@@ -232,6 +260,8 @@ export function run(args: string[]): void {
       return runOnce(parsed);
     case "status":
       return showStatus(parsed);
+    case "doctor":
+      return runDoctorCheck();
     case "help":
     default:
       return showHelp();

@@ -9,6 +9,9 @@
  *   --all             — analyze all panes in the harness session
  */
 
+import { execSync } from "child_process";
+import { mkdirSync, writeFileSync } from "fs";
+import { join } from "path";
 import {
   listPanes,
   capturePaneOutput,
@@ -26,7 +29,7 @@ import {
   info,
   count,
 } from "../lib/format.js";
-import { COLORS } from "../lib/constants.js";
+import { COLORS, HARNESS_DIR } from "../lib/constants.js";
 
 const { reset, bold, dim, green, red, yellow, cyan, gray } = COLORS;
 
@@ -201,21 +204,97 @@ function printSummary(reports: PaneReport[]): void {
   console.log();
 }
 
+// ─── Claude Doctor Integration ────────────────────────────────────────────
+
+const KNOWLEDGE_DIR = join(HARNESS_DIR, "knowledge");
+
+/**
+ * Run claude-doctor session analysis.
+ * Shells out to npx claude-doctor for transcript anti-pattern detection.
+ */
+function runDoctor(args: { session?: string; json?: boolean }): void {
+  console.log(heading("harness analyze --doctor"));
+
+  const cmd = args.session
+    ? `npx claude-doctor ${args.session}${args.json ? " --json" : ""}`
+    : `npx claude-doctor${args.json ? " --json" : ""}`;
+
+  console.log(muted(`  Running: ${cmd}`));
+
+  try {
+    const output = execSync(cmd, { encoding: "utf-8", timeout: 60000 });
+    console.log(output);
+  } catch (err) {
+    const message = err instanceof Error ? (err as any).stderr || err.message : String(err);
+    console.log(error(`  claude-doctor failed: ${message}`));
+    console.log(muted("  Install with: npm install -g claude-doctor"));
+  }
+}
+
+/**
+ * Run claude-doctor --rules and save output to .harness/knowledge/.
+ * Generates CLAUDE.md rules from session history anti-patterns.
+ */
+export function runDoctorRules(): string | null {
+  console.log(heading("harness analyze --rules"));
+  console.log(muted("  Generating rules from session history..."));
+
+  try {
+    const output = execSync("npx claude-doctor --rules", {
+      encoding: "utf-8",
+      timeout: 60000,
+    });
+
+    if (!output.trim()) {
+      console.log(muted("  No rules generated (clean session history)."));
+      return null;
+    }
+
+    mkdirSync(KNOWLEDGE_DIR, { recursive: true });
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+    const filePath = join(KNOWLEDGE_DIR, `doctor-rules-${timestamp}.md`);
+    writeFileSync(filePath, `# Claude Doctor Rules\n\nGenerated: ${new Date().toISOString()}\n\n${output}`);
+
+    console.log(success(`  Rules saved to ${filePath}`));
+    console.log(output);
+    return filePath;
+  } catch (err) {
+    const message = err instanceof Error ? (err as any).stderr || err.message : String(err);
+    console.log(error(`  claude-doctor --rules failed: ${message}`));
+    console.log(muted("  Install with: npm install -g claude-doctor"));
+    return null;
+  }
+}
+
 // ─── Entry Point ───────────────────────────────────────────────────────────
 
 export function run(args: string[]): void {
+  const target = args[0];
+
+  // Doctor mode — does not require tmux
+  if (target === "--doctor" || target === "doctor") {
+    const session = args[1] && !args[1].startsWith("--") ? args[1] : undefined;
+    const json = args.includes("--json");
+    return runDoctor({ session, json });
+  }
+
+  if (target === "--rules" || target === "rules") {
+    runDoctorRules();
+    return;
+  }
+
   if (!isTmuxAvailable()) {
     console.log(error("  tmux is not installed. Install it with: brew install tmux"));
     return;
   }
-
-  const target = args[0];
 
   if (!target || target === "--help" || target === "-h") {
     console.log(heading("harness analyze"));
     console.log("  Usage:");
     console.log("    harness analyze <pane-name>    — analyze a single pane");
     console.log("    harness analyze --all          — analyze all panes");
+    console.log("    harness analyze --doctor [id]  — run claude-doctor session analysis");
+    console.log("    harness analyze --rules        — generate CLAUDE.md rules from history");
     console.log();
     return;
   }
