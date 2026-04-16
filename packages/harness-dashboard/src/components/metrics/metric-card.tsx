@@ -11,17 +11,15 @@ interface MetricCardProps {
 
 export function MetricCard({ label, value, sparklineData, color }: MetricCardProps) {
   return (
-    <div className="border border-border-subtle rounded-md px-4 py-3 hover:bg-surface-hover transition-colors">
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-xs font-medium text-text-tertiary uppercase tracking-wide mb-1">{label}</p>
-          <p className="text-2xl font-semibold tabular text-text-primary leading-tight">{value}</p>
-        </div>
+    <div className="rounded-lg border border-border-subtle bg-surface px-4 py-3 hover:bg-surface-hover transition-colors">
+      <p className="text-xs font-medium text-text-tertiary uppercase tracking-wide mb-0.5">{label}</p>
+      <div className="flex items-end justify-between">
+        <p className="text-2xl font-display font-bold tabular text-text-primary leading-tight">{value}</p>
         {sparklineData && sparklineData.length >= 2 && (
           <Sparkline
             data={sparklineData}
-            width={72}
-            height={32}
+            width={64}
+            height={28}
             color={color || "var(--text-primary)"}
           />
         )}
