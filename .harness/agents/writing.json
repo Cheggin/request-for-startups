@@ -4,7 +4,11 @@
   "category": "content",
   "mcpServers": {},
   "allowedTools": [
-    "Read", "Write", "Glob", "Grep", "Bash"
+    "Read",
+    "Write",
+    "Glob",
+    "Grep",
+    "Bash"
   ],
   "fileScope": {
     "writable": [
@@ -36,16 +40,19 @@
       "event": "preEdit",
       "description": "Cannot modify code files",
       "patterns": [
-        "src/**", "app/**", "convex/**", "lib/**", "utils/**",
-        "*.ts", "*.tsx", "*.js", "*.jsx",
-        "package.json", "tsconfig*.json"
+        "src/**",
+        "app/**",
+        "convex/**",
+        "lib/**",
+        "utils/**",
+        "*.ts",
+        "*.tsx",
+        "*.js",
+        "*.jsx",
+        "package.json",
+        "tsconfig*.json"
       ],
       "action": "block"
-    },
-    "budget-enforcer": {
-      "turnLimit": 100,
-      "wallClockTimeout": "30m",
-      "action": "warn_then_stop"
     }
   },
   "rules": [

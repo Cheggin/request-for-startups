@@ -340,13 +340,7 @@ export function writeAgentConfigs(): number {
         readonly: [] as string[],
         blocked: [".harness/agents/**", ".harness/agent-categories.yml"],
       },
-      hooks: {
-        "budget-enforcer": {
-          turnLimit: 150,
-          wallClockTimeout: "30m",
-          action: "warn_then_stop",
-        },
-      },
+      hooks: {} as Record<string, unknown>,
       rules: [] as string[],
       skills: config.skills,
       groundTruth: config.groundTruth,

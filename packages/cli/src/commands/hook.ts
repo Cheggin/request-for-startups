@@ -70,7 +70,6 @@ function hookList(): void {
     console.log(info("  Available hook implementations:"));
     console.log("    gateguard          — block Edit without prior Read (PreToolUse)");
     console.log("    config-protection  — block modification of infra files (PreToolUse)");
-    console.log("    budget-enforcer    — turn limit + wall-clock timeout (PostToolUse)");
     console.log("    inter-agent-signal — write .harness/signals/done or needs-approval");
     console.log();
     return;
@@ -98,7 +97,7 @@ function hookTest(args: string[]): void {
   const name = args[0];
   if (!name) {
     console.log(error("  Usage: harness hook test <name>"));
-    console.log(muted("  Available: gateguard, config-protection, budget-enforcer"));
+    console.log(muted("  Available: gateguard, config-protection"));
     return;
   }
 
@@ -108,7 +107,6 @@ function hookTest(args: string[]): void {
   const hookTests: Record<string, string> = {
     gateguard: "packages/hooks/src/run-gateguard.ts",
     "config-protection": "packages/hooks/src/run-config-protection.ts",
-    "budget-enforcer": "packages/hooks/src/run-budget-enforcer.ts",
   };
 
   const testScript = hookTests[name];

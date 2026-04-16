@@ -436,7 +436,7 @@ Configure: staging (auto-deploy on PR merge), production (deploy on release tag)
 
 ### 5.6 Harness Configuration
 - Set up `.harness/` configs
-- Register hooks (GateGuard, config-protection, budget-enforcer)
+- Register hooks (GateGuard, config-protection)
 - Set up `.mcp.json` (Cubic, Sentry)
 - Configure Taskfile
 

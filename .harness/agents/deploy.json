@@ -5,7 +5,10 @@
   "mcpServers": {
     "cubic-channel": {
       "command": "bun",
-      "args": ["run", "packages/cubic-channel/channel/index.ts"],
+      "args": [
+        "run",
+        "packages/cubic-channel/channel/index.ts"
+      ],
       "env": {
         "CONVEX_URL": "${CONVEX_URL}",
         "REPO": "${GITHUB_REPO}",
@@ -14,7 +17,12 @@
     }
   },
   "allowedTools": [
-    "Read", "Edit", "Write", "Bash", "Glob", "Grep",
+    "Read",
+    "Edit",
+    "Write",
+    "Bash",
+    "Glob",
+    "Grep",
     "cubic-channel:mark_processed",
     "cubic-channel:mark_all_processed"
   ],
@@ -44,19 +52,24 @@
     "scope-restriction": {
       "event": "preEdit",
       "description": "Cannot modify application code — only infra and deploy configs",
-      "patterns": ["src/**", "app/**", "components/**", "convex/**", "lib/**"],
+      "patterns": [
+        "src/**",
+        "app/**",
+        "components/**",
+        "convex/**",
+        "lib/**"
+      ],
       "action": "block"
     },
     "deploy-gate": {
       "event": "preBash",
       "description": "Rollback plan required before any production deploy",
-      "triggerPatterns": ["railway up", "vercel deploy --prod", "convex deploy"],
+      "triggerPatterns": [
+        "railway up",
+        "vercel deploy --prod",
+        "convex deploy"
+      ],
       "action": "require_rollback_plan"
-    },
-    "budget-enforcer": {
-      "turnLimit": 100,
-      "wallClockTimeout": "20m",
-      "action": "warn_then_stop"
     }
   },
   "rules": [

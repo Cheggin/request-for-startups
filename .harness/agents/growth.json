@@ -4,7 +4,12 @@
   "category": "growth",
   "mcpServers": {},
   "allowedTools": [
-    "Read", "Edit", "Write", "Bash", "Glob", "Grep"
+    "Read",
+    "Edit",
+    "Write",
+    "Bash",
+    "Glob",
+    "Grep"
   ],
   "fileScope": {
     "writable": [
@@ -33,11 +38,6 @@
       "event": "preTask",
       "description": "Must define measurable hypothesis before acting",
       "action": "require_hypothesis"
-    },
-    "budget-enforcer": {
-      "turnLimit": 150,
-      "wallClockTimeout": "30m",
-      "action": "warn_then_stop"
     }
   },
   "rules": [

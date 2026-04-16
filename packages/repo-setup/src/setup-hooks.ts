@@ -32,10 +32,6 @@ const DEFAULT_HOOKS: HookConfig[] = [
     command: "node packages/hooks/dist/config-protection.js",
   },
   {
-    event: "PostToolUse",
-    command: "node packages/hooks/dist/budget-enforcer.js",
-  },
-  {
     event: "Stop",
     command: "node packages/hooks/dist/run-inter-agent-signal.js",
   },

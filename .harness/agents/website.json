@@ -5,7 +5,10 @@
   "mcpServers": {
     "cubic-channel": {
       "command": "bun",
-      "args": ["run", "packages/cubic-channel/channel/index.ts"],
+      "args": [
+        "run",
+        "packages/cubic-channel/channel/index.ts"
+      ],
       "env": {
         "CONVEX_URL": "${CONVEX_URL}",
         "REPO": "${GITHUB_REPO}",
@@ -20,7 +23,12 @@
     }
   },
   "allowedTools": [
-    "Read", "Edit", "Write", "Bash", "Glob", "Grep",
+    "Read",
+    "Edit",
+    "Write",
+    "Bash",
+    "Glob",
+    "Grep",
     "cubic-channel:mark_processed",
     "cubic-channel:mark_all_processed",
     "figma:get_design_context",
@@ -59,16 +67,15 @@
       "event": "preEdit",
       "description": "Block modification of infra files, linter configs, CI configs, tsconfig",
       "patterns": [
-        ".eslintrc*", ".prettierrc*", "tsconfig*.json",
-        ".github/**", "railway.json", "convex.json",
+        ".eslintrc*",
+        ".prettierrc*",
+        "tsconfig*.json",
+        ".github/**",
+        "railway.json",
+        "convex.json",
         ".harness/**"
       ],
       "action": "block"
-    },
-    "budget-enforcer": {
-      "turnLimit": 200,
-      "wallClockTimeout": "45m",
-      "action": "warn_then_stop"
     }
   },
   "rules": [
