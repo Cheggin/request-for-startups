@@ -8,13 +8,13 @@ tasks:
     cmd: npm run dev
 
   dev:receiver:
-    desc: Start the Cubic webhook receiver locally
-    dir: packages/cubic-channel
+    desc: Start the webhook receiver locally
+    dir: packages/webhook-receiver
     cmd: bun run dev:receiver
 
   dev:channel:
-    desc: Start the Cubic MCP channel locally
-    dir: packages/cubic-channel
+    desc: Start the webhook MCP channel locally
+    dir: packages/webhook-receiver
     cmd: bun run dev:channel
 
   # === Testing ===
@@ -27,9 +27,9 @@ tasks:
         fi
       done
 
-  test:cubic:
-    desc: Run Cubic channel tests
-    dir: packages/cubic-channel
+  test:webhook:
+    desc: Run webhook receiver tests
+    dir: packages/webhook-receiver
     cmd: bun test
 
   test:hooks:
@@ -65,13 +65,13 @@ tasks:
 
   # === Deploy ===
   deploy:receiver:
-    desc: Deploy Cubic webhook receiver to Railway
-    dir: packages/cubic-channel
+    desc: Deploy webhook receiver to Railway
+    dir: packages/webhook-receiver
     cmd: railway up
 
   deploy:convex:
     desc: Deploy Convex functions
-    dir: packages/cubic-channel
+    dir: packages/webhook-receiver
     cmd: npx convex deploy
 
   # === Agent Panes ===
