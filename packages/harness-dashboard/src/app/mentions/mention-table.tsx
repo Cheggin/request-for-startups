@@ -2,13 +2,7 @@
 
 import type { MentionItem } from "@/lib/data";
 import { formatNumber } from "@/lib/format";
-
-const PLATFORM_LABELS: Record<string, string> = {
-  hn: "HN",
-  reddit: "Reddit",
-  twitter: "X",
-  linkedin: "LI",
-};
+import { PLATFORM_LABELS_SHORT } from "@/lib/constants";
 
 const SENTIMENT_COLORS: Record<string, string> = {
   positive: "text-positive",

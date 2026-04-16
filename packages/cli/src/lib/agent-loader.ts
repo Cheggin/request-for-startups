@@ -146,7 +146,7 @@ const SKILL_CATEGORIES: Record<string, string> = {
   "github-state-manager": "agent", "investor-updates": "agent",
   "issue-creator": "agent", "loop-prompt": "agent", plan: "agent",
   "post-deploy-loop": "agent", ralph: "agent", research: "agent",
-  "self-improve": "agent", "session-analyzer": "agent",
+  "self-improve": "agent", "gap-analysis": "agent",
   "slack-course-correction": "agent", "stack-extend": "agent",
   "startup-init": "agent", team: "agent", "tiered-memory": "agent",
   "tmux-spawn": "agent", trace: "agent", "trajectory-logging": "agent",
@@ -328,7 +328,31 @@ export function writeAgentConfigs(): number {
       }
     }
 
-    writeFileSync(filePath, JSON.stringify(config, null, 2) + "\n");
+    // Write rich schema with empty defaults so new agents match the canonical shape
+    const richConfig = {
+      name: config.name,
+      description: "",
+      category: config.category,
+      mcpServers: {} as Record<string, unknown>,
+      allowedTools: ["Read", "Bash", "Glob", "Grep"],
+      fileScope: {
+        writable: [] as string[],
+        readonly: [] as string[],
+        blocked: [".harness/agents/**", ".harness/agent-categories.yml"],
+      },
+      hooks: {
+        "budget-enforcer": {
+          turnLimit: 150,
+          wallClockTimeout: "30m",
+          action: "warn_then_stop",
+        },
+      },
+      rules: [] as string[],
+      skills: config.skills,
+      groundTruth: config.groundTruth,
+      mcp: config.mcp,
+    };
+    writeFileSync(filePath, JSON.stringify(richConfig, null, 2) + "\n");
   }
 
   return configs.length;
