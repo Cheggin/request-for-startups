@@ -333,7 +333,7 @@ export function sendKeys(targetOrName: string, keys: string): boolean {
  * Synchronous sleep. Used to wait for runtimes to load before sending prompts.
  */
 export function sleepSync(ms: number): void {
-  execSync(`sleep ${ms / 1000}`, { stdio: "ignore" });
+  Bun.sleepSync(ms);
 }
 
 /**

@@ -1,12 +1,14 @@
 #!/usr/bin/env bun
 /**
  * CLI wrapper for GateGuard hook.
- * Uses file-based state (/tmp/gateguard-reads.json) to persist
+ * Uses file-based state (/tmp/gateguard-reads-<session>.json) to persist
  * which files have been Read across hook invocations.
+ * State is scoped per session (CLAUDE_SESSION_ID) to avoid races between concurrent agents.
  */
 import { readFileSync, writeFileSync, existsSync } from "fs";
 
-const STATE_FILE = "/tmp/gateguard-reads.json";
+const sessionId = process.env.CLAUDE_SESSION_ID || `pid-${process.ppid}`;
+const STATE_FILE = `/tmp/gateguard-reads-${sessionId}.json`;
 
 function loadReadFiles(): Set<string> {
   try {
@@ -41,10 +43,11 @@ process.stdin.on("end", () => {
       return;
     }
 
-    // Block Edit if file wasn't Read first
-    if (toolName === "Edit" && filePath) {
+    // Block Edit/Write if file wasn't Read first
+    const GATED_TOOLS = new Set(["Edit", "Write"]);
+    if (GATED_TOOLS.has(toolName) && filePath) {
       if (!readFiles.has(filePath)) {
-        console.error(`[GateGuard] File ${filePath} must be Read before it can be edited. Use the Read tool first to inspect the file contents.`);
+        console.error(`[GateGuard] File ${filePath} must be Read before it can be ${toolName === "Write" ? "written" : "edited"}. Use the Read tool first to inspect the file contents.`);
         process.exit(2);
       }
     }

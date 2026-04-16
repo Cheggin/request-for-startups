@@ -90,7 +90,6 @@ function isProtected(filePath: string): boolean {
       }
     } else {
       // Exact basename or full path match
-      const basename = normalized.split("/").pop() || "";
       if (basename === pattern || normalized === pattern) {
         return true;
       }
