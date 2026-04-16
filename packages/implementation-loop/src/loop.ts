@@ -198,27 +198,46 @@ export async function runImplementationLoop(
   emit({ type: "step_start", step: "create_pr" });
   let prNumber: number;
   try {
-    const { execSync } = await import("child_process");
-    const branchName = `feature/${config.issueNumber}-${config.featureName.replace(/\s+/g, "-").toLowerCase()}`;
+    const { execFileSync } = await import("child_process");
+    const issueNum = validateIssueNumber(config.issueNumber);
+    const safeName = sanitizeBranchName(config.featureName);
+    const branchName = `feature/${issueNum}-${safeName}`;
+    const commitMsg = `feat: ${safeName} (closes #${issueNum})`;
 
-    // Create branch, stage, commit, push, create PR
-    execSync(`git checkout -b ${branchName} 2>/dev/null || git checkout ${branchName}`, { stdio: "pipe" });
-    execSync("git add -A", { stdio: "pipe" });
-    execSync(`git commit -m "feat: ${config.featureName} (closes #${config.issueNumber})" --allow-empty`, { stdio: "pipe" });
-    execSync(`git push -u origin ${branchName}`, { stdio: "pipe", timeout: 30000 });
+    // Create branch — try new branch first, fall back to existing
+    try {
+      execFileSync("git", ["checkout", "-b", branchName], { stdio: "pipe" });
+    } catch {
+      execFileSync("git", ["checkout", branchName], { stdio: "pipe" });
+    }
 
-    const prUrl = execSync(
-      `gh pr create --title "${config.featureName}" --body "Closes #${config.issueNumber}" --base main 2>/dev/null || gh pr view --json number -q .number`,
-      { encoding: "utf-8", stdio: "pipe", timeout: 30000 }
-    ).trim();
+    // Stage, commit, push
+    execFileSync("git", ["add", "-A"], { stdio: "pipe" });
+    execFileSync("git", ["commit", "-m", commitMsg, "--allow-empty"], { stdio: "pipe" });
+    execFileSync("git", ["push", "-u", "origin", branchName], { stdio: "pipe", timeout: 30000 });
+
+    // Create PR — try create first, fall back to viewing existing
+    let prUrl: string;
+    try {
+      prUrl = execFileSync("gh", [
+        "pr", "create",
+        "--title", safeName,
+        "--body", `Closes #${issueNum}`,
+        "--base", "main",
+      ], { encoding: "utf-8", stdio: "pipe", timeout: 30000 }).trim();
+    } catch {
+      prUrl = execFileSync("gh", [
+        "pr", "view", "--json", "number", "-q", ".number",
+      ], { encoding: "utf-8", stdio: "pipe", timeout: 30000 }).trim();
+    }
 
     // Extract PR number from URL or direct output
     const match = prUrl.match(/(\d+)\s*$/);
-    prNumber = match ? parseInt(match[1]) : config.issueNumber;
+    prNumber = match ? parseInt(match[1]) : issueNum;
     emit({ type: "step_end", result: { step: "create_pr", success: true, iterations: 1, summary: `PR #${prNumber} created` } });
   } catch (e) {
     // Fall back to issue number if PR creation fails
-    prNumber = config.issueNumber;
+    prNumber = validateIssueNumber(config.issueNumber);
     emit({ type: "step_end", result: { step: "create_pr", success: false, iterations: 1, summary: `PR creation failed, using issue #${prNumber}: ${e}` } });
   }
 
