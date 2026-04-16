@@ -46,14 +46,14 @@ The harness is a **Claude Code plugin**. Install it in any project:
 claude plugins add Cheggin/request-for-startups
 ```
 
-All 95 skills become available as `/startup-harness:<skill-name>` in any Claude Code session. Skills auto-update when the repo is pushed.
+All 96 skills become available as `/startup-harness:<skill-name>` in any Claude Code session. Skills auto-update when the repo is pushed.
 
 ## Architecture
 
 ```
 commands/          Entry points (startup-init, resume)
-agents/            12 agent definitions (website, backend, growth, writing, ops, commander, researcher, docs, slop-cleaner, harness-researcher, alignment, paper-reader)
-skills/            95 skills as Claude Code plugin format (skills/<name>/SKILL.md)
+agents/            13 agent definitions (website, backend, growth, writing, ops, deploy, commander, researcher, docs, slop-cleaner, harness-researcher, alignment, paper-reader)
+skills/            96 skills as Claude Code plugin format (skills/<name>/SKILL.md)
 templates/         Integration templates (Stripe, Clerk auth, Resend email)
 packages/          27 packages with 590+ tests (includes harness-dashboard)
 features/          Checklist-driven development tracking
@@ -70,7 +70,7 @@ features/          Checklist-driven development tracking
 
 An agent is a blank Claude Code session. Its identity comes entirely from which skills are loaded. A "website agent" is just: coding ground truth + design skills + coding skills + convex skills. Agent-to-skill mapping is defined in `.harness/agent-categories.yml`.
 
-The harness is a **Claude Code plugin**. Install it and all 95 skills are available as `/startup-harness:<skill-name>` in any Claude Code session. Skills auto-update when the repo is pushed.
+The harness is a **Claude Code plugin**. Install it and all 96 skills are available as `/startup-harness:<skill-name>` in any Claude Code session. Skills auto-update when the repo is pushed.
 
 ### Mechanical Enforcement
 
@@ -130,7 +130,7 @@ harness deploy production # Deploy to production (requires rollback plan)
 harness update post       # Post investor update to Slack
 ```
 
-## Skills (95)
+## Skills (96)
 
 Every skill has frontmatter: `group`, `prerequisites`, `next`, `workflows`. Three skills are always-load guards: `anti-ai-writing`, `verify`, `avoid-feature-creep`.
 
@@ -159,7 +159,7 @@ Every skill has frontmatter: `group`, `prerequisites`, `next`, `workflows`. Thre
 | trajectory-logging | ATIF trajectory serialization | — | eval-framework |
 | error-classifier | Classify errors: FATAL/TRANSIENT/UNKNOWN | error-tracking | incident-response |
 
-### Strategy (8)
+### Strategy (9)
 
 | Skill | Purpose | Prerequisites | Next |
 |-------|---------|---------------|------|
@@ -167,6 +167,7 @@ Every skill has frontmatter: `group`, `prerequisites`, `next`, `workflows`. Thre
 | deep-interview | Socratic interview for spec crystallization | — | plan, autopilot |
 | competitor-research | Browser-based competitive analysis | — | shape, plan, website-creation |
 | research | Persistent research wiki with experiments | — | plan, competitor-research |
+| gap-analysis | Compare product against reference in same category | competitor-research | plan, shape |
 | shape | UX/UI discovery interview producing design brief | impeccable | website-creation, impeccable |
 | sprint-contracts | Success criteria between generator/evaluator | plan, shape | ralph, team |
 | brand-guidelines | Extract and codify brand identity | competitor-research | website-creation, social-media |
@@ -431,25 +432,27 @@ Legal pages (ToS, Privacy Policy), SEO setup (sitemap, meta tags, structured dat
 ## File Structure
 
 ```
-├── agents/                    12 agent definitions across 6 categories
+├── agents/                    13 agent definitions across 6 categories
 │   ├── website.md             Frontend dev (sonnet, level 2) → coding category
 │   ├── backend.md             Backend/API dev (sonnet, level 2) → coding category
 │   ├── growth.md              Growth/analytics (sonnet, level 2) → growth category
 │   ├── writing.md             Content creation (haiku, level 1) → content category
 │   ├── docs.md                Devtool documentation (sonnet, level 2) → content category
-│   ├── ops.md                 Operations/deploy (sonnet, level 3) → operations category
+│   ├── ops.md                 Operations/infra (sonnet, level 3) → operations category
+│   ├── deploy.md              Production deploys/rollbacks (sonnet, level 2) → operations category
 │   ├── commander.md           Orchestrator (opus, level 4) → orchestration category
 │   ├── researcher.md          Knowledge wiki maintainer (opus, level 3) → orchestration category
 │   ├── harness-researcher.md  Self-improvement researcher (opus, level 3) → orchestration category
-│   ├── alignment.md           Repo structure auditor (sonnet, level 2) → orchestration category
+│   ├── alignment.md           Repo structure auditor (opus, level 2) → orchestration category
+│   ├── paper-reader.md        Academic paper reader (sonnet, level 2) → orchestration category
 │   └── slop-cleaner.md        AI slop detection/removal (sonnet, level 2) → quality category
 │
-├── skills/                    95 skills in Claude Code plugin format (skills/<name>/SKILL.md)
+├── skills/                    96 skills in Claude Code plugin format (skills/<name>/SKILL.md)
 │   │                          Organized by lifecycle group with frontmatter metadata:
 │   │                          group, prerequisites, next, workflows
 │   │
 │   ├── Orchestration (20)     startup-init, autopilot, ralph, team, ultrawork, ultraqa, deep-dive, debug, trace, tmux-spawn, loop-prompt, cancel, issue-creator, github-state-manager, agent-creator, self-improve, context-reset-handler, tiered-memory, trajectory-logging, error-classifier
-│   ├── Strategy (8)           plan, deep-interview, competitor-research, research, shape, sprint-contracts, brand-guidelines, avoid-feature-creep
+│   ├── Strategy (9)           plan, deep-interview, competitor-research, research, gap-analysis, shape, sprint-contracts, brand-guidelines, avoid-feature-creep
 │   ├── Design (17)            impeccable, website-creation, layout, typeset, colorize, animate, adapt, bolder, quieter, delight, distill, overdrive, clarify, polish, critique, asset-generation, optimize
 │   ├── Build (15)             convex, convex-schema-validator, convex-functions, convex-realtime, convex-http-actions, convex-file-storage, convex-cron-jobs, convex-agents, convex-migrations, convex-best-practices, convex-component-authoring, convex-security-check, convex-security-audit, test-generator, stack-extend
 │   ├── Quality (9)            verify, audit, slop-cleaner, visual-qa-pipeline, accessibility-checker, performance-benchmark, security-scanner, cubic-codebase-scan, eval-framework

@@ -2,7 +2,7 @@
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "harness",
   "id": "harness",
-  "description": "Autonomous startup builder — takes an idea, builds the entire company. 12 agents, 94 skills, TDD, Cubic code review, Figma design, deploy to Vercel/Railway.",
+  "description": "Autonomous startup builder — takes an idea, builds the entire company. 13 agents, 96 skills, TDD, Cubic code review, Figma design, deploy to Vercel/Railway.",
   "owner": {
     "name": "Reagan Hsu",
     "email": "reagan@example.com"

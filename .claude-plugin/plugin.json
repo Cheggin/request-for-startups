@@ -1,7 +1,7 @@
 {
   "name": "startup-harness",
   "version": "0.1.0",
-  "description": "Autonomous startup builder — takes an idea and builds the entire company: research, design, code, deploy, grow. 12 agents, 94 skills, 27 packages, TDD, Cubic code review, Stripe, SEO. Validated: built 3 startups (B2C, devtool, B2B SaaS) from single sentences.",
+  "description": "Autonomous startup builder — takes an idea and builds the entire company: research, design, code, deploy, grow. 13 agents, 96 skills, 27 packages, TDD, Cubic code review, Stripe, SEO. Validated: built 3 startups (B2C, devtool, B2B SaaS) from single sentences.",
   "author": {
     "name": "Reagan Hsu"
   },
