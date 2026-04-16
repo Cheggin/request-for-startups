@@ -2,6 +2,10 @@
 name: slack-course-correction
 description: Detect user feedback in Slack threads, classify intent, and propagate direction changes to specs, Issues, and agents.
 user-invocable: true
+group: comms
+prerequisites: [investor-updates]
+next: [plan, issue-creator]
+workflows: [incident-response]
 ---
 
 # Slack Course Correction

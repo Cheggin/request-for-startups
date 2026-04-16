@@ -2,6 +2,10 @@
 name: tmux-spawn
 description: Reliable agent spawning in tmux with load-wait and verification
 user-invocable: false
+group: orchestration
+prerequisites: []
+next: []
+workflows: [full-startup]
 ---
 
 # tmux-spawn — Reliable Agent Dispatching

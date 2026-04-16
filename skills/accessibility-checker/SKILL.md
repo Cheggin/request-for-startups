@@ -2,6 +2,10 @@
 name: accessibility-checker
 description: Run automated WCAG 2.1 AA accessibility audits using axe-core via Playwright. Use when implementing or reviewing UI features to enforce accessibility compliance, catch color contrast failures, validate keyboard navigation, check screen reader landmarks, verify alt text and ARIA attributes, or gate feature completion on accessibility standards.
 user-invocable: true
+group: quality
+prerequisites: [website-creation, adapt]
+next: [audit]
+workflows: [design-review, full-startup]
 ---
 
 # Accessibility Checker

@@ -3,6 +3,10 @@ name: self-improve
 description: Autonomous evolutionary code improvement engine with tournament selection
 user-invocable: true
 level: 4
+group: orchestration
+prerequisites: [eval-framework]
+next: [verify]
+workflows: [continuous-improvement]
 ---
 
 # Self-Improvement Orchestrator

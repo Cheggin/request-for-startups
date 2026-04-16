@@ -4,6 +4,10 @@ description: Amplify safe or boring designs to make them more visually interesti
 version: 2.1.1
 user-invocable: true
 argument-hint: "[target]"
+group: design
+prerequisites: [impeccable]
+next: [quieter, polish]
+workflows: [design-review]
 ---
 
 Increase visual impact and personality in designs that are too safe, generic, or visually underwhelming, creating more engaging and memorable experiences.

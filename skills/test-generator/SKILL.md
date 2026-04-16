@@ -2,6 +2,10 @@
 name: test-generator
 description: Auto-generate Vitest unit tests and Playwright e2e tests from product spec acceptance criteria using TDD. Use when writing tests before implementation, generating test stubs from acceptance criteria, enforcing TDD red-green workflow, evaluating test quality for brittleness or looseness, or gating features on code coverage thresholds.
 user-invocable: true
+group: build
+prerequisites: [sprint-contracts]
+next: [verify, ultraqa, ci-cd-pipeline]
+workflows: [ship-feature, full-startup]
 ---
 
 # Test Generator

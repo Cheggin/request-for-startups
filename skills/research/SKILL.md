@@ -2,6 +2,10 @@
 name: research
 description: Query, store, and loop on persistent research knowledge. Check prior experiments before building.
 user-invocable: true
+group: strategy
+prerequisites: []
+next: [plan, competitor-research]
+workflows: [full-startup, continuous-improvement]
 ---
 
 # Research

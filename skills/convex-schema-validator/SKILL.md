@@ -6,6 +6,10 @@ user-invocable: true
 version: 1.0.0
 author: Convex
 tags: [convex, schema, validation, typescript, indexes, migrations]
+group: build
+prerequisites: [plan]
+next: [convex-functions, convex-migrations]
+workflows: [full-startup, ship-feature]
 ---
 
 # Convex Schema Validator

@@ -4,6 +4,10 @@ description: Add strategic color to features that are too monochromatic or lack 
 version: 2.1.1
 user-invocable: true
 argument-hint: "[target]"
+group: design
+prerequisites: [impeccable]
+next: [polish]
+workflows: [build-lander, design-review]
 ---
 
 Strategically introduce color to designs that are too monochromatic, gray, or lacking in visual warmth and personality.

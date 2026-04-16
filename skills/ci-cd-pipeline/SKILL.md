@@ -2,6 +2,10 @@
 name: ci-cd-pipeline
 description: Set up and maintain a GitHub Actions CI/CD pipeline with parallel lint/typecheck/test jobs, staging deploys on merge to main, production deploys on release tags, health checks, and automatic rollback on failure. Use when configuring CI/CD, adding deployment workflows, setting up branch protection, or implementing automatic rollback.
 user-invocable: true
+group: ship
+prerequisites: [test-generator]
+next: [deploy-pipeline]
+workflows: [full-startup, ship-feature]
 ---
 
 # CI/CD Pipeline

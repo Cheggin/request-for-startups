@@ -2,6 +2,10 @@
 name: dependency-manager
 description: Automate dependency management with scheduled security audits, auto-created PRs for safe updates, human review for breaking changes, freshness scoring, and license compliance checks. Use when running npm audit, updating dependencies, checking for vulnerabilities, or tracking dependency freshness.
 user-invocable: true
+group: ship
+prerequisites: []
+next: [security-scanner]
+workflows: [continuous-improvement]
 ---
 
 # Dependency Manager

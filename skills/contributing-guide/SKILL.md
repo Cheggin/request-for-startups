@@ -2,6 +2,10 @@
 name: contributing-guide
 description: Auto-generate a CONTRIBUTING.md covering dev setup, coding standards, and PR process. Use when the user needs a contributing guide for their repository, wants to document the development workflow for new contributors, or needs to keep contribution docs in sync with actual project configuration.
 user-invocable: true
+group: comms
+prerequisites: [readme-generator]
+next: []
+workflows: [full-startup]
 ---
 
 # Contributing Guide Generator

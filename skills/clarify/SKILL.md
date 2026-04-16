@@ -4,6 +4,10 @@ description: Improve unclear UX copy, error messages, microcopy, labels, and ins
 version: 2.1.1
 user-invocable: true
 argument-hint: "[target]"
+group: design
+prerequisites: [impeccable]
+next: [anti-ai-writing, polish]
+workflows: [design-review]
 ---
 
 Identify and improve unclear, confusing, or poorly written interface text to make the product easier to understand and use.

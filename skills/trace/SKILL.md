@@ -5,6 +5,10 @@ user-invocable: true
 argument-hint: "<observation to trace>"
 agent: tracer
 level: 2
+group: orchestration
+prerequisites: []
+next: [plan]
+workflows: [bug-fix, incident-response]
 ---
 
 # Trace Skill

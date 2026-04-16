@@ -6,6 +6,10 @@ user-invocable: true
 version: 1.0.0
 author: Convex
 tags: [convex, security, audit, authorization, rate-limiting, protection]
+group: build
+prerequisites: [convex-security-check]
+next: [deploy-pipeline]
+workflows: [full-startup]
 ---
 
 # Convex Security Audit

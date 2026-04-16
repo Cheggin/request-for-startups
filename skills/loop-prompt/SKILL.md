@@ -2,6 +2,10 @@
 name: loop-prompt
 description: Generate optimized loop prompts for agents that run continuously. Use when spawning persistent agents (harness-researcher, slop-cleaner, growth monitor, ops monitor) or any agent that should NEVER STOP until manually interrupted. Encodes patterns from autoresearch, ui-loop, ralph, and Karpathy.
 user-invocable: true
+group: orchestration
+prerequisites: []
+next: [post-deploy-loop, research]
+workflows: [continuous-improvement]
 ---
 
 # Loop Prompt Generator

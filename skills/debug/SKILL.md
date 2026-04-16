@@ -2,6 +2,10 @@
 name: debug
 description: Diagnose the current OMC session or repo state using logs, traces, state, and focused reproduction
 user-invocable: true
+group: orchestration
+prerequisites: []
+next: [trace]
+workflows: [bug-fix, incident-response]
 ---
 
 # Debug

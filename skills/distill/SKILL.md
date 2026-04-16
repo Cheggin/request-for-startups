@@ -4,6 +4,10 @@ description: Strip designs to their essence by removing unnecessary complexity. 
 version: 2.1.1
 user-invocable: true
 argument-hint: "[target]"
+group: design
+prerequisites: [impeccable]
+next: [polish]
+workflows: [design-review]
 ---
 
 Remove unnecessary complexity from designs, revealing the essential elements and creating clarity through ruthless simplification.

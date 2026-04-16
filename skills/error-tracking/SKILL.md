@@ -2,6 +2,10 @@
 name: error-tracking
 description: Integrate error tracking with Sentry for frontend and backend applications. Capture, classify, deduplicate, and alert on errors with deploy-version tagging.
 user-invocable: true
+group: operate
+prerequisites: [website-creation, convex-functions]
+next: [incident-response, error-classifier]
+workflows: [incident-response, full-startup]
 ---
 
 # Error Tracking

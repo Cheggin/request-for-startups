@@ -2,6 +2,10 @@
 name: analytics-integration
 description: Integrate PostHog product analytics into a Next.js application with page views, event tracking, conversion funnels, A/B testing via feature flags, and API access for programmatic dashboard queries. Use when setting up product analytics, tracking user actions, defining conversion funnels, or enabling A/B experiments.
 user-invocable: true
+group: grow
+prerequisites: [website-creation]
+next: [landing-page-optimizer, post-deploy-loop]
+workflows: [full-startup, seo-content-growth]
 ---
 
 # Analytics Integration

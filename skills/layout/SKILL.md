@@ -4,6 +4,10 @@ description: Improve layout, spacing, and visual rhythm. Fixes monotonous grids,
 version: 2.1.1
 user-invocable: true
 argument-hint: "[target]"
+group: design
+prerequisites: [impeccable]
+next: [polish]
+workflows: [build-lander, design-review]
 ---
 
 Assess and improve layout and spacing that feels monotonous, crowded, or structurally weak — turning generic arrangements into intentional, rhythmic compositions.

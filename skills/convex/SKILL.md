@@ -6,6 +6,10 @@ user-invocable: true
 version: 1.0.0
 author: Convex
 tags: [convex, backend, database, realtime]
+group: build
+prerequisites: [plan]
+next: [convex-schema-validator, convex-functions, convex-best-practices]
+workflows: [full-startup, ship-feature]
 ---
 
 # Convex Development Skills

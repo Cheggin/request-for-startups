@@ -2,6 +2,10 @@
 name: performance-benchmark
 description: Monitor Core Web Vitals (LCP, INP, CLS) using Lighthouse CI with budget thresholds and deploy gating. Use when setting up performance monitoring, defining performance budgets, tracking bundle sizes, gating deploys on performance regressions, or auditing route-level performance over time.
 user-invocable: true
+group: quality
+prerequisites: [website-creation]
+next: [deploy-pipeline]
+workflows: [build-lander, full-startup]
 ---
 
 # Performance Benchmark

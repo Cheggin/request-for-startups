@@ -4,6 +4,10 @@ description: Performs a final quality pass fixing alignment, spacing, consistenc
 version: 2.1.1
 user-invocable: true
 argument-hint: "[target]"
+group: design
+prerequisites: [impeccable]
+next: [visual-qa-pipeline, deploy-pipeline]
+workflows: [build-lander, design-review, full-startup]
 ---
 
 ## MANDATORY PREPARATION

@@ -4,6 +4,10 @@ description: Run technical quality checks across accessibility, performance, the
 version: 2.1.1
 user-invocable: true
 argument-hint: "[area (feature, page, component...)]"
+group: quality
+prerequisites: [impeccable]
+next: [layout, typeset, colorize, clarify, adapt]
+workflows: [design-review, full-startup]
 ---
 
 ## MANDATORY PREPARATION

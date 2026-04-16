@@ -2,6 +2,10 @@
 name: cost-tracker
 description: Per-agent per-session cost tracking with configurable ceilings and model tier optimization.
 user-invocable: true
+group: operate
+prerequisites: []
+next: [investor-updates]
+workflows: [continuous-improvement]
 ---
 
 # Cost Tracker

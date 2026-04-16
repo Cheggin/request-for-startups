@@ -4,6 +4,10 @@ description: Evaluate design from a UX perspective, assessing visual hierarchy, 
 version: 2.1.1
 user-invocable: true
 argument-hint: "[area (feature, page, component...)]"
+group: design
+prerequisites: [impeccable]
+next: [layout, typeset, colorize, clarify, distill]
+workflows: [design-review]
 ---
 
 ## STEPS

@@ -2,6 +2,10 @@
 name: incident-response
 description: Automated incident lifecycle from detection through diagnosis, fix, deploy, verification, and post-mortem with budget-guarded escalation.
 user-invocable: true
+group: operate
+prerequisites: [uptime-monitor, error-tracking]
+next: [deploy-pipeline, github-state-manager]
+workflows: [incident-response]
 ---
 
 # Incident Response

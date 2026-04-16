@@ -2,6 +2,10 @@
 name: seo-setup
 description: Generate comprehensive SEO assets from the product spec including sitemap.xml, robots.txt, meta tags, Open Graph tags, JSON-LD structured data, and canonical URLs. Use when setting up SEO for a new site, adding meta tags or structured data, generating sitemaps, integrating Lighthouse SEO audits into CI, or ensuring social sharing previews work correctly.
 user-invocable: true
+group: ship
+prerequisites: [website-creation]
+next: [seo-chat, programmatic-seo]
+workflows: [full-startup, build-lander, seo-content-growth]
 ---
 
 # SEO Setup

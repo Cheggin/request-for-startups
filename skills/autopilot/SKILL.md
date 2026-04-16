@@ -4,6 +4,10 @@ description: Full autonomous execution from idea to working code
 user-invocable: true
 argument-hint: "<product idea or task description>"
 level: 4
+group: orchestration
+prerequisites: [deep-interview, plan]
+next: [verify, ultraqa]
+workflows: [ship-feature, continuous-improvement]
 ---
 
 <Purpose>

@@ -2,6 +2,10 @@
 name: security-scanner
 description: Multi-layered security scanning for dependency vulnerabilities, secret detection, and OWASP top 10 compliance. Use when auditing dependencies for CVEs, scanning code for hardcoded secrets, setting up pre-commit hooks for secret detection, reviewing API routes for injection or auth flaws, or gating PRs and deploys on security findings.
 user-invocable: true
+group: quality
+prerequisites: []
+next: [deploy-pipeline, ci-cd-pipeline]
+workflows: [full-startup, continuous-improvement]
 ---
 
 # Security Scanner

@@ -5,6 +5,10 @@ user-invocable: true
 argument-hint: "[N:agent-type] [ralph] <task description>"
 aliases: []
 level: 4
+group: orchestration
+prerequisites: [plan]
+next: [verify]
+workflows: [ship-feature]
 ---
 
 # Team Skill

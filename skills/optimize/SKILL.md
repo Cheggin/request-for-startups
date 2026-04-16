@@ -4,6 +4,10 @@ description: Diagnoses and fixes UI performance across loading speed, rendering,
 version: 2.1.1
 user-invocable: true
 argument-hint: "[target]"
+group: design
+prerequisites: []
+next: [performance-benchmark]
+workflows: [design-review, continuous-improvement]
 ---
 
 Identify and fix performance issues to create faster, smoother user experiences.

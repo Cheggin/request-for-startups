@@ -2,6 +2,10 @@
 name: asset-generation
 description: Generate hero images, illustrations, and visual assets for SaaS websites using AI image APIs. Every page MUST have a visual centerpiece — never just text. Use Fal.ai with Flux 2 Pro for best quality. Triggers when building landing pages, hero sections, or any page that needs custom imagery.
 user-invocable: true
+group: design
+prerequisites: [brand-guidelines, shape]
+next: [website-creation]
+workflows: [build-lander, full-startup]
 ---
 
 # Asset Generation

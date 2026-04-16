@@ -6,6 +6,10 @@ user-invocable: true
 version: 1.0.0
 author: Convex
 tags: [convex, migrations, schema, database, data-modeling]
+group: build
+prerequisites: [convex-schema-validator]
+next: [convex-functions]
+workflows: [full-startup]
 ---
 
 # Convex Migrations

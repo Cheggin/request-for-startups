@@ -4,6 +4,10 @@ description: Tones down visually aggressive or overstimulating designs, reducing
 version: 2.1.1
 user-invocable: true
 argument-hint: "[target]"
+group: design
+prerequisites: [impeccable]
+next: [polish]
+workflows: [design-review]
 ---
 
 Reduce visual intensity in designs that are too bold, aggressive, or overstimulating, creating a more refined and approachable aesthetic without losing effectiveness.

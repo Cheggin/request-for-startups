@@ -4,6 +4,10 @@ description: Add moments of joy, personality, and unexpected touches that make i
 version: 2.1.1
 user-invocable: true
 argument-hint: "[target]"
+group: design
+prerequisites: [impeccable, animate]
+next: [overdrive, polish]
+workflows: [design-review]
 ---
 
 Identify opportunities to add moments of joy, personality, and unexpected polish that transform functional interfaces into delightful experiences.

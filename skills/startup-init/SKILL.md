@@ -1,3 +1,13 @@
+---
+name: startup-init
+description: Autonomous startup builder — idea to running company in 11 phases
+user-invocable: true
+group: orchestration
+prerequisites: []
+next: []
+workflows: [full-startup]
+---
+
 # /startup-init — Autonomous Startup Builder
 
 Take a startup idea from zero to running company. Research, design, build, deploy, grow. The user is CEO, not engineer. They get Slack investor updates, not questions.

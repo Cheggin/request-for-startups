@@ -8,6 +8,10 @@ next-skill: omc-plan
 next-skill-args: --consensus --direct
 handoff: .omc/specs/deep-interview-{slug}.md
 level: 3
+group: strategy
+prerequisites: []
+next: [plan, autopilot]
+workflows: [ship-feature, full-startup]
 ---
 
 <Purpose>

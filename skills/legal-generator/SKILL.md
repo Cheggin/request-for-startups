@@ -2,6 +2,10 @@
 name: legal-generator
 description: Generate Terms of Service, Privacy Policy, and Cookie Policy from startup type and jurisdiction. Use before any public launch. Produces legally-aware templates that cover standard requirements (GDPR, CCPA, SOC2 basics) without being actual legal advice.
 user-invocable: true
+group: ship
+prerequisites: [plan]
+next: [website-creation]
+workflows: [full-startup]
 ---
 
 # Legal Page Generator

@@ -2,6 +2,10 @@
 name: landing-page-optimizer
 description: Run hypothesis-driven A/B tests on the landing page, measure conversion improvements via PostHog feature flags, and report outcomes with statistical significance. Use when optimizing landing page conversion, testing CTA changes, running experiments on page elements, or analyzing funnel drop-offs.
 user-invocable: true
+group: grow
+prerequisites: [analytics-integration, website-creation]
+next: [post-deploy-loop]
+workflows: [build-lander, seo-content-growth]
 ---
 
 # Landing Page Optimizer

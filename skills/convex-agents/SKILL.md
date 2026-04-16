@@ -6,6 +6,10 @@ user-invocable: true
 version: 1.0.0
 author: Convex
 tags: [convex, agents, ai, llm, tools, rag, workflows]
+group: build
+prerequisites: [convex-functions]
+next: [convex-security-audit]
+workflows: [full-startup]
 ---
 
 # Convex Agents

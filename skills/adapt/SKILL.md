@@ -4,6 +4,10 @@ description: Adapt designs to work across different screen sizes, devices, conte
 version: 2.1.1
 user-invocable: true
 argument-hint: "[target] [context (mobile, tablet, print...)]"
+group: design
+prerequisites: [impeccable]
+next: [accessibility-checker, polish]
+workflows: [build-lander, design-review]
 ---
 
 Adapt existing designs to work effectively across different contexts - different screen sizes, devices, platforms, or use cases.

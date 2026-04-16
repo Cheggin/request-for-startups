@@ -2,6 +2,10 @@
 name: documentation-generator
 description: Auto-generate user-facing documentation including API reference, user guides, and changelog. Use when the user needs a documentation site, wants API docs generated from code comments and type definitions, needs user guides derived from a product spec, or wants a changelog generated from git history.
 user-invocable: true
+group: comms
+prerequisites: []
+next: [readme-generator]
+workflows: [full-startup]
 ---
 
 # Documentation Generator

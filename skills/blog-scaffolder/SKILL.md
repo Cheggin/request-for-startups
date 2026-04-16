@@ -2,6 +2,10 @@
 name: blog-scaffolder
 description: Scaffold SEO-optimized blog post systems derived from product specs and competitor research. Use when the user needs a blog section for their startup website, wants to generate blog content from product specs, needs SEO-optimized posts with proper metadata and heading structure, or wants a complete blog infrastructure with RSS, sitemap, and pagination.
 user-invocable: true
+group: grow
+prerequisites: [seo-chat, brand-guidelines]
+next: [data-driven-blog]
+workflows: [seo-content-growth]
 ---
 
 # Blog Scaffolder

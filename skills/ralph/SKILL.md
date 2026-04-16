@@ -4,6 +4,10 @@ description: Self-referential loop until task completion with configurable verif
 user-invocable: true
 argument-hint: "[--no-deslop] [--critic=architect|critic|codex] <task description>"
 level: 4
+group: orchestration
+prerequisites: [plan, sprint-contracts]
+next: [verify, slop-cleaner]
+workflows: [ship-feature, continuous-improvement]
 ---
 
 [RALPH + ULTRAWORK - ITERATION {{ITERATION}}/{{MAX}}]

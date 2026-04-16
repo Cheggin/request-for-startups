@@ -4,6 +4,10 @@ description: Review a feature and enhance it with purposeful animations, micro-i
 version: 2.1.1
 user-invocable: true
 argument-hint: "[target]"
+group: design
+prerequisites: [impeccable]
+next: [delight, polish]
+workflows: [build-lander, design-review]
 ---
 
 Analyze a feature and strategically add animations and micro-interactions that enhance understanding, provide feedback, and create delight.

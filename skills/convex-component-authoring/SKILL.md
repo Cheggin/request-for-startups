@@ -6,6 +6,10 @@ user-invocable: true
 version: 1.0.0
 author: Convex
 tags: [convex, components, reusable, packages, npm]
+group: build
+prerequisites: [convex-best-practices]
+next: [convex-security-audit]
+workflows: [full-startup]
 ---
 
 # Convex Component Authoring

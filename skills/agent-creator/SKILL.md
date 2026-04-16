@@ -2,6 +2,10 @@
 name: agent-creator
 description: Create new agent definitions with specific instruction sets, skill assignments, and behavioral rules. Use when the user wants a new type of agent (e.g., research-papers agent, customer-support agent, data-pipeline agent) or wants to modify an existing agent's behavior.
 user-invocable: true
+group: orchestration
+prerequisites: []
+next: [tmux-spawn]
+workflows: []
 ---
 
 # Agent Creator

@@ -6,6 +6,10 @@ user-invocable: true
 version: 1.0.0
 author: Convex
 tags: [convex, functions, queries, mutations, actions, http]
+group: build
+prerequisites: [convex-schema-validator]
+next: [convex-realtime, convex-http-actions, convex-cron-jobs, convex-file-storage, convex-agents]
+workflows: [full-startup, ship-feature]
 ---
 
 # Convex Functions

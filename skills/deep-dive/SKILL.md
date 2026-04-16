@@ -12,6 +12,10 @@ pipeline: [deep-dive, omc-plan, autopilot]
 next-skill: omc-plan
 next-skill-args: --consensus --direct
 handoff: .omc/specs/deep-dive-{slug}.md
+group: orchestration
+prerequisites: []
+next: [plan, autopilot]
+workflows: [bug-fix]
 ---
 
 <Purpose>

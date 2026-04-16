@@ -4,6 +4,10 @@ description: Pushes interfaces past conventional limits with technically ambitio
 version: 2.1.1
 user-invocable: true
 argument-hint: "[target]"
+group: design
+prerequisites: [impeccable, delight]
+next: [polish]
+workflows: [design-review]
 ---
 
 Start your response with:

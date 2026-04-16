@@ -6,6 +6,10 @@ user-invocable: true
 version: 1.0.0
 author: Convex
 tags: [convex, security, authentication, authorization, checklist]
+group: build
+prerequisites: [convex-functions]
+next: [convex-security-audit]
+workflows: [full-startup]
 ---
 
 # Convex Security Check

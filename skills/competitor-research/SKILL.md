@@ -2,6 +2,10 @@
 name: competitor-research
 description: Deep competitor research using browser agents to visit actual competitor sites. Captures screenshots, extracts real pricing, scores UX friction, evaluates API/agent experience, and produces a comparison matrix. Use when analyzing a competitive landscape before product planning.
 user-invocable: true
+group: strategy
+prerequisites: []
+next: [shape, plan, website-creation]
+workflows: [full-startup, seo-content-growth]
 ---
 
 # Competitor Research

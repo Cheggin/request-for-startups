@@ -2,6 +2,10 @@
 name: log-aggregation
 description: Aggregate and search logs from Vercel and Railway with structured format, ring buffer storage, and agent-queryable search interface.
 user-invocable: true
+group: operate
+prerequisites: [deploy-pipeline]
+next: [debug, incident-response]
+workflows: [incident-response]
 ---
 
 # Log Aggregation

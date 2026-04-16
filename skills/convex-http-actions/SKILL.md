@@ -6,6 +6,10 @@ user-invocable: true
 version: 1.0.0
 author: Convex
 tags: [convex, http, actions, webhooks, api, endpoints]
+group: build
+prerequisites: [convex-functions]
+next: [convex-security-check]
+workflows: [full-startup]
 ---
 
 # Convex HTTP Actions

@@ -2,6 +2,10 @@
 name: error-classifier
 description: Classify errors as FATAL, TRANSIENT, or UNKNOWN and transform raw stack traces into actionable agent instructions.
 user-invocable: true
+group: orchestration
+prerequisites: [error-tracking]
+next: [incident-response]
+workflows: [incident-response]
 ---
 
 # Error Classifier

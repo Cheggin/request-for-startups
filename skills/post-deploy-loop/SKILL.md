@@ -2,6 +2,10 @@
 name: post-deploy-loop
 description: Continuous post-deploy monitoring and growth loop. Use after deploying a startup to keep it running, growing, and improving 24/7. Combines monitoring, growth, content, and maintenance into one persistent loop.
 user-invocable: true
+group: operate
+prerequisites: [deploy-pipeline]
+next: [uptime-monitor, landing-page-optimizer, investor-updates]
+workflows: [full-startup, continuous-improvement]
 ---
 
 # Post-Deploy Loop

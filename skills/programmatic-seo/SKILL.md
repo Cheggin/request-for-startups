@@ -2,6 +2,10 @@
 name: programmatic-seo
 description: Generate programmatic SEO pages at scale from structured data. Use when a SaaS has a natural "matrix" of variations (format conversions, city pages, tool comparisons). Creates unique, data-enriched pages that survive Google's "zero information gain" filter. Query SEO Chat API for validation.
 user-invocable: true
+group: grow
+prerequisites: [seo-chat, analytics-integration]
+next: [seo-setup, landing-page-optimizer]
+workflows: [seo-content-growth]
 ---
 
 # Programmatic SEO Page Generator

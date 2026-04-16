@@ -7,6 +7,10 @@ pipeline: [deep-interview, omc-plan, autopilot]
 next-skill: autopilot
 handoff: .omc/plans/ralplan-*.md
 level: 4
+group: strategy
+prerequisites: []
+next: [ralph, team, autopilot, sprint-contracts]
+workflows: [ship-feature, bug-fix, continuous-improvement, full-startup]
 ---
 
 <Purpose>

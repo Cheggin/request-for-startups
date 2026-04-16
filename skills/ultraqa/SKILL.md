@@ -4,6 +4,10 @@ description: QA cycling workflow - test, verify, fix, repeat until goal met
 user-invocable: true
 argument-hint: "[--tests|--build|--lint|--typecheck|--custom <pattern>] [--interactive]"
 level: 3
+group: orchestration
+prerequisites: [test-generator]
+next: [verify]
+workflows: [ship-feature, design-review, bug-fix]
 ---
 
 # UltraQA Skill

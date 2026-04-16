@@ -3,6 +3,10 @@ name: issue-creator
 description: Turn a one-line request into a schema-compliant GitHub issue draft or creation command. Use when the user gives a short bug report, feature request, refactor idea, or task summary and wants a normalized issue with title, type, severity, description, acceptance criteria, and verification steps.
 user-invocable: true
 argument-hint: "<one-line task description>"
+group: orchestration
+prerequisites: []
+next: [github-state-manager]
+workflows: [incident-response, ship-feature]
 ---
 
 # Issue Creator

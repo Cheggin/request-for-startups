@@ -6,6 +6,10 @@ user-invocable: true
 version: 1.0.0
 author: Convex
 tags: [convex, cron, scheduling, background-jobs, automation]
+group: build
+prerequisites: [convex-functions]
+next: [convex-security-check]
+workflows: [full-startup]
 ---
 
 # Convex Cron Jobs

@@ -4,6 +4,10 @@ description: Improves typography by fixing font choices, hierarchy, sizing, weig
 version: 2.1.1
 user-invocable: true
 argument-hint: "[target]"
+group: design
+prerequisites: [impeccable]
+next: [polish]
+workflows: [build-lander, design-review]
 ---
 
 Assess and improve typography that feels generic, inconsistent, or poorly structured — turning default-looking text into intentional, well-crafted type.

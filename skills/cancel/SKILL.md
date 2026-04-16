@@ -4,6 +4,10 @@ description: Cancel any active OMC mode (autopilot, ralph, ultrawork, ultraqa, s
 user-invocable: true
 argument-hint: "[--force|--all]"
 level: 2
+group: orchestration
+prerequisites: []
+next: []
+workflows: []
 ---
 
 # Cancel Skill

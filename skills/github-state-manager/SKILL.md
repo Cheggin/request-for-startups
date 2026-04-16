@@ -2,6 +2,10 @@
 name: github-state-manager
 description: Track all task state via GitHub Issues and Project boards with automated column transitions and audit trail comments.
 user-invocable: true
+group: orchestration
+prerequisites: [plan]
+next: [ci-cd-pipeline, investor-updates]
+workflows: [full-startup, incident-response]
 ---
 
 # GitHub State Manager

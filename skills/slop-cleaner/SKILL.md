@@ -9,6 +9,10 @@ triggers:
   - cleanup
   - anti-slop
   - code smell
+group: quality
+prerequisites: []
+next: [verify]
+workflows: [ship-feature, continuous-improvement]
 ---
 
 # Slop Cleaner Skill

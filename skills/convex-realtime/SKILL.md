@@ -6,6 +6,10 @@ user-invocable: true
 version: 1.0.0
 author: Convex
 tags: [convex, realtime, subscriptions, optimistic-updates, pagination]
+group: build
+prerequisites: [convex-functions]
+next: [convex-security-check]
+workflows: [full-startup]
 ---
 
 # Convex Realtime
