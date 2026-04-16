@@ -37,11 +37,6 @@ function matchesPattern(filePath: string, pattern: string): boolean {
     return filePath.endsWith(ext);
   }
 
-  // Directory prefix without glob: "components/**" -> "components/"
-  if (pattern.endsWith("/**")) {
-    return filePath.startsWith(pattern.slice(0, -2));
-  }
-
   // Simple prefix match for patterns like "migrations/**"
   if (pattern.includes("**")) {
     const prefix = pattern.split("**")[0];
@@ -190,6 +185,7 @@ export function buildTaskFromIssue(issue: Issue): Task {
   const depKeywordRe = /(?:depends on|blocked by|requires|after)\s+/gi;
   const lines = body.split("\n");
   for (const line of lines) {
+    depKeywordRe.lastIndex = 0;
     if (depKeywordRe.test(line)) {
       const refRe = new RegExp(ISSUE_REF_RE.source, ISSUE_REF_RE.flags);
       let refMatch: RegExpExecArray | null;
@@ -199,7 +195,6 @@ export function buildTaskFromIssue(issue: Issue): Task {
         }
       }
     }
-    depKeywordRe.lastIndex = 0;
   }
 
   return {
