@@ -46,14 +46,14 @@ The harness is a **Claude Code plugin**. Install it in any project:
 claude plugins add Cheggin/request-for-startups
 ```
 
-All 94 skills become available as `/startup-harness:<skill-name>` in any Claude Code session. Skills auto-update when the repo is pushed.
+All 95 skills become available as `/startup-harness:<skill-name>` in any Claude Code session. Skills auto-update when the repo is pushed.
 
 ## Architecture
 
 ```
 commands/          Entry points (startup-init, resume)
 agents/            12 agent definitions (website, backend, growth, writing, ops, commander, researcher, docs, slop-cleaner, harness-researcher, alignment, paper-reader)
-skills/            94 skills as Claude Code plugin format (skills/<name>/SKILL.md)
+skills/            95 skills as Claude Code plugin format (skills/<name>/SKILL.md)
 templates/         Integration templates (Stripe, Clerk auth, Resend email)
 packages/          27 packages with 590+ tests (includes harness-dashboard)
 features/          Checklist-driven development tracking
@@ -70,7 +70,7 @@ features/          Checklist-driven development tracking
 
 An agent is a blank Claude Code session. Its identity comes entirely from which skills are loaded. A "website agent" is just: coding ground truth + design skills + coding skills + convex skills. Agent-to-skill mapping is defined in `.harness/agent-categories.yml`.
 
-The harness is a **Claude Code plugin**. Install it and all 94 skills are available as `/startup-harness:<skill-name>` in any Claude Code session. Skills auto-update when the repo is pushed.
+The harness is a **Claude Code plugin**. Install it and all 95 skills are available as `/startup-harness:<skill-name>` in any Claude Code session. Skills auto-update when the repo is pushed.
 
 ### Mechanical Enforcement
 
@@ -129,6 +129,166 @@ harness deploy staging    # Deploy to staging
 harness deploy production # Deploy to production (requires rollback plan)
 harness update post       # Post investor update to Slack
 ```
+
+## Skills (95)
+
+Every skill has frontmatter: `group`, `prerequisites`, `next`, `workflows`. Three skills are always-load guards: `anti-ai-writing`, `verify`, `avoid-feature-creep`.
+
+### Orchestration (20)
+
+| Skill | Purpose | Prerequisites | Next |
+|-------|---------|---------------|------|
+| startup-init | 11-phase autonomous startup builder | — | — |
+| autopilot | Full autonomous execution: idea to code | deep-interview, plan | verify, ultraqa |
+| ralph | Self-referential loop until task complete | plan, sprint-contracts | verify, slop-cleaner |
+| team | N coordinated agents on shared task list | plan | verify |
+| ultrawork | Parallel execution engine | plan | verify |
+| ultraqa | QA cycling: test/verify/fix/repeat | test-generator | verify |
+| deep-dive | Trace + interview pipeline for investigation | — | plan, autopilot |
+| debug | Diagnose failures via logs, traces, state | — | trace |
+| trace | Competing hypothesis investigation | — | plan |
+| tmux-spawn | Reliable agent spawning in tmux | — | — |
+| loop-prompt | Generate loop prompts for continuous agents | — | post-deploy-loop, research |
+| cancel | Cancel any active mode | — | — |
+| issue-creator | One-liner to schema-compliant GitHub Issue | — | github-state-manager |
+| github-state-manager | Task state via GitHub Issues + Projects | plan | ci-cd-pipeline, investor-updates |
+| agent-creator | Create new agent definitions | — | tmux-spawn |
+| self-improve | Autonomous evolutionary code improvement | eval-framework | verify |
+| context-reset-handler | Clean context resets with handoff docs | — | — |
+| tiered-memory | Hot/warm/cold memory across resets | — | — |
+| trajectory-logging | ATIF trajectory serialization | — | eval-framework |
+| error-classifier | Classify errors: FATAL/TRANSIENT/UNKNOWN | error-tracking | incident-response |
+
+### Strategy (8)
+
+| Skill | Purpose | Prerequisites | Next |
+|-------|---------|---------------|------|
+| plan | Strategic planning with interview workflow | — | ralph, team, autopilot, sprint-contracts |
+| deep-interview | Socratic interview for spec crystallization | — | plan, autopilot |
+| competitor-research | Browser-based competitive analysis | — | shape, plan, website-creation |
+| research | Persistent research wiki with experiments | — | plan, competitor-research |
+| shape | UX/UI discovery interview producing design brief | impeccable | website-creation, impeccable |
+| sprint-contracts | Success criteria between generator/evaluator | plan, shape | ralph, team |
+| brand-guidelines | Extract and codify brand identity | competitor-research | website-creation, social-media |
+| avoid-feature-creep | Scope discipline enforcement (always-load) | — | sprint-contracts |
+
+### Design (17)
+
+| Skill | Purpose | Prerequisites | Next |
+|-------|---------|---------------|------|
+| impeccable | Production-grade frontend interfaces | — | shape, layout, typeset, colorize, animate, adapt, critique, audit |
+| website-creation | SaaS websites with design presets | shape, brand-guidelines, anti-ai-writing | seo-setup, audit, polish |
+| layout | Spacing, hierarchy, visual rhythm | impeccable | polish |
+| typeset | Typography hierarchy, sizing, readability | impeccable | polish |
+| colorize | Strategic color application | impeccable | polish |
+| animate | Motion, micro-interactions, transitions | impeccable | delight, polish |
+| adapt | Responsive design across devices | impeccable | accessibility-checker, polish |
+| bolder | Amplify safe designs for more impact | impeccable | quieter, polish |
+| quieter | Tone down overstimulating designs | impeccable | polish |
+| delight | Moments of joy and personality | impeccable, animate | overdrive, polish |
+| distill | Strip to essence, remove complexity | impeccable | polish |
+| overdrive | Technically ambitious: shaders, physics | impeccable, delight | polish |
+| clarify | UX copy, labels, error messages | impeccable | anti-ai-writing, polish |
+| polish | Final pass: alignment, spacing, consistency | impeccable | visual-qa-pipeline, deploy-pipeline |
+| critique | Multi-perspective design evaluation | impeccable | layout, typeset, colorize, clarify, distill |
+| asset-generation | Hero images and visual assets | brand-guidelines, shape | website-creation |
+| optimize | UI performance: loading, rendering, bundle | — | performance-benchmark |
+
+### Build (15)
+
+| Skill | Purpose | Prerequisites | Next |
+|-------|---------|---------------|------|
+| convex | Umbrella router to Convex sub-skills | plan | convex-schema-validator, convex-functions |
+| convex-schema-validator | Schema, typing, indexes | plan | convex-functions, convex-migrations |
+| convex-functions | Queries, mutations, actions | convex-schema-validator | convex-realtime, convex-http-actions, convex-cron-jobs, convex-file-storage, convex-agents |
+| convex-realtime | Reactive subscriptions, optimistic updates | convex-functions | convex-security-check |
+| convex-http-actions | Webhooks, external API integration | convex-functions | convex-security-check |
+| convex-file-storage | Upload, serving, metadata | convex-functions | convex-security-check |
+| convex-cron-jobs | Scheduled background tasks | convex-functions | convex-security-check |
+| convex-agents | AI agents with threads, tools, RAG | convex-functions | convex-security-audit |
+| convex-migrations | Zero-downtime schema evolution | convex-schema-validator | convex-functions |
+| convex-best-practices | Production-ready Convex patterns | convex | convex-component-authoring |
+| convex-component-authoring | Reusable isolated components | convex-best-practices | convex-security-audit |
+| convex-security-check | Quick security audit checklist | convex-functions | convex-security-audit |
+| convex-security-audit | Deep RBAC, rate limiting review | convex-security-check | deploy-pipeline |
+| test-generator | Auto-generate Vitest + Playwright tests | sprint-contracts | verify, ultraqa, ci-cd-pipeline |
+| stack-extend | Add new tools to stack at runtime | plan | post-deploy-loop |
+
+### Quality (9)
+
+| Skill | Purpose | Prerequisites | Next |
+|-------|---------|---------------|------|
+| verify | Verify changes work before claiming done (always-load) | — | deploy-pipeline |
+| audit | Technical quality checks, P0-P3 scoring | impeccable | layout, typeset, colorize, clarify, adapt |
+| slop-cleaner | Remove dead code, duplication, weak tests | — | verify |
+| visual-qa-pipeline | Screenshot pages, evaluate against preset | website-creation | polish |
+| accessibility-checker | WCAG 2.1 AA audits via axe-core | website-creation, adapt | audit |
+| performance-benchmark | Core Web Vitals via Lighthouse CI | website-creation | deploy-pipeline |
+| security-scanner | Dependency vulns, secrets, OWASP top 10 | — | deploy-pipeline, ci-cd-pipeline |
+| cubic-codebase-scan | Full-codebase security/quality scans | — | github-state-manager |
+| eval-framework | pass@k metrics for agent reliability | agent-creator, test-generator | self-improve |
+
+### Ship (5)
+
+| Skill | Purpose | Prerequisites | Next |
+|-------|---------|---------------|------|
+| deploy-pipeline | Automated deploy: Vercel + Railway + Convex | security-scanner, verify, ci-cd-pipeline | post-deploy-loop, uptime-monitor |
+| ci-cd-pipeline | GitHub Actions with parallel jobs | test-generator | deploy-pipeline |
+| seo-setup | Sitemap, robots.txt, meta tags, JSON-LD | website-creation | seo-chat, programmatic-seo |
+| legal-generator | ToS, Privacy Policy, Cookie Policy | plan | website-creation |
+| dependency-manager | Automated dependency audits and updates | — | security-scanner |
+
+### Grow (9)
+
+| Skill | Purpose | Prerequisites | Next |
+|-------|---------|---------------|------|
+| analytics-integration | PostHog: page views, funnels, A/B tests | website-creation | landing-page-optimizer, post-deploy-loop |
+| landing-page-optimizer | A/B tests via PostHog feature flags | analytics-integration, website-creation | post-deploy-loop |
+| programmatic-seo | Hundreds of pages from data matrices | seo-chat, analytics-integration | seo-setup, landing-page-optimizer |
+| seo-chat | Query SEO API for strategy and audits | seo-setup | programmatic-seo, blog-scaffolder |
+| blog-scaffolder | SEO-optimized blog system with MDX | seo-chat, brand-guidelines | data-driven-blog |
+| data-driven-blog | Blog posts with proprietary data | blog-scaffolder, analytics-integration | social-media |
+| social-media | Platform-adapted social posts | brand-guidelines, anti-ai-writing | social-intelligence |
+| social-intelligence | Monitor social platforms for mentions | social-media | slack-course-correction |
+| user-feedback-collector | In-app feedback widget with routing | website-creation | github-state-manager |
+
+### Operate (6)
+
+| Skill | Purpose | Prerequisites | Next |
+|-------|---------|---------------|------|
+| post-deploy-loop | 24/7 monitoring + growth loop | deploy-pipeline | uptime-monitor, landing-page-optimizer, investor-updates |
+| uptime-monitor | Health check polling with Slack alerts | deploy-pipeline | incident-response |
+| error-tracking | Sentry integration with spike detection | website-creation, convex-functions | incident-response, error-classifier |
+| incident-response | Full incident lifecycle with escalation | uptime-monitor, error-tracking | deploy-pipeline, github-state-manager |
+| log-aggregation | Unified logs from Vercel/Railway | deploy-pipeline | debug, incident-response |
+| cost-tracker | Per-agent cost tracking with budgets | — | investor-updates |
+
+### Comms (6)
+
+| Skill | Purpose | Prerequisites | Next |
+|-------|---------|---------------|------|
+| anti-ai-writing | Eliminate AI writing tells (always-load) | — | — |
+| investor-updates | Milestone reports to Slack with metrics | github-state-manager, analytics-integration | slack-course-correction |
+| slack-course-correction | Detect Slack feedback, propagate changes | investor-updates | plan, issue-creator |
+| documentation-generator | API reference, user guides, changelog | — | readme-generator |
+| readme-generator | Auto-generate README.md | — | documentation-generator, contributing-guide |
+| contributing-guide | Auto-generate CONTRIBUTING.md | readme-generator | — |
+
+### Workflows
+
+Skills chain into 8 standard workflows:
+
+| Workflow | Chain |
+|----------|-------|
+| **full-startup** | deep-interview -> plan -> shape -> website-creation -> test-generator -> deploy-pipeline -> post-deploy-loop |
+| **build-lander** | impeccable -> shape -> website-creation -> polish -> seo-setup -> deploy-pipeline -> landing-page-optimizer |
+| **build-saas** | deep-interview -> plan -> convex-schema-validator -> convex-functions -> website-creation -> deploy-pipeline |
+| **ship-feature** | deep-interview -> plan -> sprint-contracts -> test-generator -> autopilot -> verify -> deploy-pipeline |
+| **design-review** | impeccable -> critique -> audit -> [layout, typeset, colorize, clarify] -> polish -> visual-qa-pipeline |
+| **bug-fix** | debug -> trace -> deep-dive -> plan -> verify -> slop-cleaner -> ultraqa |
+| **seo-content-growth** | seo-setup -> seo-chat -> blog-scaffolder -> data-driven-blog -> social-media -> social-intelligence |
+| **incident-response** | uptime-monitor -> error-tracking -> error-classifier -> incident-response -> deploy-pipeline -> verify |
+| **continuous-improvement** | self-improve -> research -> plan -> ultrawork -> eval-framework -> slop-cleaner -> verify |
 
 ## Canonical Stack
 
@@ -284,24 +444,19 @@ Legal pages (ToS, Privacy Policy), SEO setup (sitemap, meta tags, structured dat
 │   ├── alignment.md           Repo structure auditor (sonnet, level 2) → orchestration category
 │   └── slop-cleaner.md        AI slop detection/removal (sonnet, level 2) → quality category
 │
-├── skills/                    94 skills in Claude Code plugin format (skills/<name>/SKILL.md)
-│   │                          Each agent category loads specific skills:
-│   │                          coding agents → design + coding + convex skills
-│   │                          content agents → content skills
-│   │                          growth agents → growth skills
-│   │                          operations agents → operations + coding skills
-│   │                          orchestration agents → agent skills
-│   │                          quality agents → coding + design skills
+├── skills/                    95 skills in Claude Code plugin format (skills/<name>/SKILL.md)
+│   │                          Organized by lifecycle group with frontmatter metadata:
+│   │                          group, prerequisites, next, workflows
 │   │
-│   ├── Init (1)               startup-init
-│   ├── Design (17)            impeccable, polish, layout, typeset, animate, colorize, bolder, critique, adapt, audit, clarify, delight, distill, optimize, overdrive, quieter, shape
-│   ├── Coding (12)            website-creation, visual-qa-pipeline, test-generator, deploy-pipeline, security-scanner, accessibility-checker, performance-benchmark, seo-setup, slop-cleaner, cubic-codebase-scan, sprint-contracts, asset-generation
-│   ├── Convex (13)            convex, convex-functions, convex-realtime, convex-agents, convex-schema-validator, convex-best-practices, convex-security-audit, convex-security-check, convex-component-authoring, convex-cron-jobs, convex-file-storage, convex-http-actions, convex-migrations
-│   ├── Content (9)            anti-ai-writing, blog-scaffolder, brand-guidelines, contributing-guide, data-driven-blog, documentation-generator, legal-generator, readme-generator, social-media
-│   ├── Growth (7)             analytics-integration, competitor-research, landing-page-optimizer, programmatic-seo, seo-chat, social-intelligence, user-feedback-collector
-│   ├── Operations (6)         ci-cd-pipeline, dependency-manager, error-tracking, incident-response, log-aggregation, uptime-monitor
-│   ├── Orchestration (14)     autopilot, ralph, team, ultrawork, ultraqa, plan, deep-interview, deep-dive, cancel, trace, debug, self-improve, verify, agent-creator
-│   └── Agent (14)             loop-prompt, context-reset-handler, cost-tracker, error-classifier, eval-framework, trajectory-logging, tiered-memory, investor-updates, github-state-manager, slack-course-correction, stack-extend, post-deploy-loop, research, avoid-feature-creep
+│   ├── Orchestration (20)     startup-init, autopilot, ralph, team, ultrawork, ultraqa, deep-dive, debug, trace, tmux-spawn, loop-prompt, cancel, issue-creator, github-state-manager, agent-creator, self-improve, context-reset-handler, tiered-memory, trajectory-logging, error-classifier
+│   ├── Strategy (8)           plan, deep-interview, competitor-research, research, shape, sprint-contracts, brand-guidelines, avoid-feature-creep
+│   ├── Design (17)            impeccable, website-creation, layout, typeset, colorize, animate, adapt, bolder, quieter, delight, distill, overdrive, clarify, polish, critique, asset-generation, optimize
+│   ├── Build (15)             convex, convex-schema-validator, convex-functions, convex-realtime, convex-http-actions, convex-file-storage, convex-cron-jobs, convex-agents, convex-migrations, convex-best-practices, convex-component-authoring, convex-security-check, convex-security-audit, test-generator, stack-extend
+│   ├── Quality (9)            verify, audit, slop-cleaner, visual-qa-pipeline, accessibility-checker, performance-benchmark, security-scanner, cubic-codebase-scan, eval-framework
+│   ├── Ship (5)               deploy-pipeline, ci-cd-pipeline, seo-setup, legal-generator, dependency-manager
+│   ├── Grow (9)               analytics-integration, landing-page-optimizer, programmatic-seo, seo-chat, blog-scaffolder, data-driven-blog, social-media, social-intelligence, user-feedback-collector
+│   ├── Operate (6)            post-deploy-loop, uptime-monitor, error-tracking, incident-response, log-aggregation, cost-tracker
+│   └── Comms (6)              anti-ai-writing, investor-updates, slack-course-correction, documentation-generator, readme-generator, contributing-guide
 │
 ├── packages/                  27 packages with 590+ tests
 │   ├── cli/                   Harness CLI (12 command groups)
