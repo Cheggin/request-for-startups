@@ -27,7 +27,7 @@ export default function DeployPage() {
   const deployments = getDeployments();
 
   return (
-    <div className="px-6 py-5">
+    <div className="px-8 py-6 max-w-[1200px]">
       <div className="flex items-baseline gap-3 mb-5">
         <h1 className="text-lg heading-page text-text-primary leading-tight">Deployments</h1>
         {deployments.length > 0 && (

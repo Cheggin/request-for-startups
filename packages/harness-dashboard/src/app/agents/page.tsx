@@ -92,8 +92,8 @@ export default function AgentsPage() {
     .filter((g) => g.agents.length > 0);
 
   return (
-    <div className="px-6 py-5">
-      <div className="flex items-center justify-between mb-5">
+    <div className="px-8 py-6 max-w-[1200px]">
+      <div className="flex items-center justify-between mb-6">
         <div className="flex items-baseline gap-3">
           <h1 className="text-lg heading-page text-text-primary leading-tight">Agents</h1>
           {!loading && (
@@ -117,9 +117,9 @@ export default function AgentsPage() {
           </p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-6">
           {/* Category summary pills */}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2.5">
             {groups.map(({ category, agents: groupAgents }) => {
               const meta = CATEGORY_META[category];
               return (
@@ -144,7 +144,7 @@ export default function AgentsPage() {
                   </h2>
                   <span className="text-xs text-text-tertiary tabular">{groupAgents.length}</span>
                 </div>
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
                   {groupAgents.map(({ agent, summary }) => {
                     const isExpanded = expandedId === agent.paneId;
                     return (

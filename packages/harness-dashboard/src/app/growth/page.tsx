@@ -13,7 +13,7 @@ export default function GrowthPage() {
   const hasData = snapshot.traffic.length > 0 || snapshot.topPages.length > 0;
 
   return (
-    <div className="px-6 py-5">
+    <div className="px-8 py-6 max-w-[1200px]">
       <div className="flex items-baseline justify-between mb-5">
         <h1 className="text-lg heading-page text-text-primary leading-tight">Growth</h1>
         <span className="text-xs uppercase tracking-wider text-text-tertiary">
