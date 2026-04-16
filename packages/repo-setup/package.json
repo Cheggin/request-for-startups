@@ -1,5 +1,5 @@
 {
-  "name": "@rfs/repo-setup",
+  "name": "@harness/repo-setup",
   "version": "1.0.0",
   "description": "Automated repository setup that creates a fully configured dev environment for every harness-built startup",
   "type": "module",
@@ -10,6 +10,6 @@
   },
   "devDependencies": {
     "typescript": "^5.7.0",
-    "vitest": "^3.1.1"
+    "vitest": "^4.1.4"
   }
 }
