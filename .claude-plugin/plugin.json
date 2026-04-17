@@ -1,6 +1,6 @@
 {
   "name": "startup-harness",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Autonomous startup builder — takes an idea and builds the entire company: research, design, code, deploy, grow. 13 agents, 96 skills, 27 packages, TDD, Cubic code review, Stripe, SEO. Validated: built 3 startups (B2C, devtool, B2B SaaS) from single sentences.",
   "author": {
     "name": "Reagan Hsu"
@@ -20,5 +20,8 @@
     "deployment"
   ],
   "skills": "./skills/",
-  "hooks": "./hooks/hooks.json"
+  "hooks": "./hooks/hooks.json",
+  "dependencies": [
+    "oh-my-claudecode@omc"
+  ]
 }
