@@ -56,6 +56,63 @@
           ]
         }
       ]
+    },
+    "startup-end-to-end": {
+      "description": "Full autonomous startup build — founder interview through deploy and growth.",
+      "trigger_skill": "startup-init",
+      "gate_patterns": [
+        "**/app/**",
+        "**/components/**",
+        "**/pages/**",
+        "**/src/**",
+        "**/convex/**",
+        "**/*.tsx",
+        "**/*.jsx",
+        "**/*.ts"
+      ],
+      "phases": [
+        {
+          "name": "interview",
+          "required": ["deep-interview"]
+        },
+        {
+          "name": "research",
+          "required": ["competitor-research"]
+        },
+        {
+          "name": "spec",
+          "required": ["shape"]
+        },
+        {
+          "name": "design",
+          "required": ["brand-guidelines", "website-creation"]
+        },
+        {
+          "name": "infra",
+          "required": ["ci-cd-pipeline", "error-tracking", "analytics-integration"]
+        },
+        {
+          "name": "build",
+          "required": ["test-generator", "impeccable"]
+        },
+        {
+          "name": "launch",
+          "required": [
+            "legal-generator",
+            "seo-setup",
+            "accessibility-checker",
+            "security-scanner"
+          ]
+        },
+        {
+          "name": "ship",
+          "required": ["deploy-pipeline"]
+        },
+        {
+          "name": "growth",
+          "required": ["post-deploy-loop"]
+        }
+      ]
     }
   }
 }
