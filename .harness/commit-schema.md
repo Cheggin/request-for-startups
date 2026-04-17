@@ -47,7 +47,6 @@ Scope maps to the area of the codebase changed. Use the most specific scope that
 | `repo-setup` | packages/repo-setup |
 | `services` | packages/service-validator |
 | `webhook` | packages/webhook-receiver |
-| `config` | packages/config-optimizer |
 | `boundary` | packages/fixed-boundary |
 | `cubic` | packages/cubic-channel |
 | `dashboard` | packages/harness-dashboard |
