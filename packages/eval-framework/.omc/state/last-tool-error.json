@@ -1,7 +1,0 @@
-{
-  "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"for f in packages/eval-framework/evals/operations/*.test.ts; do sed -i '' '/allowed-tools/d' \\\"$f\\\" 2>/dev/null; done && cd packages/eval-framework && bun test 2>&1 | tail -5\",\"description...",
-  "error": "Exit code 1\n(eval):1: no matches found: packages/eval-framework/evals/operations/*.test.ts\n[rerun: b182]",
-  "timestamp": "2026-04-14T08:30:31.014Z",
-  "retry_count": 1
-}

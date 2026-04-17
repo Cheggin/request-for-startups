@@ -1,7 +1,0 @@
-{
-  "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"ls -la packages/harness-dashboard/next.config* 2>/dev/null; ls packages/harness-dashboard/*.config* 2>/dev/null\",\"description\":\"Find the next config file\"}",
-  "error": "Exit code 1\n(eval):1: no matches found: packages/harness-dashboard/next.config*\n(eval):1: no matches found: packages/harness-dashboard/*.config*",
-  "timestamp": "2026-04-16T00:54:17.804Z",
-  "retry_count": 2
-}
