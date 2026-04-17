@@ -113,6 +113,70 @@
           "required": ["post-deploy-loop"]
         }
       ]
+    },
+    "deploy-loop": {
+      "description": "Safe production deploy — readiness checks, security scan, deploy, post-deploy monitoring.",
+      "trigger_skill": "deploy-pipeline",
+      "gate_patterns": [
+        ".github/workflows/**",
+        "vercel.json",
+        "railway.json",
+        "Dockerfile",
+        "docker-compose.yml",
+        "docker-compose.*.yml",
+        "packages/*/vercel.json",
+        "packages/*/railway.json",
+        "packages/*/Dockerfile"
+      ],
+      "phases": [
+        {
+          "name": "readiness",
+          "required": ["verify", "test-generator"]
+        },
+        {
+          "name": "security",
+          "required": ["security-scanner"]
+        },
+        {
+          "name": "ship",
+          "required": ["deploy-pipeline"]
+        },
+        {
+          "name": "monitor",
+          "required": ["uptime-monitor", "error-tracking"]
+        }
+      ]
+    },
+    "debug-loop": {
+      "description": "Evidence-driven debugging — trace causal hypotheses, diagnose the root cause, verify the fix.",
+      "trigger_skill": "debug",
+      "gate_patterns": [
+        "src/**",
+        "app/**",
+        "convex/**",
+        "packages/*/src/**",
+        "packages/*/app/**",
+        "*.ts",
+        "*.tsx",
+        "*.js",
+        "*.jsx",
+        "**/*.ts",
+        "**/*.tsx"
+      ],
+      "phases": [
+        {
+          "name": "trace",
+          "required": ["trace"]
+        },
+        {
+          "name": "diagnose",
+          "required": ["debug"]
+        },
+        {
+          "name": "verify",
+          "required": ["verify"]
+        }
+      ]
     }
   }
 }
