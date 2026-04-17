@@ -1,0 +1,36 @@
+name: Test Hooks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-hooks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install runtime deps
+        run: npm install --no-audit --no-fund
+      - name: Syntax-check every wired hook
+        run: |
+          set -e
+          for f in hooks/*.mjs hooks/*.cjs .claude/hooks/*.mjs; do
+            [ -f "$f" ] && node --check "$f"
+          done
+      - name: Run hook test suite
+        run: npm run test:hooks
+      - name: Smoke-test MCP server handshake
+        run: |
+          (
+            printf '%s\n' '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"ci","version":"0"}}}'
+            sleep 0.3
+            printf '%s\n' '{"jsonrpc":"2.0","id":2,"method":"tools/list"}'
+            sleep 0.5
+          ) | node bridge/mcp-server.cjs | grep -q '"protocolVersion":"2024-11-05"'
+      - name: Validate hooks.json
+        run: node -e "JSON.parse(require('fs').readFileSync('hooks/hooks.json','utf-8'))"
