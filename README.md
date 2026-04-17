@@ -24,22 +24,6 @@ Works for any startup type: B2C, B2B SaaS, devtool, marketplace, hardware+softwa
 
 ## Quick Start
 
-```bash
-# Clone
-git clone https://github.com/Cheggin/request-for-startups.git
-cd request-for-startups
-
-# Install
-bun install
-
-# Run
-bun run harness init
-```
-
-The `harness init` command walks you through a founder interview, validates your service connections, and then autonomously builds your startup.
-
-## Install as Plugin
-
 The harness is a **Claude Code plugin**. Inside any Claude Code session:
 
 ```
@@ -47,7 +31,15 @@ The harness is a **Claude Code plugin**. Inside any Claude Code session:
 /plugin install startup-harness@harness
 ```
 
-The first command registers this repo as a marketplace named `harness`. The second installs the `startup-harness` plugin from it. All 96 skills become available as `/startup-harness:<skill-name>` and 13 agents become available as `@startup-harness:<agent-name>` in any Claude Code session on this machine.
+The first command registers this repo as a marketplace named `harness`. The second installs the `startup-harness` plugin from it. All 121 skills become available as `/startup-harness:<skill-name>` and 32 agents become available as `@startup-harness:<agent-name>` in any Claude Code session on this machine.
+
+Once installed, kick off an autonomous build with:
+
+```
+/startup-harness:startup-init
+```
+
+This walks you through the founder interview, validates your service connections, and then builds the startup end-to-end.
 
 To update to the latest version later:
 
@@ -66,8 +58,8 @@ To uninstall:
 
 ```
 commands/          Entry points (startup-init, resume)
-agents/            13 agent definitions (website, backend, growth, writing, ops, deploy, commander, researcher, docs, slop-cleaner, harness-researcher, alignment, paper-reader)
-skills/            96 skills as Claude Code plugin format (skills/<name>/SKILL.md)
+agents/            32 agent definitions (website, backend, growth, writing, ops, deploy, commander, researcher, docs, slop-cleaner, harness-researcher, alignment, paper-reader, plus OMC-merged roles like architect, critic, executor, planner, analyst, debugger, tracer, verifier, designer, qa-tester, git-master, security-reviewer, code-reviewer, code-simplifier, test-engineer, scientist, document-specialist, writer)
+skills/            121 skills as Claude Code plugin format (skills/<name>/SKILL.md)
 templates/         Integration templates (Stripe, Clerk auth, Resend email)
 packages/          27 packages with 590+ tests (includes harness-dashboard)
 features/          Checklist-driven development tracking
@@ -84,7 +76,7 @@ features/          Checklist-driven development tracking
 
 An agent is a blank Claude Code session. Its identity comes entirely from which skills are loaded. A "website agent" is just: coding ground truth + design skills + coding skills + convex skills. Agent-to-skill mapping is defined in `.harness/agent-categories.yml`.
 
-The harness is a **Claude Code plugin**. Install it and all 96 skills are available as `/startup-harness:<skill-name>` in any Claude Code session. Skills auto-update when the repo is pushed.
+The harness is a **Claude Code plugin**. Install it and all 121 skills are available as `/startup-harness:<skill-name>` in any Claude Code session. Skills auto-update when the repo is pushed.
 
 ### Mechanical Enforcement
 
@@ -457,7 +449,7 @@ Legal pages (ToS, Privacy Policy), SEO setup (sitemap, meta tags, structured dat
 ## File Structure
 
 ```
-├── agents/                    13 agent definitions across 6 categories
+├── agents/                    32 agent definitions across 6 categories (core 13 listed below; the remaining 19 are OMC-merged roles — architect, critic, executor, planner, analyst, debugger, designer, qa-tester, etc.)
 │   ├── website.md             Frontend dev (sonnet, level 2) → coding category
 │   ├── backend.md             Backend/API dev (sonnet, level 2) → coding category
 │   ├── growth.md              Growth/analytics (sonnet, level 2) → growth category
@@ -472,7 +464,7 @@ Legal pages (ToS, Privacy Policy), SEO setup (sitemap, meta tags, structured dat
 │   ├── paper-reader.md        Academic paper reader (sonnet, level 2) → orchestration category
 │   └── slop-cleaner.md        AI slop detection/removal (sonnet, level 2) → quality category
 │
-├── skills/                    96 skills in Claude Code plugin format (skills/<name>/SKILL.md)
+├── skills/                    121 skills in Claude Code plugin format (skills/<name>/SKILL.md)
 │   │                          Organized by lifecycle group with frontmatter metadata:
 │   │                          group, prerequisites, next, workflows
 │   │

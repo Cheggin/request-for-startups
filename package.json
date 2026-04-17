@@ -5,7 +5,6 @@
   "scripts": {
     "test": "bun run test:all",
     "test:all": "for dir in packages/*/; do (cd $dir && bun test 2>/dev/null) || true; done",
-    "validate": "node scripts/validate-plugin.mjs",
-    "harness": "bun run packages/cli/src/index.ts"
+    "validate": "node scripts/validate-plugin.mjs"
   }
 }
