@@ -27,8 +27,12 @@ const QUIET_LEVEL = getQuietLevel();
 const SESSION_ID_ALLOWLIST = /^[a-zA-Z0-9][a-zA-Z0-9_-]{0,255}$/;
 
 function getQuietLevel() {
-  const parsed = Number.parseInt(process.env.OMC_QUIET || '0', 10);
-  if (Number.isNaN(parsed)) return 0;
+  // startup-harness default: 2 (silence boilerplate 'Code modified.' /
+  // 'File written.' nudges and background-op chatter; real failure
+  // detections still fire). Override via OMC_QUIET=0/1 for OMC's chatty
+  // defaults.
+  const parsed = Number.parseInt(process.env.OMC_QUIET || '2', 10);
+  if (Number.isNaN(parsed)) return 2;
   return Math.max(0, parsed);
 }
 
