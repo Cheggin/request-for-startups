@@ -22,13 +22,13 @@ export function TraceLog({ events }: TraceLogProps) {
   if (events.length === 0) {
     return (
       <div className="py-4 text-center text-sm" style={{ color: COLORS.textTertiary }}>
-        No trace events
+        No trace events yet. Events appear as hooks fire.
       </div>
     );
   }
 
   return (
-    <div className="max-h-64 overflow-y-auto">
+    <div className="max-h-64 overflow-y-auto" role="log" aria-label="Hook trace events">
       <table className="w-full text-[12px] font-mono">
         <tbody>
           {events.map((ev, i) => (

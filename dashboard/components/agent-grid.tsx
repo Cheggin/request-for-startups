@@ -14,7 +14,7 @@ export function AgentGrid({ agents }: AgentGridProps) {
   if (nonCeoAgents.length === 0) {
     return (
       <div className="py-12 text-center text-sm" style={{ color: COLORS.textTertiary }}>
-        No active agents
+        No agents found. Start tmux panes to populate the fleet.
       </div>
     );
   }

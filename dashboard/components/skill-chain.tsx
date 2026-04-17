@@ -13,7 +13,7 @@ export function SkillChain({ chain }: SkillChainProps) {
   if (!chain) {
     return (
       <div className="py-8 text-center text-sm" style={{ color: COLORS.textTertiary }}>
-        No chain in progress
+        No skill chain active. Chains appear when a multi-phase flow is running.
       </div>
     );
   }

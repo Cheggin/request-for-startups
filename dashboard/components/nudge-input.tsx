@@ -19,7 +19,7 @@ export function NudgeInput({ paneId, label, onSent }: NudgeInputProps) {
 
     if (value.length > NUDGE_CONFIRM_LENGTH) {
       const ok = window.confirm(
-        `This message is ${value.length} characters. Send to ${label}?`
+        `Send ${value.length}-character message to ${label}?`
       );
       if (!ok) return;
     }
@@ -50,7 +50,7 @@ export function NudgeInput({ paneId, label, onSent }: NudgeInputProps) {
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && send()}
-        placeholder="Send a nudge..."
+        placeholder="Type a nudge, press Enter..."
         disabled={sending}
         aria-label={`Nudge message for ${label}`}
         className="flex-1 min-w-0 px-2 py-1 text-[13px] font-mono rounded border border-border bg-surface placeholder:text-text-tertiary focus:outline-none focus:border-info disabled:opacity-50"
@@ -62,7 +62,7 @@ export function NudgeInput({ paneId, label, onSent }: NudgeInputProps) {
         aria-label={`Send nudge to ${label}`}
         className="px-2 py-1 text-[11px] font-medium uppercase tracking-wide rounded border border-border bg-surface hover:bg-surface-raised disabled:opacity-30 transition-colors"
       >
-        {sending ? "..." : "Send"}
+        {sending ? "Sending" : "Send"}
       </button>
     </div>
   );
