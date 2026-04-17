@@ -352,7 +352,6 @@ Plugin-distributed functionality lives at the repo root (`skills/`, `agents/`, `
 | repo-setup | Scaffold repos, configure services, install hooks |
 | service-validator | Validate all service connections |
 | fixed-boundary | Frozen paths enforcement |
-| figma-integration | Spec → Figma designs |
 | website-template | Canonical Next.js scaffold template |
 | mention-monitor | Social mention monitor across HN, Reddit, Twitter (scheduled for retirement — replaced by `social-intelligence` skill; blocked on updating the dashboard reference) |
 | tab-commander-site | Test startup build (active dev) |
@@ -481,7 +480,6 @@ Legal pages (ToS, Privacy Policy), SEO setup (sitemap, meta tags, structured dat
 │   ├── repo-setup/            Scaffold repos, configure services, install hooks
 │   ├── service-validator/     Validate all service connections
 │   ├── fixed-boundary/        Frozen paths enforcement
-│   ├── figma-integration/     Spec → Figma designs
 │   ├── mention-monitor/       Social-mention monitor (retirement pending)
 │   ├── tab-commander-site/    Test startup build (active)
 │   └── website-template/      Canonical Next.js scaffold template
