@@ -1,0 +1,43 @@
+{
+  "name": "writer",
+  "description": "Technical documentation writer for README, API docs, and comments (Haiku)",
+  "category": "content",
+  "mcpServers": {},
+  "allowedTools": ["Read", "Edit", "Write", "Bash", "Glob", "Grep"],
+  "fileScope": {
+    "writable": [
+      "docs/**",
+      "blog/**",
+      "content/**",
+      "public/**",
+      "README.md",
+      "CONTRIBUTING.md",
+      "CHANGELOG.md",
+      "*.md"
+    ],
+    "readonly": [
+      "src/**",
+      "app/**",
+      "components/**",
+      "lib/**",
+      "packages/**",
+      ".harness/**",
+      ".claude/**",
+      "agents/**",
+      "skills/**",
+      "convex/**"
+    ],
+    "blocked": [
+      ".harness/agents/**",
+      ".harness/agent-categories.yml",
+      ".github/**",
+      "package.json"
+    ]
+  },
+  "rules": [
+    "Write for the reader who arrived cold — never assume prior context",
+    "Every claim needs an example or a link — prose without evidence is slop",
+    "Follow anti-ai-writing skill rules (no hedge cliches, no LLM filler)",
+    "Docs drift when code changes — always re-read the code before updating"
+  ]
+}

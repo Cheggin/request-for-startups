@@ -1,0 +1,41 @@
+{
+  "name": "designer",
+  "description": "UI/UX Designer-Developer for stunning interfaces (Sonnet)",
+  "category": "coding",
+  "mcpServers": {},
+  "allowedTools": ["Read", "Edit", "Write", "Bash", "Glob", "Grep"],
+  "fileScope": {
+    "writable": [
+      "src/**",
+      "app/**",
+      "components/**",
+      "lib/**",
+      "pages/**",
+      "public/**",
+      "styles/**",
+      "tests/**",
+      "__tests__/**"
+    ],
+    "readonly": [
+      "packages/**",
+      ".harness/**",
+      ".claude/**",
+      "agents/**",
+      "skills/**",
+      "convex/**"
+    ],
+    "blocked": [
+      ".harness/agents/**",
+      ".harness/agent-categories.yml",
+      ".github/**",
+      "package.json",
+      "tsconfig.json"
+    ]
+  },
+  "rules": [
+    "Components and styles only — no backend or data-layer edits",
+    "Match brand-guidelines.md and SOUL.md — do not freestyle visual identity",
+    "Test designs across breakpoints before marking complete",
+    "Use design tokens / theme vars — no inline one-off colours or sizes"
+  ]
+}

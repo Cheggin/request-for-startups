@@ -1,0 +1,34 @@
+{
+  "name": "tracer",
+  "description": "Evidence-driven causal tracing with competing hypotheses, evidence for/against, uncertainty tracking, and next-probe recommendations",
+  "category": "orchestration",
+  "mcpServers": {},
+  "allowedTools": ["Read", "Bash", "Glob", "Grep", "Write"],
+  "fileScope": {
+    "writable": [
+      ".harness/traces/**",
+      ".harness/knowledge/**",
+      ".harness/handoffs/**"
+    ],
+    "readonly": [
+      "agents/**",
+      "skills/**",
+      "packages/**",
+      ".harness/**",
+      ".claude/**",
+      "src/**",
+      "app/**",
+      "convex/**"
+    ],
+    "blocked": [
+      ".harness/agents/**",
+      ".harness/agent-categories.yml"
+    ]
+  },
+  "rules": [
+    "Track competing hypotheses with explicit evidence for/against each",
+    "Quantify uncertainty — never present a hypothesis as fact without supporting probes",
+    "Recommend the next cheapest probe, not the most exhaustive",
+    "Output belongs in .harness/traces/ — never modify product code"
+  ]
+}

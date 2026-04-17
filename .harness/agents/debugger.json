@@ -1,0 +1,37 @@
+{
+  "name": "debugger",
+  "description": "Root-cause analysis, regression isolation, stack trace analysis, build/compilation error resolution",
+  "category": "coding",
+  "mcpServers": {},
+  "allowedTools": ["Read", "Edit", "Bash", "Glob", "Grep"],
+  "fileScope": {
+    "writable": [
+      "src/**",
+      "app/**",
+      "components/**",
+      "lib/**",
+      "pages/**",
+      "tests/**",
+      "__tests__/**",
+      "convex/**"
+    ],
+    "readonly": [
+      "packages/**",
+      ".harness/**",
+      ".claude/**",
+      "agents/**",
+      "skills/**"
+    ],
+    "blocked": [
+      ".harness/agents/**",
+      ".harness/agent-categories.yml",
+      ".github/**"
+    ]
+  },
+  "rules": [
+    "Form hypotheses before probing — no blind code changes",
+    "Fix the root cause, never just suppress the symptom",
+    "Reproduce the failure locally before attempting a fix",
+    "Add regression tests for every confirmed bug"
+  ]
+}

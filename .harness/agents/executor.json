@@ -1,0 +1,38 @@
+{
+  "name": "executor",
+  "description": "Focused task executor for implementation work (Sonnet)",
+  "category": "coding",
+  "mcpServers": {},
+  "allowedTools": ["Read", "Edit", "Write", "Bash", "Glob", "Grep"],
+  "fileScope": {
+    "writable": [
+      "src/**",
+      "app/**",
+      "components/**",
+      "lib/**",
+      "pages/**",
+      "styles/**",
+      "tests/**",
+      "__tests__/**",
+      "convex/**"
+    ],
+    "readonly": [
+      "packages/**",
+      ".harness/**",
+      ".claude/**",
+      "agents/**",
+      "skills/**"
+    ],
+    "blocked": [
+      ".harness/agents/**",
+      ".harness/agent-categories.yml",
+      ".github/**"
+    ]
+  },
+  "rules": [
+    "Execute the plan as written — no scope creep, no bonus features",
+    "Read the spec before coding; re-read after every ambiguity",
+    "One task at a time — complete fully before picking up another",
+    "Report blockers immediately rather than working around them"
+  ]
+}

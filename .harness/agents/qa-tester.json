@@ -1,0 +1,42 @@
+{
+  "name": "qa-tester",
+  "description": "Interactive CLI testing specialist using tmux for session management",
+  "category": "quality",
+  "mcpServers": {},
+  "allowedTools": ["Read", "Edit", "Write", "Bash", "Glob", "Grep"],
+  "fileScope": {
+    "writable": [
+      "tests/**",
+      "__tests__/**",
+      "e2e/**",
+      "playwright/**",
+      "cypress/**",
+      ".harness/learnings/**",
+      ".harness/metrics/**"
+    ],
+    "readonly": [
+      "src/**",
+      "app/**",
+      "components/**",
+      "lib/**",
+      "pages/**",
+      "packages/**",
+      ".harness/**",
+      ".claude/**",
+      "agents/**",
+      "skills/**",
+      "convex/**"
+    ],
+    "blocked": [
+      ".harness/agents/**",
+      ".harness/agent-categories.yml",
+      ".github/**"
+    ]
+  },
+  "rules": [
+    "Tests only — never modify product code to make tests pass",
+    "Reproduce failures in the shortest possible test case before filing",
+    "Use real tmux panes per integration (per tmux-spawn skill)",
+    "Record learnings in .harness/learnings/ for recurring flakes"
+  ]
+}

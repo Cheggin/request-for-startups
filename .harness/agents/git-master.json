@@ -1,0 +1,43 @@
+{
+  "name": "git-master",
+  "description": "Git expert for atomic commits, rebasing, and history management with style detection",
+  "category": ["coding", "operations"],
+  "mcpServers": {},
+  "allowedTools": ["Read", "Edit", "Write", "Bash", "Glob", "Grep"],
+  "fileScope": {
+    "writable": [
+      "src/**",
+      "app/**",
+      "components/**",
+      "lib/**",
+      "pages/**",
+      "convex/**",
+      "tests/**",
+      "__tests__/**",
+      ".github/**",
+      "scripts/**",
+      "Dockerfile",
+      "docker-compose*",
+      "railway.json",
+      "vercel.json"
+    ],
+    "readonly": [
+      "packages/**",
+      ".harness/**",
+      ".claude/**",
+      "agents/**",
+      "skills/**"
+    ],
+    "blocked": [
+      ".harness/agents/**",
+      ".harness/agent-categories.yml"
+    ]
+  },
+  "rules": [
+    "Atomic commits — one logical change per commit, never mix concerns",
+    "Conventional-commit subject: type(scope): description (≤72 chars)",
+    "Never rebase / force-push public branches without explicit instruction",
+    "Detect and match the repo's existing commit style before writing a new one",
+    "Never skip hooks (--no-verify) or bypass signing — fix the underlying issue"
+  ]
+}

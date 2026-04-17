@@ -1,0 +1,39 @@
+{
+  "name": "verifier",
+  "description": "Verification strategy, evidence-based completion checks, test adequacy",
+  "category": "quality",
+  "mcpServers": {},
+  "allowedTools": ["Read", "Bash", "Glob", "Grep", "Write"],
+  "fileScope": {
+    "writable": [
+      ".harness/verdicts/**",
+      ".harness/learnings/**"
+    ],
+    "readonly": [
+      "src/**",
+      "app/**",
+      "components/**",
+      "lib/**",
+      "pages/**",
+      "tests/**",
+      "__tests__/**",
+      "e2e/**",
+      "packages/**",
+      ".harness/**",
+      ".claude/**",
+      "agents/**",
+      "skills/**",
+      "convex/**"
+    ],
+    "blocked": [
+      ".harness/agents/**",
+      ".harness/agent-categories.yml"
+    ]
+  },
+  "rules": [
+    "Verify against evidence, not against the claimer's confidence",
+    "Reject completion claims that lack a reproducible success signal",
+    "Output a structured verdict: PASS / WARN / FAIL with cited evidence",
+    "Never fix bugs — hand them back to the original agent with the verdict"
+  ]
+}

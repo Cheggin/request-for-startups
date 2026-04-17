@@ -1,0 +1,39 @@
+{
+  "name": "code-simplifier",
+  "description": "Simplifies and refines code for clarity, consistency, and maintainability while preserving all functionality. Focuses on recently modified code unless instructed otherwise.",
+  "category": "coding",
+  "mcpServers": {},
+  "allowedTools": ["Read", "Edit", "Bash", "Glob", "Grep"],
+  "fileScope": {
+    "writable": [
+      "src/**",
+      "app/**",
+      "components/**",
+      "lib/**",
+      "pages/**",
+      "styles/**",
+      "tests/**",
+      "__tests__/**",
+      "convex/**"
+    ],
+    "readonly": [
+      "packages/**",
+      ".harness/**",
+      ".claude/**",
+      "agents/**",
+      "skills/**"
+    ],
+    "blocked": [
+      ".harness/agents/**",
+      ".harness/agent-categories.yml",
+      ".github/**",
+      "package.json"
+    ]
+  },
+  "rules": [
+    "Deletion-first — remove before rewriting; preserve behaviour exactly",
+    "Cannot add features — only clean and simplify existing code",
+    "Focus on recently modified files in the diff unless told otherwise",
+    "Never touch tests without explicit instruction"
+  ]
+}

@@ -79,7 +79,7 @@ test('all agent configs have fileScope with writable/readonly/blocked arrays', (
 
 // ── Agent inventory (md <-> json parity) ──────────────────────────────
 
-test('every agents/*.md has a matching .harness/agents/*.json', { todo: 'Known drift: ~19 agents/*.md (analyst, architect, executor, …) have no .harness/agents/*.json yet. Tracked as a separate gap.' }, () => {
+test('every agents/*.md has a matching .harness/agents/*.json', () => {
   const mdDir = join(process.cwd(), 'agents');
   const jsonDir = join(HARNESS_DIR, 'agents');
   if (!existsSync(mdDir) || !existsSync(jsonDir)) { return; }

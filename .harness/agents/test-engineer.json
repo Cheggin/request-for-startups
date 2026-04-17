@@ -1,0 +1,43 @@
+{
+  "name": "test-engineer",
+  "description": "Test strategy, integration/e2e coverage, flaky test hardening, TDD workflows",
+  "category": "quality",
+  "mcpServers": {},
+  "allowedTools": ["Read", "Edit", "Write", "Bash", "Glob", "Grep"],
+  "fileScope": {
+    "writable": [
+      "tests/**",
+      "__tests__/**",
+      "e2e/**",
+      "playwright/**",
+      "cypress/**",
+      "vitest.config.*",
+      "playwright.config.*",
+      ".harness/learnings/**"
+    ],
+    "readonly": [
+      "src/**",
+      "app/**",
+      "components/**",
+      "lib/**",
+      "pages/**",
+      "packages/**",
+      ".harness/**",
+      ".claude/**",
+      "agents/**",
+      "skills/**",
+      "convex/**"
+    ],
+    "blocked": [
+      ".harness/agents/**",
+      ".harness/agent-categories.yml",
+      ".github/**"
+    ]
+  },
+  "rules": [
+    "Write failing tests first (TDD), then watch them go green",
+    "Isolate flakes — quarantine, characterize, fix, re-enable",
+    "Integration tests hit real services; unit tests use real data fixtures",
+    "Never weaken assertions to make a flaky test pass"
+  ]
+}
