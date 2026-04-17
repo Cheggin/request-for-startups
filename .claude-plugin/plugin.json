@@ -1,7 +1,7 @@
 {
   "name": "startup-harness",
-  "version": "0.7.0",
-  "description": "Autonomous startup builder — takes an idea and builds the entire company: research, design, code, deploy, grow. 32 agents, 120 skills, deterministic skill-chain enforcement, plugin-shipped hooks. Encapsulates all oh-my-claudecode functionality inline. Validated: built 3 startups (B2C, devtool, B2B SaaS) from single sentences.",
+  "version": "0.8.0",
+  "description": "Autonomous startup builder — takes an idea and builds the entire company: research, design, code, deploy, grow. 32 agents, 121 skills, magic-keyword skill detection, deterministic skill-chain enforcement, plugin-shipped hooks. Encapsulates all oh-my-claudecode functionality inline. Validated: built 3 startups (B2C, devtool, B2B SaaS) from single sentences.",
   "author": {
     "name": "Reagan Hsu"
   },
