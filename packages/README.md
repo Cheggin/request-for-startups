@@ -31,7 +31,6 @@ These lost their user-facing role when the plugin migration happened (commit 124
 - `idea-grader/` — one-off scoring experiment.
 - `knowledge/` — knowledge-wiki store; content moved into the wiki-* skills.
 - `mention-monitor/` — replaced by the `social-intelligence` skill.
-- `repo-setup/` — replaced by the startup-init skill + agent.
 - `service-validator/` — replaced by the startup-init skill's Phase 1 service-connection checks.
 
 ## Retired
@@ -53,6 +52,7 @@ These lost their user-facing role when the plugin migration happened (commit 124
 - `github-state/` — retired 2026-04-17; replaced by the `github-state-manager` and `issue-creator` skills.
 - `implementation-loop/` — retired 2026-04-17; per-feature build cycle replaced by the `autopilot` and `ralph` skills.
 - `agent-loop/` — retired 2026-04-17; mode-switching runtime (mode loop, plateau detection, hook runner, self-improve, error classifier, agent loader) replaced by skill chains + `skill-chain-enforcer` hook.
+- `repo-setup/` — retired 2026-04-17; scaffold + configure-services + setup-hooks replaced by the `startup-init` skill Phase 1 + Phase 5.
 
 ## Deletion protocol
 

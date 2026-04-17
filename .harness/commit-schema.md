@@ -38,7 +38,6 @@ Scope maps to the area of the codebase changed. Use the most specific scope that
 | `hooks` | packages/hooks |
 | `eval` | packages/eval-framework |
 | `knowledge` | packages/knowledge |
-| `repo-setup` | packages/repo-setup |
 | `services` | packages/service-validator |
 | `webhook` | packages/webhook-receiver |
 | `boundary` | packages/fixed-boundary |
