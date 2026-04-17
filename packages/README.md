@@ -42,7 +42,11 @@ These lost their user-facing role when the plugin migration happened (commit 124
 - `secret-manager/` — never productionized; `.harness/secrets.env` is the authoritative location.
 - `sentry-integration/` — replaced by the `error-tracking` skill.
 - `service-validator/` — replaced by the startup-init skill's Phase 1 service-connection checks.
-- `status-dashboard/` — experimental standalone dashboard; superseded by `harness-dashboard/`.
+
+## Retired
+
+- `cli/` — dropped in commit 124e850; the plugin surface replaced it.
+- `status-dashboard/` — retired in commit after this ledger; superseded by `harness-dashboard/`.
 
 ## Deletion protocol
 

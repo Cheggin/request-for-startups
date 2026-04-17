@@ -362,7 +362,6 @@ Defined in `.harness/stacks.yml`:
 | cubic-channel | 30 | Cubic → Convex → Claude Code channel |
 | adaptive-loadout | — | Startup type → skill selection |
 | figma-integration | — | Spec → Figma designs |
-| status-dashboard | — | Terminal status overview |
 
 ## Research Foundation
 
@@ -503,7 +502,6 @@ Legal pages (ToS, Privacy Policy), SEO setup (sitemap, meta tags, structured dat
 │   ├── schema-generator/      Spec → Convex schema
 │   ├── api-generator/         Spec → API routes
 │   ├── figma-integration/     Spec → Figma designs
-│   ├── status-dashboard/      Terminal status overview
 │   └── website-template/      Canonical Next.js scaffold
 │
 ├── templates/                 Integration templates
