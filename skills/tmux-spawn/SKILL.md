@@ -22,57 +22,89 @@ Naive tmux spawning fails silently in multiple ways:
 4. **No load verification**: Claude Code takes 10-30s to load plugins and MCP servers. Sending a prompt before it's ready drops the input silently.
 5. **No activity verification**: Even after sending a prompt, the agent may not have started working (stuck at prompt, crashed, etc.).
 
-## The 5-Step Protocol
+## The 6-Step Protocol
 
-### Step 1: Spawn window with login shell wrapping
+**All agents share ONE tmux window** named `agents` (by default). New spawns split that window and `select-layout tiled` keeps every pane equally sized in an alternating vertical/horizontal grid. You never have to flip between windows to watch the fleet.
+
+### Step 1: Ensure the shared window exists (first spawn creates it, subsequent spawns reuse)
 
 ```bash
-# Wrap the command so .zshrc is sourced
-tmux new-window -t harness -n <name> \
-  '/bin/zsh -lc '\''[ -f ~/.zshrc ] && . ~/.zshrc; cd /path/to/repo && claude --dangerously-skip-permissions --model claude-opus-4-6'\'''
+WIN=agents
+SESSION=harness
+
+# Does the window exist?
+if ! tmux list-windows -t "$SESSION" 2>/dev/null | grep -qE "^[0-9]+: $WIN[\* ]"; then
+  # First agent: create the window and the first pane. Name the pane via
+  # @title so capture/target calls can find it.
+  tmux new-window -t "$SESSION" -n "$WIN" \
+    "/bin/zsh -lc '[ -f ~/.zshrc ] && . ~/.zshrc; cd $REPO && claude --dangerously-skip-permissions --model $MODEL'"
+  tmux select-pane -t "$SESSION:$WIN" -T "$AGENT_NAME"
+else
+  # Subsequent agents: split the most recent pane in the same window,
+  # then re-tile so every pane is equally sized.
+  tmux split-window -t "$SESSION:$WIN" \
+    "/bin/zsh -lc '[ -f ~/.zshrc ] && . ~/.zshrc; cd $REPO && claude --dangerously-skip-permissions --model $MODEL'"
+  tmux select-pane -T "$AGENT_NAME"
+  tmux select-layout -t "$SESSION:$WIN" tiled
+fi
 ```
 
-The `wrapWithLoginShell()` function in `packages/cli/src/lib/tmux.ts` handles this automatically.
+### Step 2: Target the NEW pane by title
 
-### Step 2: Wait for Claude Code to fully load
-
-Poll `capture-pane` output for ready indicators (`>`, `claude>`, `Claude Code`, `Tips:`).
+All subsequent commands target the pane by its title (set in Step 1):
 
 ```bash
-# Poll until ready (max 30s)
-until tmux capture-pane -t harness:<name> -p -S -10 2>/dev/null | grep -qE '>|claude>|Claude Code|Tips:'; do
+PANE=$(tmux list-panes -t "$SESSION:$WIN" -F '#{pane_title}:#{pane_id}' | grep "^$AGENT_NAME:" | head -1 | cut -d: -f2)
+```
+
+### Step 3: Wait for Claude Code to fully load
+
+Poll `capture-pane` on that specific pane for ready indicators (`>`, `claude>`, `Claude Code`, `Tips:`).
+
+```bash
+until tmux capture-pane -t "$PANE" -p -S -10 2>/dev/null | grep -qE '>|claude>|Claude Code|Tips:'; do
   sleep 2
 done
 ```
 
 The `waitForReady()` function handles this with configurable timeout.
 
-### Step 3: Send prompt text (NO Enter)
+### Step 4: Send prompt text (NO Enter)
 
 ```bash
-tmux send-keys -t harness:<name> 'your prompt text here'
+tmux send-keys -t "$PANE" 'your prompt text here'
 ```
 
-### Step 4: Send Enter SEPARATELY
+### Step 5: Send Enter SEPARATELY
 
 ```bash
-tmux send-keys -t harness:<name> Enter
+tmux send-keys -t "$PANE" Enter
 ```
 
-The `sendKeys()` function in tmux.ts does steps 3+4 automatically.
+The `sendKeys()` function does steps 4+5 automatically.
 
-### Step 5: Verify agent is running
+### Step 6: Verify agent is running + keep layout tidy
 
-After a brief pause (3s), capture pane output and check for activity indicators (tool calls, thinking, output generation) vs idle indicators (Tips, prompt).
+After a brief pause (3s), capture pane output and check for activity indicators. Then re-tile once in case the capture broadcast changed pane sizing.
 
 ```bash
 sleep 3
-tmux capture-pane -t harness:<name> -p -S -15 2>/dev/null
+tmux capture-pane -t "$PANE" -p -S -15 2>/dev/null
+tmux select-layout -t "$SESSION:$WIN" tiled
 # Check for: Read, Edit, Bash, Grep, thinking, searching
 # Warn if: Tips:, Available commands:
 ```
 
-The `verifyRunning()` function handles this.
+## Why `tiled` (not manual -h / -v splits)
+
+`tmux select-layout tiled` alternates vertical and horizontal splits automatically and resizes every pane equally. You get a 1x1 → 1x2 → 2x2 → 2x3 → 3x3 progression without having to pick split direction per agent. Manually alternating `-h` / `-v` while targeting specific panes produces slivers and gets out of sync with agents that exit.
+
+## Common anti-patterns — never do these
+
+- **`tmux new-window` per agent** — produces N separate windows you have to tab through. Use `split-window` on the shared window instead.
+- **`tmux split-window -h` without `select-layout tiled`** — each new agent gets skinnier than the last. Re-tile after every split.
+- **Targeting panes by index** (`$WIN.1`, `$WIN.2`) — indices shift when panes close. Use `@title` + `#{pane_title}` lookup.
+- **Multiple shared windows** (`agents-1`, `agents-2`) — defeats the one-window requirement. One window, N panes.
 
 ## API Reference
 
