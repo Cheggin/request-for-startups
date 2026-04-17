@@ -38,7 +38,6 @@ These lost their user-facing role when the plugin migration happened (commit 124
 - `knowledge/` — knowledge-wiki store; content moved into the wiki-* skills.
 - `mention-monitor/` — replaced by the `social-intelligence` skill.
 - `repo-setup/` — replaced by the startup-init skill + agent.
-- `sentry-integration/` — replaced by the `error-tracking` skill.
 - `service-validator/` — replaced by the startup-init skill's Phase 1 service-connection checks.
 
 ## Retired
@@ -48,6 +47,7 @@ These lost their user-facing role when the plugin migration happened (commit 124
 - `idea-grader/` — tracked tests retired 2026-04-17; implementation files were never committed.
 - `research-store/` — retired 2026-04-17; replaced by the `research` skill's persistent knowledge store.
 - `secret-manager/` — retired 2026-04-17; `.harness/secrets.env` has always been the authoritative secret store.
+- `sentry-integration/` — retired 2026-04-17; replaced by the `error-tracking` skill.
 
 ## Deletion protocol
 
