@@ -1,0 +1,53 @@
+# packages/ inventory
+
+This directory is pre-plugin legacy. The plugin surface lives in the repo root (`skills/`, `agents/`, `hooks/`, `chains/`, `commands/`, `.claude-plugin/`). Each subdirectory here is classified below so a future session can delete or port the right ones without hunting.
+
+The stop condition for the current packaging loop is "all legacy-only functionality in packages/ and .harness/ is either ported or deleted". This file is the work ledger for that clause.
+
+## Live — do not delete
+
+These packages are actively wired into the harness or supply the TS source for `hooks/`'s compiled outputs.
+
+- `hooks/` — TS sources for plugin hooks. The compiled output in the repo root's `hooks/` is a bun bundle of these; many are still wired via `.claude/settings.json` for project-local hooks. Cannot retire until every TS hook is either ported to `.claude/hooks/*.mjs` or deleted. **Ported already**: gateguard, skill-chain-enforcer (source lives here, compiled in plugin `hooks/`), completion-signal, validate-commit-msg, validate-issue-create, branch-enforcer, deploy-gate, metrics-gate, config-protection, scope-enforcer, inter-agent-signal. **Not yet ported**: auto-finish (655 lines, touches real git/gh).
+- `harness-dashboard/` — Next.js dashboard for the harness itself. Distinct from the plugin; renders harness state, metrics, signals. Keep.
+- `cubic-channel/` — Cubic code-review webhook receiver. Referenced from harness signals. Keep.
+- `webhook-receiver/` — Universal multi-source webhook receiver. Keep.
+- `eval-framework/` — pass@k eval harness. Still referenced by skills/eval-framework. Keep.
+
+## Test-build artifacts — move to `test-runs/` or delete
+
+These are startup builds that the harness produced for validation. Not harness infrastructure. Either move under `test-runs/` or delete.
+
+- `tab-commander-site/` — test startup build. Actively being iterated on as of this classification (commits in the last 3 hours). Do NOT delete yet; confirm with the user first.
+- `devin-widmer-site/` — test startup build. Zero commits in the last 30 days; untracked `handoffs/` files from earlier runs are on disk but not tracked. Likely retirable. Confirm with the user that no further work is planned before deleting.
+- `website-template/` — prototype for the `website-creation` skill. Skill content long since migrated to `skills/website-creation/`. Candidate for deletion once confirmed no build tooling still imports it.
+
+## Orphans from pre-plugin era — candidates for deletion
+
+These lost their user-facing role when the plugin migration happened (commit 124e850 dropped the CLI layer). They may still import each other, so deletion order matters: delete leaves first.
+
+- `commander/` — orchestrator daemon. Replaced by the `commander` agent + `startup-init` skill.
+- `agent-loop/` — mode-switching runtime. Replaced by skill chains + `skill-chain-enforcer`.
+- `adaptive-loadout/`, `config-optimizer/`, `task-classifier/` — experimental harness-tuning modules never wired into production.
+- `api-generator/`, `schema-generator/`, `spec-generator/`, `feature-decomposer/` — codegen experiments; overlapping scope with `shape` + `convex-schema-validator` skills.
+- `fixed-boundary/` — import-boundary checker. Functionality absorbed into scope-enforcer hook + skill-chain-enforcer.
+- `figma-integration/` — superseded by the figma plugin in `reference/` and the `figma-*` skills.
+- `github-state/` — replaced by the `github-state-manager` skill.
+- `idea-grader/` — one-off scoring experiment.
+- `implementation-loop/` — replaced by the `autopilot` and `ralph` skills.
+- `knowledge/` — knowledge-wiki store; content moved into the wiki-* skills.
+- `mention-monitor/` — replaced by the `social-intelligence` skill.
+- `repo-setup/` — replaced by the startup-init skill + agent.
+- `research-store/` — replaced by the `research` skill's persistent knowledge store.
+- `secret-manager/` — never productionized; `.harness/secrets.env` is the authoritative location.
+- `sentry-integration/` — replaced by the `error-tracking` skill.
+- `service-validator/` — replaced by the startup-init skill's Phase 1 service-connection checks.
+- `status-dashboard/` — experimental standalone dashboard; superseded by `harness-dashboard/`.
+
+## Deletion protocol
+
+For each orphan candidate, a future iteration should:
+
+1. `grep -rnE "(packages/<name>|@harness/<name>|from ['\"].*<name>)" --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=reference --exclude-dir=packages/<name>` to confirm zero imports from live code.
+2. `git rm -r packages/<name>` and commit as `chore: retire packages/<name> (orphan from pre-plugin era)`.
+3. Re-run `npm run validate` — should stay green (the validator doesn't walk packages/).
