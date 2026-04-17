@@ -72,7 +72,7 @@
           },
           {
             "type": "command",
-            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/validate-commit-msg.ts"
+            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/validate-commit-msg.mjs"
           },
           {
             "type": "command",
