@@ -9,7 +9,12 @@
  * that live inside .harness/ (tool-catalog.yml, agent-categories.yml,
  * loops.yml, founder-profile.yml, commit-schema.md, issue-schema.md,
  * idea.md, state.json, alignment-report.md, knowledge/, handoffs/,
- * signals/).
+ * signals/, agents/, learnings/, metrics/).
+ *
+ * agents/ is exempted because per-agent fileScope.blocked in every
+ * .harness/agents/*.json already blocks agents from writing their own
+ * configs — scope-enforcer is the fine-grained defence, so config-protection
+ * only needs to gate the rest of .harness/ and the static configs above.
  *
  * Ported from the two-file pair
  *   packages/hooks/src/config-protection.ts      (rule logic)
@@ -33,6 +38,9 @@ const EXEMPT_PATHS = [
   'knowledge/',
   'handoffs/',
   'signals/',
+  'agents/',
+  'learnings/',
+  'metrics/',
 ];
 
 const PROTECTED_PATHS = [
