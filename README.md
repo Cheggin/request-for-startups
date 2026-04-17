@@ -348,7 +348,6 @@ Plugin-distributed functionality lives at the repo root (`skills/`, `agents/`, `
 | eval-framework | 3-tier eval (static, E2E, LLM judge) |
 | cubic-channel | Cubic → Convex → Claude Code code-review channel |
 | webhook-receiver | Universal multi-source webhook receiver |
-| knowledge | Karpathy wiki: ingest, query, lint |
 | repo-setup | Scaffold repos, configure services, install hooks |
 | service-validator | Validate all service connections |
 | fixed-boundary | Frozen paths enforcement |
@@ -476,7 +475,6 @@ Legal pages (ToS, Privacy Policy), SEO setup (sitemap, meta tags, structured dat
 │   ├── eval-framework/        3-tier eval (static, E2E, LLM judge)
 │   ├── cubic-channel/         Cubic → Convex → Claude Code code-review channel
 │   ├── webhook-receiver/      Universal multi-source webhook receiver
-│   ├── knowledge/             Karpathy wiki (ingest, query, lint)
 │   ├── repo-setup/            Scaffold repos, configure services, install hooks
 │   ├── service-validator/     Validate all service connections
 │   ├── fixed-boundary/        Frozen paths enforcement

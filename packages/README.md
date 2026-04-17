@@ -27,7 +27,6 @@ These are startup builds that the harness produced for validation. Not harness i
 These lost their user-facing role when the plugin migration happened (commit 124e850 dropped the CLI layer). They may still import each other, so deletion order matters: delete leaves first.
 
 - `idea-grader/` — one-off scoring experiment.
-- `knowledge/` — knowledge-wiki store; content moved into the wiki-* skills.
 - `mention-monitor/` — replaced by the `social-intelligence` skill.
 
 ## Retired
@@ -53,6 +52,7 @@ These lost their user-facing role when the plugin migration happened (commit 124
 - `service-validator/` — retired 2026-04-17; validate-all + validators library replaced by the startup-init skill's Phase 1 service-connection checks.
 - `fixed-boundary/` — retired 2026-04-17; `checkBoundary()` import-boundary + file-write-scope checker absorbed into `.claude/hooks/scope-enforcer.mjs` (which already reads the same `fileScope.writable/readonly/blocked` fields from `.harness/agents/<name>.json`).
 - `figma-integration/` — retired 2026-04-17; design generation + screenshot capture + design-system extraction replaced by the figma plugin's skills (`figma:figma-generate-design`, `figma:figma-implement-design`, `figma:figma-generate-library`).
+- `knowledge/` — retired 2026-04-17; ingest + query + lint + index-manager replaced by the wiki-* skills (`wiki-add`, `wiki-read`, `wiki-query`, `wiki-ingest`, `wiki-list`, `wiki-lint`, `wiki-delete`).
 
 ## Deletion protocol
 

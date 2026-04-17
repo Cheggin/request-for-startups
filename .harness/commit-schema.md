@@ -37,7 +37,6 @@ Scope maps to the area of the codebase changed. Use the most specific scope that
 | `cli` | packages/cli |
 | `hooks` | packages/hooks |
 | `eval` | packages/eval-framework |
-| `knowledge` | packages/knowledge |
 | `webhook` | packages/webhook-receiver |
 | `cubic` | packages/cubic-channel |
 | `dashboard` | packages/harness-dashboard |
