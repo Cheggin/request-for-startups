@@ -149,6 +149,7 @@ Plus deterministic enforcement hooks that ship with the plugin:
 
 - `keyword-detector` — UserPromptSubmit hook that detects magic keywords (`ralph`, `autopilot`, `ultrawork`, `ccg`, `ralplan`, `deep-interview`, `ai-slop`, `wiki`, `tdd`, `code review`, `security review`, `ultrathink`, `deepsearch`, `cancelharness`) and injects the matching skill content before the agent responds
 - `skill-chain-enforcer` — blocks Edit/Write until the current flow's required phase skills have fired
+- `context-guard-stop` — Stop hook that blocks with a `/compact` prompt when context usage crosses `HARNESS_CONTEXT_GUARD_THRESHOLD` (default 75%), so long autonomous runs never hit a hard context limit mid-iteration
 - `completion-signal` — writes a session-done signal on every Stop so `/startup-harness:review` can pick it up
 - `gateguard` — Read-before-Edit gate to prevent uninformed changes
 
