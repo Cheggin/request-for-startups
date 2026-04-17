@@ -498,7 +498,6 @@ Legal pages (ToS, Privacy Policy), SEO setup (sitemap, meta tags, structured dat
 │   ├── config-optimizer/      Auto-tune agent configs from performance data
 │   ├── task-classifier/       Trivial/moderate/complex task routing
 │   ├── fixed-boundary/        Frozen paths enforcement
-│   ├── schema-generator/      Spec → Convex schema
 │   ├── figma-integration/     Spec → Figma designs
 │   └── website-template/      Canonical Next.js scaffold
 │
