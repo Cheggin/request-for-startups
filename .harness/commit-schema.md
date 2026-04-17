@@ -38,7 +38,6 @@ Scope maps to the area of the codebase changed. Use the most specific scope that
 | `cli` | packages/cli |
 | `hooks` | packages/hooks |
 | `eval` | packages/eval-framework |
-| `impl-loop` | packages/implementation-loop |
 | `knowledge` | packages/knowledge |
 | `repo-setup` | packages/repo-setup |
 | `services` | packages/service-validator |
