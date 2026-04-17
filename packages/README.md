@@ -26,7 +26,6 @@ These are startup builds that the harness produced for validation. Not harness i
 
 These lost their user-facing role when the plugin migration happened (commit 124e850 dropped the CLI layer). They may still import each other, so deletion order matters: delete leaves first.
 
-- `commander/` — orchestrator daemon. Replaced by the `commander` agent + `startup-init` skill.
 - `agent-loop/` — mode-switching runtime. Replaced by skill chains + `skill-chain-enforcer`.
 - `fixed-boundary/` — import-boundary checker. Functionality absorbed into scope-enforcer hook + skill-chain-enforcer.
 - `figma-integration/` — superseded by the figma plugin in `reference/` and the `figma-*` skills.
@@ -53,6 +52,7 @@ These lost their user-facing role when the plugin migration happened (commit 124
 - `spec-generator/` — retired 2026-04-17; product-spec codegen experiment whose scope is now owned by the `shape` skill's interview output.
 - `api-generator/` — retired 2026-04-17; API-route codegen whose scope is now owned by the `shape` skill + `convex-http-actions` for handler scaffolding.
 - `schema-generator/` — retired 2026-04-17; Convex-schema codegen whose scope is now owned by the `convex-schema-validator` skill.
+- `commander/` — retired 2026-04-17; orchestrator daemon replaced by the `commander` agent + `startup-init` skill.
 
 ## Deletion protocol
 
