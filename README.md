@@ -54,6 +54,27 @@ To uninstall:
 /plugin marketplace remove harness
 ```
 
+## Advanced install (full runtime)
+
+Marketplace install is enough for skills, agents, hooks, and deterministic
+skill-chain enforcement. If you also want the bundled MCP server (`state_*`,
+`notepad_*`, `wiki_*`, `lsp_*`, `ast_grep_*`, `python_repl`) and the `omc`
+CLI binary, clone the repo and link it:
+
+```bash
+git clone https://github.com/Cheggin/request-for-startups
+cd request-for-startups
+npm install          # pulls ajv, ajv-formats, better-sqlite3
+npm link             # registers the `omc` binary on PATH
+npm run test:hooks   # 55 node:test assertions across all hooks
+```
+
+After `npm install`, `bridge/mcp-server.cjs` becomes registered as the `t`
+MCP server (see `.mcp.json`) and provides the full OMC tool surface to any
+session with this plugin installed. After `npm link`, skills that invoke
+`omc team start`, `omc teleport`, `omc ask codex`, etc. resolve to this
+plugin's `bridge/cli.cjs` rather than a separately-installed OMC plugin.
+
 ## Architecture
 
 ```
