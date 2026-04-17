@@ -13,7 +13,7 @@ interface ActivitySectionProps {
 
 export function ActivitySection({ activityData, traceEvents }: ActivitySectionProps) {
   return (
-    <div className="grid grid-cols-2 gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <div>
         <SectionLabel>Git Activity (7 days)</SectionLabel>
         {activityData.length > 0 ? (
