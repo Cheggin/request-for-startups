@@ -1,8 +1,8 @@
 {
-  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "harness",
-  "id": "harness",
-  "description": "Autonomous startup builder — takes an idea, builds the entire company. 13 agents, 96 skills, TDD, Cubic code review, Figma design, deploy to Vercel/Railway.",
+  "metadata": {
+    "description": "The Startup Harness marketplace. Autonomous startup builder plugin — multi-agent orchestration with enforced skill chains, TDD loops, and auto-deploy."
+  },
   "owner": {
     "name": "Reagan Hsu",
     "email": "reagan@example.com"
@@ -11,7 +11,6 @@
     {
       "name": "startup-harness",
       "description": "Multi-agent harness that builds startups end-to-end. Founder interview, market research, product spec, design, TDD build loop, deploy, growth. Works for B2C, B2B SaaS, devtools, marketplaces, hardware+software, fintech, healthcare.",
-      "version": "0.1.0",
       "author": {
         "name": "Reagan Hsu"
       },
@@ -28,6 +27,5 @@
         "growth"
       ]
     }
-  ],
-  "version": "0.1.0"
+  ]
 }
