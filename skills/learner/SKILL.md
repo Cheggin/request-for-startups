@@ -162,5 +162,5 @@ If code helps, show it - but as illustration of the principle, not copy-paste ma
 
 ## Related Commands
 
-- /oh-my-claudecode:note - Save quick notes that survive compaction (less formal than skills)
-- /oh-my-claudecode:ralph - Start a development loop with learning capture
+- /startup-harness:note - Save quick notes that survive compaction (less formal than skills)
+- /startup-harness:ralph - Start a development loop with learning capture

@@ -10,15 +10,15 @@ Use OMC's canonical advisor skill to route a prompt through the local Claude, Co
 ## Usage
 
 ```bash
-/oh-my-claudecode:ask <claude|codex|gemini> <question or task>
+/startup-harness:ask <claude|codex|gemini> <question or task>
 ```
 
 Examples:
 
 ```bash
-/oh-my-claudecode:ask codex "review this patch from a security perspective"
-/oh-my-claudecode:ask gemini "suggest UX improvements for this flow"
-/oh-my-claudecode:ask claude "draft an implementation plan for issue #123"
+/startup-harness:ask codex "review this patch from a security perspective"
+/startup-harness:ask gemini "suggest UX improvements for this flow"
+/startup-harness:ask claude "draft an implementation plan for issue #123"
 ```
 
 ## Routing

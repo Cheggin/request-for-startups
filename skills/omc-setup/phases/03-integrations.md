@@ -16,7 +16,7 @@ Use AskUserQuestion: "Would you like to configure MCP servers for enhanced capab
 
 If yes, invoke the mcp-setup skill:
 ```
-/oh-my-claudecode:mcp-setup
+/startup-harness:mcp-setup
 ```
 
 If no, skip to next step.
@@ -182,7 +182,7 @@ Skip this step. Agent teams will remain disabled. User can enable later by addin
 }
 ```
 
-Or by running `/oh-my-claudecode:omc-setup --force` and choosing to enable teams.
+Or by running `/startup-harness:omc-setup --force` and choosing to enable teams.
 
 ## Save Progress
 

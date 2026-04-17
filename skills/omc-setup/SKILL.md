@@ -37,11 +37,11 @@ When user runs with `--help`, display this and stop:
 OMC Setup - Configure oh-my-claudecode
 
 USAGE:
-  /oh-my-claudecode:omc-setup           Run initial setup wizard (or update if already configured)
-  /oh-my-claudecode:omc-setup --local   Configure local project (.claude/CLAUDE.md)
-  /oh-my-claudecode:omc-setup --global  Configure global settings (~/.claude/CLAUDE.md)
-  /oh-my-claudecode:omc-setup --force   Force full setup wizard even if already configured
-  /oh-my-claudecode:omc-setup --help    Show this help
+  /startup-harness:omc-setup           Run initial setup wizard (or update if already configured)
+  /startup-harness:omc-setup --local   Configure local project (.claude/CLAUDE.md)
+  /startup-harness:omc-setup --global  Configure global settings (~/.claude/CLAUDE.md)
+  /startup-harness:omc-setup --force   Force full setup wizard even if already configured
+  /startup-harness:omc-setup --help    Show this help
 
 MODES:
   Initial Setup (no flags)
@@ -74,10 +74,10 @@ MODES:
     - Use when you want to reconfigure preferences
 
 EXAMPLES:
-  /oh-my-claudecode:omc-setup           # First time setup (or update CLAUDE.md if configured)
-  /oh-my-claudecode:omc-setup --local   # Update this project
-  /oh-my-claudecode:omc-setup --global  # Update all projects
-  /oh-my-claudecode:omc-setup --force   # Re-run full setup wizard
+  /startup-harness:omc-setup           # First time setup (or update CLAUDE.md if configured)
+  /startup-harness:omc-setup --local   # Update this project
+  /startup-harness:omc-setup --global  # Update all projects
+  /startup-harness:omc-setup --force   # Re-run full setup wizard
 
 For more info: https://github.com/Yeachan-Heo/oh-my-claudecode
 ```
@@ -178,11 +178,11 @@ Execute phases sequentially. For each phase, read the corresponding file and fol
 
 After installing oh-my-claudecode updates (via npm or plugin update):
 
-**Automatic**: Just run `/oh-my-claudecode:omc-setup` - it will detect you've already configured and offer a quick "Update CLAUDE.md only" option that skips the full wizard.
+**Automatic**: Just run `/startup-harness:omc-setup` - it will detect you've already configured and offer a quick "Update CLAUDE.md only" option that skips the full wizard.
 
 **Manual options**:
-- `/oh-my-claudecode:omc-setup --local` to update project config only
-- `/oh-my-claudecode:omc-setup --global` to update global config only
-- `/oh-my-claudecode:omc-setup --force` to re-run the full wizard (reconfigure preferences)
+- `/startup-harness:omc-setup --local` to update project config only
+- `/startup-harness:omc-setup --global` to update global config only
+- `/startup-harness:omc-setup --force` to re-run the full wizard (reconfigure preferences)
 
 This ensures you have the newest features and agent configurations without the token cost of repeating the full setup.

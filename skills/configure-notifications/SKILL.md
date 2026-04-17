@@ -245,9 +245,9 @@ You can also set these via environment variables:
   OMC_TELEGRAM_BOT_TOKEN=123456789:ABCdefGHI...
   OMC_TELEGRAM_CHAT_ID=123456789
 
-To reconfigure: /oh-my-claudecode:configure-notifications telegram
-To configure Discord: /oh-my-claudecode:configure-notifications discord
-To configure Slack: /oh-my-claudecode:configure-notifications slack
+To reconfigure: /startup-harness:configure-notifications telegram
+To configure Discord: /startup-harness:configure-notifications discord
+To configure Slack: /startup-harness:configure-notifications slack
 ```
 
 ### Environment Variable Alternative
@@ -487,9 +487,9 @@ You can also set these via environment variables:
   OMC_DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
   OMC_DISCORD_MENTION=<@1465264645320474637>
 
-To reconfigure: /oh-my-claudecode:configure-notifications discord
-To configure Telegram: /oh-my-claudecode:configure-notifications telegram
-To configure Slack: /oh-my-claudecode:configure-notifications slack
+To reconfigure: /startup-harness:configure-notifications discord
+To configure Telegram: /startup-harness:configure-notifications telegram
+To configure Slack: /startup-harness:configure-notifications slack
 ```
 
 ### Environment Variable Alternative
@@ -734,9 +734,9 @@ You can also set these via environment variables:
   OMC_SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...
   OMC_SLACK_MENTION=<@U1234567890>
 
-To reconfigure: /oh-my-claudecode:configure-notifications slack
-To configure Discord: /oh-my-claudecode:configure-notifications discord
-To configure Telegram: /oh-my-claudecode:configure-notifications telegram
+To reconfigure: /startup-harness:configure-notifications slack
+To configure Discord: /startup-harness:configure-notifications discord
+To configure Telegram: /startup-harness:configure-notifications telegram
 ```
 
 ### Environment Variable Alternative
@@ -935,7 +935,7 @@ Offer to send a test notification with the new template.
 
 ## Related
 
-- `/oh-my-claudecode:configure-openclaw` — Configure OpenClaw gateway integration
+- `/startup-harness:configure-openclaw` — Configure OpenClaw gateway integration
 
 ---
 

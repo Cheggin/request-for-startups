@@ -94,7 +94,7 @@ argument-hint: "<args>"
 ## Examples
 
 ```
-/oh-my-claudecode:<name> example-arg
+/startup-harness:<name> example-arg
 ```
 
 ## Notes
@@ -711,9 +711,9 @@ How to work with this integration correctly:
 
 When invoked with an argument, skip the interactive wizard:
 
-- `/oh-my-claudecode:skill list` - Show detailed skill inventory
-- `/oh-my-claudecode:skill add` - Start skill creation (invoke learner)
-- `/oh-my-claudecode:skill scan` - Scan both skill directories
+- `/startup-harness:skill list` - Show detailed skill inventory
+- `/startup-harness:skill add` - Start skill creation (invoke learner)
+- `/startup-harness:skill scan` - Scan both skill directories
 
 ### Interactive Mode
 
@@ -759,16 +759,16 @@ Good skills are:
 
 ## Related Skills
 
-- `/oh-my-claudecode:learner` - Extract a skill from current conversation
-- `/oh-my-claudecode:note` - Save quick notes (less formal than skills)
-- `/oh-my-claudecode:deepinit` - Generate AGENTS.md codebase hierarchy
+- `/startup-harness:learner` - Extract a skill from current conversation
+- `/startup-harness:note` - Save quick notes (less formal than skills)
+- `/startup-harness:deepinit` - Generate AGENTS.md codebase hierarchy
 
 ---
 
 ## Example Session
 
 ```
-> /oh-my-claudecode:skill list
+> /startup-harness:skill list
 
 Checking skill directories...
 ✓ User skills directory exists: ~/.claude/skills/omc-learned/
@@ -811,7 +811,7 @@ What would you like to do?
 
 ## Tips for Users
 
-- Run `/oh-my-claudecode:skill list` periodically to review your skill library
+- Run `/startup-harness:skill list` periodically to review your skill library
 - After solving a tricky bug, immediately run learner to capture it
 - Use project-level skills for codebase-specific knowledge
 - Use user-level skills for general patterns that apply everywhere
@@ -832,9 +832,9 @@ What would you like to do?
 
 ## Related Skills
 
-- `/oh-my-claudecode:learner` - Extract a skill from current conversation
-- `/oh-my-claudecode:note` - Save quick notes (less formal than skills)
-- `/oh-my-claudecode:deepinit` - Generate AGENTS.md codebase hierarchy
+- `/startup-harness:learner` - Extract a skill from current conversation
+- `/startup-harness:note` - Save quick notes (less formal than skills)
+- `/startup-harness:deepinit` - Generate AGENTS.md codebase hierarchy
 
 ---
 
