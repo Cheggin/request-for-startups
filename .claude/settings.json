@@ -76,7 +76,7 @@
           },
           {
             "type": "command",
-            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/validate-issue-create.ts"
+            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/validate-issue-create.mjs"
           },
           {
             "type": "command",
