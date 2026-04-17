@@ -37,11 +37,6 @@ tasks:
     dir: packages/hooks
     cmd: bun test
 
-  test:agent-loop:
-    desc: Run agent-loop tests
-    dir: packages/agent-loop
-    cmd: bun test
-
   test:eval:
     desc: Run eval framework tests
     dir: packages/eval-framework

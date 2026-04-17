@@ -34,7 +34,6 @@ Scope maps to the area of the codebase changed. Use the most specific scope that
 
 | Scope | Area |
 |-------|------|
-| `agent-loop` | packages/agent-loop |
 | `cli` | packages/cli |
 | `hooks` | packages/hooks |
 | `eval` | packages/eval-framework |

@@ -26,7 +26,6 @@ These are startup builds that the harness produced for validation. Not harness i
 
 These lost their user-facing role when the plugin migration happened (commit 124e850 dropped the CLI layer). They may still import each other, so deletion order matters: delete leaves first.
 
-- `agent-loop/` — mode-switching runtime. Replaced by skill chains + `skill-chain-enforcer`.
 - `fixed-boundary/` — import-boundary checker. Functionality absorbed into scope-enforcer hook + skill-chain-enforcer.
 - `figma-integration/` — superseded by the figma plugin in `reference/` and the `figma-*` skills.
 - `idea-grader/` — one-off scoring experiment.
@@ -53,6 +52,7 @@ These lost their user-facing role when the plugin migration happened (commit 124
 - `commander/` — retired 2026-04-17; orchestrator daemon replaced by the `commander` agent + `startup-init` skill.
 - `github-state/` — retired 2026-04-17; replaced by the `github-state-manager` and `issue-creator` skills.
 - `implementation-loop/` — retired 2026-04-17; per-feature build cycle replaced by the `autopilot` and `ralph` skills.
+- `agent-loop/` — retired 2026-04-17; mode-switching runtime (mode loop, plateau detection, hook runner, self-improve, error classifier, agent loader) replaced by skill chains + `skill-chain-enforcer` hook.
 
 ## Deletion protocol
 

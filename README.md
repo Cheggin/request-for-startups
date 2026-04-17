@@ -341,7 +341,6 @@ Defined in `.harness/stacks.yml`:
 
 | Package | Tests | What |
 |---------|-------|------|
-| agent-loop | 108 | Core runtime: mode switching, hooks, plateau detection, self-improvement |
 | cli | 33 | `harness` command with 12 command groups |
 | commander | 48 | Dispatcher, monitor, handoff, investor updates |
 | hooks | 28 | GateGuard, config-protection, budget-enforcer |
@@ -481,7 +480,6 @@ Legal pages (ToS, Privacy Policy), SEO setup (sitemap, meta tags, structured dat
 │   ├── cli/                   Harness CLI (12 command groups)
 │   ├── harness-dashboard/     Web dashboard — agent monitoring, growth intel, deploy health (Next.js + visx)
 │   ├── commander/             Orchestrator (dispatcher, monitor, handoff, investor updates)
-│   ├── agent-loop/            Core runtime (mode switching, hooks, plateau detection, self-improvement)
 │   ├── hooks/                 GateGuard (read before edit), config-protection
 │   ├── knowledge/             Karpathy wiki (ingest, query, lint)
 │   ├── eval-framework/        3-tier eval (static, E2E, LLM judge)
