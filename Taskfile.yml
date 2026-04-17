@@ -42,11 +42,6 @@ tasks:
     dir: packages/agent-loop
     cmd: bun test
 
-  test:research-store:
-    desc: Run research-store tests
-    dir: packages/research-store
-    cmd: bun test
-
   test:eval:
     desc: Run eval framework tests
     dir: packages/eval-framework

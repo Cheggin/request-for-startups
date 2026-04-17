@@ -91,7 +91,7 @@ disallowedTools: []
   </Success_Criteria>
 
   <Constraints>
-    - Cannot modify: src/**, packages/** (except research-store), features/**, templates/**
+    - Cannot modify: src/**, packages/**, features/**, templates/**
     - Cannot modify production application code
     - Can read any file in the repository
     - Can use WebSearch for external research
