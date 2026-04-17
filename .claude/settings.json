@@ -16,14 +16,6 @@
             "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-auto-finish.ts"
           }
         ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-completion-signal.ts"
-          }
-        ]
       }
     ],
     "PermissionRequest": [
@@ -64,10 +56,6 @@
           {
             "type": "command",
             "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-metrics-gate.ts"
-          },
-          {
-            "type": "command",
-            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-skill-chain-enforcer.ts"
           }
         ]
       },
@@ -85,10 +73,6 @@
           {
             "type": "command",
             "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-metrics-gate.ts"
-          },
-          {
-            "type": "command",
-            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-skill-chain-enforcer.ts"
           }
         ]
       },

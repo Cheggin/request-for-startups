@@ -1,0 +1,61 @@
+{
+  "$schema": "./skill-chains.schema.json",
+  "flows": {
+    "website-end-to-end": {
+      "description": "Full production-quality website build — discovery through deploy.",
+      "trigger_skill": "website-creation",
+      "gate_patterns": [
+        "app/**",
+        "components/**",
+        "pages/**",
+        "src/**",
+        "packages/*/src/**",
+        "packages/*/app/**",
+        "packages/*/components/**",
+        "*.tsx",
+        "*.jsx",
+        "*.css",
+        "*.scss"
+      ],
+      "phases": [
+        {
+          "name": "discovery",
+          "required": ["shape", "brand-guidelines"]
+        },
+        {
+          "name": "foundation",
+          "required": ["website-creation", "impeccable"]
+        },
+        {
+          "name": "assets",
+          "required": ["asset-generation", "clarify"]
+        },
+        {
+          "name": "refinement",
+          "required": ["layout", "typeset", "colorize", "adapt"]
+        },
+        {
+          "name": "quality",
+          "required": [
+            "critique",
+            "audit",
+            "accessibility-checker",
+            "visual-qa-pipeline",
+            "performance-benchmark"
+          ]
+        },
+        {
+          "name": "ship",
+          "required": [
+            "polish",
+            "optimize",
+            "seo-setup",
+            "test-generator",
+            "security-scanner",
+            "deploy-pipeline"
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -25,16 +25,25 @@ function normalizeSkill(name: string): string {
 }
 
 function loadChains(cwd: string): SkillChains | null {
-  const path = resolve(cwd, ".harness/skill-chains.json");
-  if (!existsSync(path)) return null;
-  try {
-    const raw = readFileSync(path, "utf-8");
-    const parsed = JSON.parse(raw);
-    if (!parsed.flows) return null;
-    return parsed as SkillChains;
-  } catch {
-    return null;
+  // Check project-local first, then plugin-shipped defaults.
+  const candidates = [
+    resolve(cwd, ".harness/skill-chains.json"),
+    process.env.CLAUDE_PLUGIN_ROOT
+      ? resolve(process.env.CLAUDE_PLUGIN_ROOT, "chains/skill-chains.json")
+      : null,
+  ].filter((p): p is string => !!p);
+
+  for (const path of candidates) {
+    if (!existsSync(path)) continue;
+    try {
+      const raw = readFileSync(path, "utf-8");
+      const parsed = JSON.parse(raw);
+      if (parsed.flows) return parsed as SkillChains;
+    } catch {
+      continue;
+    }
   }
+  return null;
 }
 
 function readSkillHistory(transcriptPath: string | undefined): string[] {
