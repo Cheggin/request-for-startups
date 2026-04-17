@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, memo } from "react";
 import type { Agent } from "@/lib/types";
 import { COLORS, STATUS_LABELS } from "@/lib/constants";
 import { NudgeInput } from "./nudge-input";
@@ -30,14 +30,14 @@ function statusBg(status: string): string {
   return "transparent";
 }
 
-export function AgentCard({ agent }: AgentCardProps) {
+export const AgentCard = memo(function AgentCard({ agent }: AgentCardProps) {
   const [expanded, setExpanded] = useState(false);
   const color = statusColor(agent.status);
   const bg = statusBg(agent.status);
 
   return (
     <div
-      className="border rounded-lg p-4 flex flex-col gap-3"
+      className="border rounded-lg p-4 flex flex-col gap-3 transition-colors"
       style={{
         borderColor: agent.status === "stuck" ? COLORS.stuck : COLORS.border,
         backgroundColor: bg === "transparent" ? COLORS.surface : bg,
@@ -48,6 +48,7 @@ export function AgentCard({ agent }: AgentCardProps) {
           <span
             className={`inline-block w-2 h-2 rounded-full shrink-0 ${agent.status === "running" ? "animate-pulse-dot" : ""}`}
             style={{ backgroundColor: color }}
+            aria-hidden="true"
           />
           <span className="text-sm font-semibold truncate">{agent.name}</span>
         </div>
@@ -88,4 +89,4 @@ export function AgentCard({ agent }: AgentCardProps) {
       <NudgeInput paneId={agent.paneId} label={agent.name} />
     </div>
   );
-}
+});
