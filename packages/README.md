@@ -26,7 +26,6 @@ These are startup builds that the harness produced for validation. Not harness i
 
 These lost their user-facing role when the plugin migration happened (commit 124e850 dropped the CLI layer). They may still import each other, so deletion order matters: delete leaves first.
 
-- `fixed-boundary/` — import-boundary checker. Functionality absorbed into scope-enforcer hook + skill-chain-enforcer.
 - `figma-integration/` — superseded by the figma plugin in `reference/` and the `figma-*` skills.
 - `idea-grader/` — one-off scoring experiment.
 - `knowledge/` — knowledge-wiki store; content moved into the wiki-* skills.
@@ -53,6 +52,7 @@ These lost their user-facing role when the plugin migration happened (commit 124
 - `agent-loop/` — retired 2026-04-17; mode-switching runtime (mode loop, plateau detection, hook runner, self-improve, error classifier, agent loader) replaced by skill chains + `skill-chain-enforcer` hook.
 - `repo-setup/` — retired 2026-04-17; scaffold + configure-services + setup-hooks replaced by the `startup-init` skill Phase 1 + Phase 5.
 - `service-validator/` — retired 2026-04-17; validate-all + validators library replaced by the startup-init skill's Phase 1 service-connection checks.
+- `fixed-boundary/` — retired 2026-04-17; `checkBoundary()` import-boundary + file-write-scope checker absorbed into `.claude/hooks/scope-enforcer.mjs` (which already reads the same `fileScope.writable/readonly/blocked` fields from `.harness/agents/<name>.json`).
 
 ## Deletion protocol
 

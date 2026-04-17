@@ -39,7 +39,6 @@ Scope maps to the area of the codebase changed. Use the most specific scope that
 | `eval` | packages/eval-framework |
 | `knowledge` | packages/knowledge |
 | `webhook` | packages/webhook-receiver |
-| `boundary` | packages/fixed-boundary |
 | `cubic` | packages/cubic-channel |
 | `dashboard` | packages/harness-dashboard |
 | `skills` | skills/ (any skill change) |
