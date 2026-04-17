@@ -6,12 +6,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/keyword-detector.mjs",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/run.cjs ${CLAUDE_PLUGIN_ROOT}/hooks/keyword-detector.mjs",
             "timeout": 5
           },
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/skill-injector.mjs",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/run.cjs ${CLAUDE_PLUGIN_ROOT}/hooks/skill-injector.mjs",
             "timeout": 3
           }
         ]
@@ -23,7 +23,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/gateguard.mjs"
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/run.cjs ${CLAUDE_PLUGIN_ROOT}/hooks/gateguard.mjs"
           }
         ]
       },
@@ -32,11 +32,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/gateguard.mjs"
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/run.cjs ${CLAUDE_PLUGIN_ROOT}/hooks/gateguard.mjs"
           },
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/skill-chain-enforcer.mjs"
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/run.cjs ${CLAUDE_PLUGIN_ROOT}/hooks/skill-chain-enforcer.mjs"
           }
         ]
       },
@@ -45,7 +45,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/skill-chain-enforcer.mjs"
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/run.cjs ${CLAUDE_PLUGIN_ROOT}/hooks/skill-chain-enforcer.mjs"
           }
         ]
       }
@@ -55,17 +55,17 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/context-guard-stop.mjs",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/run.cjs ${CLAUDE_PLUGIN_ROOT}/hooks/context-guard-stop.mjs",
             "timeout": 5
           },
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/persistent-mode.cjs",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/run.cjs ${CLAUDE_PLUGIN_ROOT}/hooks/persistent-mode.cjs",
             "timeout": 10
           },
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/completion-signal.mjs"
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/run.cjs ${CLAUDE_PLUGIN_ROOT}/hooks/completion-signal.mjs"
           }
         ]
       }
