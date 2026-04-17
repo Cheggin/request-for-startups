@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-inter-agent-signal.ts"
+            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/inter-agent-signal.mjs"
           }
         ]
       },
@@ -23,7 +23,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-inter-agent-signal.ts"
+            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/inter-agent-signal.mjs"
           }
         ]
       }
