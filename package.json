@@ -5,6 +5,11 @@
   "scripts": {
     "test": "bun run test:all",
     "test:all": "for dir in packages/*/; do (cd $dir && bun test 2>/dev/null) || true; done",
+    "test:hooks": "node --test hooks/*.test.mjs .claude/hooks/*.test.mjs",
     "validate": "node scripts/validate-plugin.mjs"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
   }
 }
