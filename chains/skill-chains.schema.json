@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Cheggin/request-for-startups/chains/skill-chains.schema.json",
+  "title": "Startup-Harness Skill Chains",
+  "description": "Deterministic multi-phase skill flows enforced by hooks/skill-chain-enforcer.mjs. Each flow is triggered by a skill and gates Edit/Write on matching files until earlier phases' required skills have fired.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["flows"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Relative or absolute URI of this schema. Editors use it for autocomplete + validation."
+    },
+    "flows": {
+      "type": "object",
+      "description": "Map of flow name -> Flow. The flow name is human-readable (e.g. website-end-to-end) and is reported in enforcer messages.",
+      "minProperties": 1,
+      "additionalProperties": { "$ref": "#/$defs/Flow" }
+    }
+  },
+  "$defs": {
+    "Flow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["description", "trigger_skill", "gate_patterns", "phases"],
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "One-sentence summary of what this flow builds. Shown in CLI / docs."
+        },
+        "trigger_skill": {
+          "type": "string",
+          "description": "The skill whose invocation marks the start of this flow. skill-chain-enforcer treats the latest trigger_skill invocation across all flows as the active flow.",
+          "minLength": 1
+        },
+        "gate_patterns": {
+          "type": "array",
+          "description": "Glob patterns (relative to cwd). When this flow is active and the Edit/Write target matches any pattern, earlier phases must be complete or the tool call is blocked.",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1
+        },
+        "phases": {
+          "type": "array",
+          "description": "Ordered list of phases. Phase N is checked for completeness before any edit whose last phase-skill fired is at index >= N. The first phase with the trigger_skill is phase 0.",
+          "items": { "$ref": "#/$defs/Phase" },
+          "minItems": 1
+        }
+      }
+    },
+    "Phase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Human-readable phase name shown in enforcer messages (e.g. 'discovery', 'build', 'launch').",
+          "minLength": 1
+        },
+        "required": {
+          "type": "array",
+          "description": "ALL of these skills must have fired before the phase is complete.",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1
+        },
+        "oneOf": {
+          "type": "array",
+          "description": "AT LEAST ONE of these skills must have fired for the phase to be complete.",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 2
+        },
+        "anyOf": {
+          "type": "object",
+          "description": "At least `min` of the skills in `of` must have fired for the phase to be complete.",
+          "additionalProperties": false,
+          "required": ["of", "min"],
+          "properties": {
+            "of": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "minItems": 2
+            },
+            "min": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      },
+      "oneOf": [
+        { "required": ["required"], "not": { "anyOf": [{ "required": ["oneOf"] }, { "required": ["anyOf"] }] } },
+        { "required": ["oneOf"], "not": { "anyOf": [{ "required": ["required"] }, { "required": ["anyOf"] }] } },
+        { "required": ["anyOf"], "not": { "anyOf": [{ "required": ["required"] }, { "required": ["oneOf"] }] } }
+      ]
+    }
+  }
+}
