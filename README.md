@@ -82,7 +82,10 @@ commands/          Entry points (startup-init, resume)
 agents/            32 agent definitions (website, backend, growth, writing, ops, deploy, commander, researcher, docs, slop-cleaner, harness-researcher, alignment, paper-reader, plus OMC-merged roles like architect, critic, executor, planner, analyst, debugger, tracer, verifier, designer, qa-tester, git-master, security-reviewer, code-reviewer, code-simplifier, test-engineer, scientist, document-specialist, writer)
 skills/            121 skills as Claude Code plugin format (skills/<name>/SKILL.md)
 templates/         Integration templates (Stripe, Clerk auth, Resend email)
-packages/          27 packages with 590+ tests (includes harness-dashboard)
+hooks/             Plugin hooks (node .mjs/.cjs) + hooks.json wiring every Claude Code event type
+bridge/            OMC CLI + MCP server + tmux team-bridge daemons (direct-merged from OMC)
+dist/              Vendored OMC compiled runtime (476 .js files)
+chains/            Deterministic skill-chain flows (website, startup-e2e, deploy-loop, debug-loop)
 features/          Checklist-driven development tracking
 .harness/          Configuration (stacks, agent categories, tool catalog, knowledge wiki, commit schema, issue schema)
 .claude-plugin/    Plugin manifest — registers as Claude Code marketplace plugin
@@ -358,22 +361,22 @@ Defined in `.harness/stacks.yml`:
 | Real-time alerts | MCP or webhook → Convex → local channel |
 | Rich bidirectional | MCP (Figma, Sentry) |
 
-## Packages
+## Plugin layout
 
-Plugin-distributed functionality lives at the repo root (`skills/`, `agents/`, `hooks/`, `chains/`, `commands/`, `.claude-plugin/`). The `packages/` directory holds ancillary infrastructure plus a few test-build artifacts — see `packages/README.md` for the full classification ledger with retirement timestamps.
+All plugin-distributed functionality lives at the repo root — no `packages/` sub-monorepo in v1.0.0.
 
-| Package | What |
+| Path | What |
 |---------|------|
-| hooks | TS sources for plugin hooks + the project-local hook set (gateguard, skill-chain-enforcer, completion-signal, config-protection, scope-enforcer, branch-enforcer, metrics-gate, deploy-gate, validate-commit-msg, validate-issue-create, inter-agent-signal) |
-| harness-dashboard | Next.js dashboard — agent monitoring, growth intel, deploy health (visx) |
-| eval-framework | 3-tier eval (static, E2E, LLM judge) |
-| cubic-channel | Cubic → Convex → Claude Code code-review channel |
-| webhook-receiver | Universal multi-source webhook receiver |
-| repo-setup | Scaffold repos, configure services, install hooks |
-| service-validator | Validate all service connections |
-| fixed-boundary | Frozen paths enforcement |
-| website-template | Canonical Next.js scaffold template |
-| tab-commander-site | Test startup build (active dev) |
+| `skills/` | 121 SKILL.md definitions (37 OMC + 84 harness-specific) |
+| `agents/` | 32 agent prompts with per-agent scope configs in `.harness/agents/*.json` |
+| `hooks/` | Plugin-shipped hooks (node `.mjs`/`.cjs`). Wired to every Claude Code hook event type. |
+| `.claude/hooks/` | Repo-local hooks for dev-time enforcement (not shipped to plugin consumers). |
+| `dist/` | Vendored OMC compiled TypeScript runtime (476 `.js` files) — powers the advanced paths of hooks that dynamic-import it. |
+| `bridge/` | Bundled daemons — `mcp-server.cjs` (registered MCP server `t`), `cli.cjs` (the `omc` binary), `team-bridge.cjs` + `team-mcp.cjs` + `runtime-cli.cjs` (tmux-pane orchestration). |
+| `chains/` | `skill-chains.json` — deterministic flow enforcement (website-end-to-end, startup-end-to-end, deploy-loop, debug-loop). |
+| `commands/` | Slash commands (resume, startup-init). |
+| `scripts/` | `run.cjs` universal hook wrapper + maintenance scripts. |
+| `.claude-plugin/` | `plugin.json` + `marketplace.json`. |
 
 ## Research Foundation
 
@@ -489,17 +492,12 @@ Legal pages (ToS, Privacy Policy), SEO setup (sitemap, meta tags, structured dat
 │   ├── Operate (6)            post-deploy-loop, uptime-monitor, error-tracking, incident-response, log-aggregation, cost-tracker
 │   └── Comms (6)              anti-ai-writing, investor-updates, slack-course-correction, documentation-generator, readme-generator, contributing-guide
 │
-├── packages/                  Ancillary infrastructure (see packages/README.md for the ledger)
-│   ├── hooks/                 TS sources for plugin + project hooks
-│   ├── harness-dashboard/     Next.js dashboard — agent monitoring, growth intel, deploy health (visx)
-│   ├── eval-framework/        3-tier eval (static, E2E, LLM judge)
-│   ├── cubic-channel/         Cubic → Convex → Claude Code code-review channel
-│   ├── webhook-receiver/      Universal multi-source webhook receiver
-│   ├── repo-setup/            Scaffold repos, configure services, install hooks
-│   ├── service-validator/     Validate all service connections
-│   ├── fixed-boundary/        Frozen paths enforcement
-│   ├── tab-commander-site/    Test startup build (active)
-│   └── website-template/      Canonical Next.js scaffold template
+├── hooks/                     Plugin-shipped hooks (node .mjs/.cjs) + hooks.json
+├── .claude/hooks/             Repo-local dev hooks (not shipped)
+├── dist/                      Vendored OMC compiled runtime (476 .js files)
+├── bridge/                    mcp-server.cjs, cli.cjs (omc binary), team-bridge.cjs
+├── chains/skill-chains.json   Deterministic skill-chain enforcement (4 flows)
+├── scripts/run.cjs            Universal hook wrapper (cross-platform Node resolver)
 │
 ├── templates/                 Integration templates
 │   ├── stripe/                Embedded Checkout, webhooks, subscription state
