@@ -1,5 +1,4 @@
-#!/usr/bin/env bun
-// @bun
+#!/usr/bin/env node
 
 // packages/hooks/src/run-skill-chain-enforcer.ts
 import { readFileSync, existsSync } from "fs";
