@@ -88,10 +88,11 @@ export default function MentionsPage() {
           <div className="border border-border-subtle rounded-md px-4 py-5">
             <p className="text-base text-text-secondary">No mention data.</p>
             <p className="text-sm text-text-tertiary mt-1">
-              Run the mention monitor to start collecting data:
+              Start the monitor by invoking the social-intelligence skill
+              inside a Claude Code session with this repo open:
             </p>
             <code className="block mt-2 font-mono text-sm text-text-secondary bg-bg px-3 py-2 rounded">
-              bun run packages/mention-monitor/src/index.ts
+              /startup-harness:social-intelligence
             </code>
           </div>
         </section>
