@@ -11,6 +11,11 @@ node_modules/
 dist/
 out/
 
+# Exception: plugin-root dist/ is vendored from OMC's compiled runtime
+# (direct-merge, not built from this repo's source). Keep it tracked.
+!/dist/
+!/dist/**
+
 # OS
 .DS_Store
 
