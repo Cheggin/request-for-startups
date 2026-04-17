@@ -38,7 +38,7 @@
           },
           {
             "type": "command",
-            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-scope-enforcer.ts"
+            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/scope-enforcer.mjs"
           },
           {
             "type": "command",
@@ -55,7 +55,7 @@
           },
           {
             "type": "command",
-            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-scope-enforcer.ts"
+            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/scope-enforcer.mjs"
           },
           {
             "type": "command",
