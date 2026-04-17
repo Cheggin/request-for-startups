@@ -1,5 +1,9 @@
 {
   "mcpServers": {
+    "t": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/bridge/mcp-server.cjs"]
+    },
     "cubic-channel": {
       "command": "bun",
       "args": ["run", "packages/cubic-channel/channel/index.ts"],
