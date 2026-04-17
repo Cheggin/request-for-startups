@@ -48,7 +48,6 @@ Scope maps to the area of the codebase changed. Use the most specific scope that
 | `services` | packages/service-validator |
 | `webhook` | packages/webhook-receiver |
 | `config` | packages/config-optimizer |
-| `classifier` | packages/task-classifier |
 | `boundary` | packages/fixed-boundary |
 | `cubic` | packages/cubic-channel |
 | `dashboard` | packages/harness-dashboard |

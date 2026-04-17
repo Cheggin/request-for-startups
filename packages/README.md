@@ -28,7 +28,7 @@ These lost their user-facing role when the plugin migration happened (commit 124
 
 - `commander/` — orchestrator daemon. Replaced by the `commander` agent + `startup-init` skill.
 - `agent-loop/` — mode-switching runtime. Replaced by skill chains + `skill-chain-enforcer`.
-- `adaptive-loadout/`, `config-optimizer/`, `task-classifier/` — experimental harness-tuning modules never wired into production.
+- `adaptive-loadout/`, `config-optimizer/` — experimental harness-tuning modules never wired into production.
 - `api-generator/`, `schema-generator/`, `spec-generator/`, `feature-decomposer/` — codegen experiments; overlapping scope with `shape` + `convex-schema-validator` skills.
 - `fixed-boundary/` — import-boundary checker. Functionality absorbed into scope-enforcer hook + skill-chain-enforcer.
 - `figma-integration/` — superseded by the figma plugin in `reference/` and the `figma-*` skills.
@@ -48,6 +48,7 @@ These lost their user-facing role when the plugin migration happened (commit 124
 - `research-store/` — retired 2026-04-17; replaced by the `research` skill's persistent knowledge store.
 - `secret-manager/` — retired 2026-04-17; `.harness/secrets.env` has always been the authoritative secret store.
 - `sentry-integration/` — retired 2026-04-17; replaced by the `error-tracking` skill.
+- `task-classifier/` — retired 2026-04-17; experimental harness-tuning module, never wired into production.
 
 ## Deletion protocol
 
