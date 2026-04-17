@@ -28,7 +28,7 @@ These lost their user-facing role when the plugin migration happened (commit 124
 
 - `commander/` — orchestrator daemon. Replaced by the `commander` agent + `startup-init` skill.
 - `agent-loop/` — mode-switching runtime. Replaced by skill chains + `skill-chain-enforcer`.
-- `api-generator/`, `schema-generator/`, `spec-generator/` — codegen experiments; overlapping scope with `shape` + `convex-schema-validator` skills.
+- `api-generator/`, `schema-generator/` — codegen experiments; overlapping scope with `shape` + `convex-schema-validator` skills.
 - `fixed-boundary/` — import-boundary checker. Functionality absorbed into scope-enforcer hook + skill-chain-enforcer.
 - `figma-integration/` — superseded by the figma plugin in `reference/` and the `figma-*` skills.
 - `github-state/` — replaced by the `github-state-manager` skill.
@@ -51,6 +51,7 @@ These lost their user-facing role when the plugin migration happened (commit 124
 - `config-optimizer/` — retired 2026-04-17; experimental harness-tuning module (budget-rate analyzer and recommendations) never wired into production.
 - `adaptive-loadout/` — retired 2026-04-17; experimental startup-type → skill-manifest mapper never wired into production.
 - `feature-decomposer/` — retired 2026-04-17; codegen experiment (decomposer + dependency graph) whose scope is now owned by the `shape` skill.
+- `spec-generator/` — retired 2026-04-17; product-spec codegen experiment whose scope is now owned by the `shape` skill's interview output.
 
 ## Deletion protocol
 

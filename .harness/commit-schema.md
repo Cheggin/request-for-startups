@@ -41,7 +41,6 @@ Scope maps to the area of the codebase changed. Use the most specific scope that
 | `github-state` | packages/github-state |
 | `eval` | packages/eval-framework |
 | `impl-loop` | packages/implementation-loop |
-| `spec` | packages/spec-generator |
 | `knowledge` | packages/knowledge |
 | `repo-setup` | packages/repo-setup |
 | `services` | packages/service-validator |
