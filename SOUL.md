@@ -79,7 +79,7 @@ The harness is a cage that makes it safe to run autonomously: hooks enforce what
 - **Phase 2 (Quality)**: GateGuard, phase-scoped tool restriction, config protection hook, stop-time batching, diff-based eval selection, context reset with structured handoffs
 - **Phase 3 (Scale)**: Tiered memory, in-process MCP tool bus, DAG workflows for complex tasks, task-size classifier, per-session cost tracking
 - **Phase 4 (Evolution)**: Continuous skill learning, GAN-style generator/evaluator sprint contracts, risk scoring, compiled binary distribution
-- Built so far: 93 shipped skills, 27 packages (including the CLI, agent-loop, commander, hooks, eval-framework, and harness-dashboard), 12 domain-specific agents, a full CLI, the harness dashboard, Cubic webhook channel, structured handoff system, agent-categories with ground-truth enforcement, and Level 5 end-to-end validation passing with 590+ tests
+- Built so far: 121 shipped skills and 32 agents exposed through the startup-harness Claude Code plugin (the pre-plugin CLI layer was retired in commit 124e850 — skills and agents are now the entire user surface), 2 deterministic skill-chain flows enforced by hooks/skill-chain-enforcer.mjs, the harness dashboard, Cubic webhook channel, structured handoff system, agent-categories with ground-truth enforcement, and Level 5 end-to-end validation passing with 590+ tests. A node-native plugin load test (scripts/validate-plugin.mjs, wired into CI) catches frontmatter / manifest / chain drift before merge.
 
 ---
 
