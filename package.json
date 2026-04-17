@@ -1,6 +1,10 @@
 {
   "name": "startup-harness",
   "private": true,
+  "bin": {
+    "omc": "bridge/cli.cjs",
+    "startup-harness": "bridge/cli.cjs"
+  },
   "scripts": {
     "test": "bun run test:all",
     "test:all": "for dir in packages/*/; do (cd $dir && bun test 2>/dev/null) || true; done",
