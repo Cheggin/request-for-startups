@@ -153,6 +153,8 @@ Plus deterministic enforcement hooks that ship with the plugin:
 - `completion-signal` — writes a session-done signal on every Stop so `/startup-harness:review` can pick it up
 - `gateguard` — Read-before-Edit gate to prevent uninformed changes
 
+Load-test the plugin with `npm run validate` (node-native, no bun). It parses `.claude-plugin/plugin.json`, `marketplace.json`, every `hooks/*.mjs` via `node --check`, every `SKILL.md` / agent `.md` frontmatter, and `chains/skill-chains.json` — including that every skill referenced in a chain exists in `skills/`.
+
 ## Skills (121)
 
 Every skill has frontmatter: `group`, `prerequisites`, `next`, `workflows`. Three skills are always-load guards: `anti-ai-writing`, `verify`, `avoid-feature-creep`.
