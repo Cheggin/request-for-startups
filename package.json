@@ -1,5 +1,9 @@
 {
   "name": "startup-harness",
+  "version": "1.0.0",
+  "description": "Autonomous startup builder plugin — 121 skills, 32 agents, deterministic skill-chain enforcement, 11-event-type hook coverage, bundled OMC runtime. Standalone: no dependency on oh-my-claudecode plugin.",
+  "repository": "https://github.com/Cheggin/request-for-startups",
+  "license": "MIT",
   "private": true,
   "bin": {
     "omc": "bridge/cli.cjs",

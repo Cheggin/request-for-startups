@@ -1,7 +1,7 @@
 {
   "name": "startup-harness",
-  "version": "0.8.0",
-  "description": "Autonomous startup builder — takes an idea and builds the entire company: research, design, code, deploy, grow. 32 agents, 121 skills, magic-keyword skill detection, deterministic skill-chain enforcement, plugin-shipped hooks. Encapsulates all oh-my-claudecode functionality inline. Validated: built 3 startups (B2C, devtool, B2B SaaS) from single sentences.",
+  "version": "1.0.0",
+  "description": "Autonomous startup builder — idea to deployed company. 121 skills (37 OMC + 84 custom), 32 agents, deterministic skill-chain enforcement across 4 flows, hooks on all 11 Claude Code event types, bundled OMC runtime + MCP server + bridge CLI. Standalone: no dependency on the oh-my-claudecode plugin. Validated: built 3 startups (B2C, devtool, B2B SaaS) from single sentences.",
   "author": {
     "name": "Reagan Hsu"
   },
