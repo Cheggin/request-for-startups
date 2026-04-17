@@ -30,6 +30,13 @@ export function TraceLog({ events }: TraceLogProps) {
   return (
     <div className="max-h-64 overflow-y-auto" role="log" aria-label="Hook trace events">
       <table className="w-full text-[12px] font-mono">
+        <thead className="sr-only">
+          <tr>
+            <th scope="col">Time</th>
+            <th scope="col">Type</th>
+            <th scope="col">Content</th>
+          </tr>
+        </thead>
         <tbody>
           {events.map((ev, i) => (
             <tr key={`${ev.file}-${i}`} className="border-b" style={{ borderColor: COLORS.borderSubtle }}>

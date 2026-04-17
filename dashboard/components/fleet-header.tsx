@@ -37,14 +37,15 @@ function LastUpdated() {
 
 export function FleetHeader({ summary, ceoAgent }: FleetHeaderProps) {
   return (
-    <div className="border-b" style={{ borderColor: COLORS.border }}>
+    <header className="border-b" style={{ borderColor: COLORS.border }}>
       <div className="max-w-7xl mx-auto px-6 py-6">
+        <h1 className="sr-only">Fleet Dashboard</h1>
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex items-center gap-6 sm:gap-10 flex-wrap">
+          <div className="flex items-center gap-6 sm:gap-10 flex-wrap" role="group" aria-label="Fleet status summary">
             <StatBlock value={summary.running} label="Running" color={COLORS.running} />
             <StatBlock value={summary.idle} label="Idle" color={COLORS.idle} />
             <StatBlock value={summary.stuck} label="Stuck" color={COLORS.stuck} />
-            <div className="hidden sm:block w-px h-12" style={{ backgroundColor: COLORS.border }} />
+            <div className="hidden sm:block w-px h-12" style={{ backgroundColor: COLORS.border }} aria-hidden="true" />
             <StatBlock value={summary.total} label="Total" color={COLORS.textPrimary} />
           </div>
 
@@ -54,6 +55,7 @@ export function FleetHeader({ summary, ceoAgent }: FleetHeaderProps) {
                 <span
                   className={`inline-block w-2 h-2 rounded-full ${ceoAgent ? "animate-pulse-dot" : ""}`}
                   style={{ backgroundColor: ceoAgent ? COLORS.running : COLORS.textTertiary }}
+                  aria-hidden="true"
                 />
                 <span className="text-[11px] font-medium uppercase tracking-widest" style={{ color: COLORS.textTertiary }}>
                   CEO Pane
@@ -71,6 +73,6 @@ export function FleetHeader({ summary, ceoAgent }: FleetHeaderProps) {
           </div>
         </div>
       </div>
-    </div>
+    </header>
   );
 }

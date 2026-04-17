@@ -53,14 +53,14 @@ export function NudgeInput({ paneId, label, onSent }: NudgeInputProps) {
         placeholder="Type a nudge, press Enter..."
         disabled={sending}
         aria-label={`Nudge message for ${label}`}
-        className="flex-1 min-w-0 px-2 py-1 text-[13px] font-mono rounded border border-border bg-surface placeholder:text-text-tertiary focus:outline-none focus:border-info disabled:opacity-50"
+        className="flex-1 min-w-0 px-2 py-1 text-[13px] font-mono rounded border border-border bg-surface placeholder:text-text-tertiary focus:outline-2 focus:outline-info focus:-outline-offset-1 disabled:opacity-50"
       />
       <button
         type="button"
         onClick={send}
         disabled={sending || !value.trim()}
         aria-label={`Send nudge to ${label}`}
-        className="px-2 py-1 text-[11px] font-medium uppercase tracking-wide rounded border border-border bg-surface hover:bg-surface-raised disabled:opacity-30 transition-colors"
+        className="px-2 py-1 text-[11px] font-medium uppercase tracking-wide rounded border border-border bg-surface hover:bg-surface-raised disabled:opacity-30 transition-colors focus:outline-2 focus:outline-info focus:-outline-offset-1"
       >
         {sending ? "Sending" : "Send"}
       </button>
