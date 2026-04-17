@@ -339,28 +339,23 @@ Defined in `.harness/stacks.yml`:
 
 ## Packages
 
-| Package | Tests | What |
-|---------|-------|------|
-| cli | 33 | `harness` command with 12 command groups |
-| commander | 48 | Dispatcher, monitor, handoff, investor updates |
-| hooks | 28 | GateGuard, config-protection, budget-enforcer |
-| github-state | 41 | Issues, project board, audit trail, context rebuild |
-| eval-framework | 59 | 3-tier eval (static, E2E, LLM judge) |
-| implementation-loop | 24 | TDD → Cubic → Visual QA → Ship cycle |
-| spec-generator | 23 | Idea → product spec with startup type detection |
-| feature-decomposer | 39 | Spec → features with dependency graph |
-| knowledge | 56 | Karpathy wiki: ingest, query, lint |
-| repo-setup | 29 | Scaffold repos, configure services, install hooks |
-| service-validator | 24 | Validate all service connections |
-| webhook-receiver | 33 | Universal multi-source webhook receiver |
-| secret-manager | 30 | Credential storage, sync, detection, rotation |
-| sentry-integration | 18 | Error routing, agent-friendly formatting |
-| config-optimizer | 33 | Auto-tune agent configs from performance data |
-| task-classifier | 25 | Trivial/moderate/complex task routing |
-| fixed-boundary | 25 | Frozen paths enforcement |
-| cubic-channel | 30 | Cubic → Convex → Claude Code channel |
-| adaptive-loadout | — | Startup type → skill selection |
-| figma-integration | — | Spec → Figma designs |
+Plugin-distributed functionality lives at the repo root (`skills/`, `agents/`, `hooks/`, `chains/`, `commands/`, `.claude-plugin/`). The `packages/` directory holds ancillary infrastructure plus a few test-build artifacts — see `packages/README.md` for the full classification ledger with retirement timestamps.
+
+| Package | What |
+|---------|------|
+| hooks | TS sources for plugin hooks + the project-local hook set (gateguard, skill-chain-enforcer, completion-signal, config-protection, scope-enforcer, branch-enforcer, metrics-gate, deploy-gate, validate-commit-msg, validate-issue-create, inter-agent-signal) |
+| harness-dashboard | Next.js dashboard — agent monitoring, growth intel, deploy health (visx) |
+| eval-framework | 3-tier eval (static, E2E, LLM judge) |
+| cubic-channel | Cubic → Convex → Claude Code code-review channel |
+| webhook-receiver | Universal multi-source webhook receiver |
+| knowledge | Karpathy wiki: ingest, query, lint |
+| repo-setup | Scaffold repos, configure services, install hooks |
+| service-validator | Validate all service connections |
+| fixed-boundary | Frozen paths enforcement |
+| figma-integration | Spec → Figma designs |
+| website-template | Canonical Next.js scaffold template |
+| mention-monitor | Social mention monitor across HN, Reddit, Twitter (scheduled for retirement — replaced by `social-intelligence` skill; blocked on updating the dashboard reference) |
+| tab-commander-site | Test startup build (active dev) |
 
 ## Research Foundation
 
@@ -476,28 +471,20 @@ Legal pages (ToS, Privacy Policy), SEO setup (sitemap, meta tags, structured dat
 │   ├── Operate (6)            post-deploy-loop, uptime-monitor, error-tracking, incident-response, log-aggregation, cost-tracker
 │   └── Comms (6)              anti-ai-writing, investor-updates, slack-course-correction, documentation-generator, readme-generator, contributing-guide
 │
-├── packages/                  27 packages with 590+ tests
-│   ├── cli/                   Harness CLI (12 command groups)
-│   ├── harness-dashboard/     Web dashboard — agent monitoring, growth intel, deploy health (Next.js + visx)
-│   ├── commander/             Orchestrator (dispatcher, monitor, handoff, investor updates)
-│   ├── hooks/                 GateGuard (read before edit), config-protection
-│   ├── knowledge/             Karpathy wiki (ingest, query, lint)
+├── packages/                  Ancillary infrastructure (see packages/README.md for the ledger)
+│   ├── hooks/                 TS sources for plugin + project hooks
+│   ├── harness-dashboard/     Next.js dashboard — agent monitoring, growth intel, deploy health (visx)
 │   ├── eval-framework/        3-tier eval (static, E2E, LLM judge)
-│   ├── implementation-loop/   TDD → Cubic → Visual QA → Ship cycle
-│   ├── spec-generator/        Idea → product spec with startup type detection
-│   ├── feature-decomposer/    Spec → features with dependency graph
+│   ├── cubic-channel/         Cubic → Convex → Claude Code code-review channel
+│   ├── webhook-receiver/      Universal multi-source webhook receiver
+│   ├── knowledge/             Karpathy wiki (ingest, query, lint)
 │   ├── repo-setup/            Scaffold repos, configure services, install hooks
 │   ├── service-validator/     Validate all service connections
-│   ├── github-state/          Issues + Project board + audit trail + context rebuild
-│   ├── webhook-receiver/      Universal multi-source webhook receiver
-│   ├── cubic-channel/         Cubic → Convex → Claude Code channel
-│   ├── secret-manager/        Credential storage, sync, detection, rotation
-│   ├── sentry-integration/    Error routing, agent-friendly formatting
-│   ├── config-optimizer/      Auto-tune agent configs from performance data
-│   ├── task-classifier/       Trivial/moderate/complex task routing
 │   ├── fixed-boundary/        Frozen paths enforcement
 │   ├── figma-integration/     Spec → Figma designs
-│   └── website-template/      Canonical Next.js scaffold
+│   ├── mention-monitor/       Social-mention monitor (retirement pending)
+│   ├── tab-commander-site/    Test startup build (active)
+│   └── website-template/      Canonical Next.js scaffold template
 │
 ├── templates/                 Integration templates
 │   ├── stripe/                Embedded Checkout, webhooks, subscription state
