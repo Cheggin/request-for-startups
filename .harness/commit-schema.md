@@ -37,7 +37,6 @@ Scope maps to the area of the codebase changed. Use the most specific scope that
 | `agent-loop` | packages/agent-loop |
 | `cli` | packages/cli |
 | `hooks` | packages/hooks |
-| `github-state` | packages/github-state |
 | `eval` | packages/eval-framework |
 | `impl-loop` | packages/implementation-loop |
 | `knowledge` | packages/knowledge |

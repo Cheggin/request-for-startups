@@ -29,7 +29,6 @@ These lost their user-facing role when the plugin migration happened (commit 124
 - `agent-loop/` — mode-switching runtime. Replaced by skill chains + `skill-chain-enforcer`.
 - `fixed-boundary/` — import-boundary checker. Functionality absorbed into scope-enforcer hook + skill-chain-enforcer.
 - `figma-integration/` — superseded by the figma plugin in `reference/` and the `figma-*` skills.
-- `github-state/` — replaced by the `github-state-manager` skill.
 - `idea-grader/` — one-off scoring experiment.
 - `implementation-loop/` — replaced by the `autopilot` and `ralph` skills.
 - `knowledge/` — knowledge-wiki store; content moved into the wiki-* skills.
@@ -53,6 +52,7 @@ These lost their user-facing role when the plugin migration happened (commit 124
 - `api-generator/` — retired 2026-04-17; API-route codegen whose scope is now owned by the `shape` skill + `convex-http-actions` for handler scaffolding.
 - `schema-generator/` — retired 2026-04-17; Convex-schema codegen whose scope is now owned by the `convex-schema-validator` skill.
 - `commander/` — retired 2026-04-17; orchestrator daemon replaced by the `commander` agent + `startup-init` skill.
+- `github-state/` — retired 2026-04-17; replaced by the `github-state-manager` and `issue-creator` skills.
 
 ## Deletion protocol
 
