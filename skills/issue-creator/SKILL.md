@@ -23,11 +23,11 @@ Before drafting or creating an issue, read these files:
 
 If you will actually run `gh issue create` or validate a command, also read:
 
-4. `packages/hooks/src/validate-issue-create.ts`
+4. `.claude/hooks/validate-issue-create.mjs`
 
 Do not rely on memory. When sources disagree, use this precedence:
 
-1. `packages/hooks/src/validate-issue-create.ts` for what the CLI hook will accept
+1. `.claude/hooks/validate-issue-create.mjs` for what the CLI hook will accept
 2. `.harness/issue-schema.md` for the normalized body shape
 3. `.github/ISSUE_TEMPLATE/*.yml` for wording and field intent
 
