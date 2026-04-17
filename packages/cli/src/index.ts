@@ -85,6 +85,8 @@ ${bold}Evals:${reset}
 ${bold}Analyze:${reset}
   ${green}analyze${reset} <pane-name>                Audit agent pane compliance
   ${green}analyze --all${reset}                      Audit all agent panes
+  ${green}review${reset} <signal>                    Third-party review of a finished session
+  ${green}review --all-pending${reset}               Review every .harness/signals/done-*.json
 
 ${bold}Deploy:${reset}
   ${green}deploy staging${reset}                    Deploy to staging
@@ -182,6 +184,11 @@ async function main(): Promise<void> {
     }
     case "analyze": {
       const mod = await import("./commands/analyze.js");
+      mod.run(commandArgs);
+      break;
+    }
+    case "review": {
+      const mod = await import("./commands/review.js");
       mod.run(commandArgs);
       break;
     }

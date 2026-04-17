@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run packages/hooks/src/run-inter-agent-signal.ts"
+            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-inter-agent-signal.ts"
           }
         ]
       },
@@ -13,7 +13,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run packages/hooks/src/run-auto-finish.ts"
+            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-auto-finish.ts"
           }
         ]
       },
@@ -21,7 +21,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run packages/hooks/src/run-context-handoff.ts"
+            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-completion-signal.ts"
           }
         ]
       }
@@ -31,7 +31,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run packages/hooks/src/run-inter-agent-signal.ts"
+            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-inter-agent-signal.ts"
           }
         ]
       }
@@ -42,7 +42,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run packages/hooks/src/run-gateguard.ts"
+            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-gateguard.ts"
           }
         ]
       },
@@ -51,23 +51,23 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run packages/hooks/src/run-gateguard.ts"
+            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-gateguard.ts"
           },
           {
             "type": "command",
-            "command": "bun run packages/hooks/src/run-config-protection.ts"
+            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-config-protection.ts"
           },
           {
             "type": "command",
-            "command": "bun run packages/hooks/src/run-scope-enforcer.ts"
+            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-scope-enforcer.ts"
           },
           {
             "type": "command",
-            "command": "bun run packages/hooks/src/run-metrics-gate.ts"
+            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-metrics-gate.ts"
           },
           {
             "type": "command",
-            "command": "bun run packages/hooks/src/run-skill-chain-enforcer.ts"
+            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-skill-chain-enforcer.ts"
           }
         ]
       },
@@ -76,19 +76,19 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun run packages/hooks/src/run-config-protection.ts"
+            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-config-protection.ts"
           },
           {
             "type": "command",
-            "command": "bun run packages/hooks/src/run-scope-enforcer.ts"
+            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-scope-enforcer.ts"
           },
           {
             "type": "command",
-            "command": "bun run packages/hooks/src/run-metrics-gate.ts"
+            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-metrics-gate.ts"
           },
           {
             "type": "command",
-            "command": "bun run packages/hooks/src/run-skill-chain-enforcer.ts"
+            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-skill-chain-enforcer.ts"
           }
         ]
       },
@@ -97,27 +97,27 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/log-commands.sh"
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/log-commands.sh"
           },
           {
             "type": "command",
-            "command": "bun run packages/hooks/src/validate-commit-msg.ts"
+            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/validate-commit-msg.ts"
           },
           {
             "type": "command",
-            "command": "bun run packages/hooks/src/validate-issue-create.ts"
+            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/validate-issue-create.ts"
           },
           {
             "type": "command",
-            "command": "bun run packages/hooks/src/run-deploy-gate.ts"
+            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-deploy-gate.ts"
           },
           {
             "type": "command",
-            "command": "bun run packages/hooks/src/run-metrics-gate.ts"
+            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-metrics-gate.ts"
           },
           {
             "type": "command",
-            "command": "bun run packages/hooks/src/branch-enforcer.ts"
+            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/branch-enforcer.ts"
           }
         ]
       }
