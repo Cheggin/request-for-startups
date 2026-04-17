@@ -19,6 +19,7 @@
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { basename, relative, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const WRITE_TOOL_NAMES = new Set(['Edit', 'Write', 'MultiEdit']);
 const ISSUE_VIEW_PATTERN = /\bgh issue view\s+(\d+)\b/i;
@@ -71,7 +72,7 @@ const SCOPE_PREFIXES = [
   { prefix: 'SOUL.md', scope: 'readme' },
 ];
 
-function detectAgentName(fallbackCwd) {
+export function detectAgentName(fallbackCwd) {
   if (process.env.HARNESS_AGENT) return process.env.HARNESS_AGENT;
   try {
     const windowName = spawnSync(
@@ -152,7 +153,7 @@ function readTranscriptEntries(transcriptPath) {
     .filter((e) => e !== null);
 }
 
-function parseTranscript(transcriptPath, cwd) {
+export function parseTranscript(transcriptPath, cwd) {
   const entries = readTranscriptEntries(transcriptPath);
   const touchedFiles = new Set();
   let issueNumber;
@@ -227,7 +228,7 @@ function branchLooksDedicatedToIssue(branchName, issueNumber) {
   return Number.parseInt(match[1] ?? '', 10) === issueNumber;
 }
 
-function selectFilesToCommit(changedFiles, touchedFiles, branchName, issueNumber) {
+export function selectFilesToCommit(changedFiles, touchedFiles, branchName, issueNumber) {
   const meaningful = changedFiles
     .map((e) => e.path)
     .filter((p) => !isIgnoredPath(p));
@@ -274,7 +275,7 @@ function trimCommitSubject(subject) {
   return subject.slice(0, 69).trimEnd() + '...';
 }
 
-function buildCommitMessage({ issueTitle, taskSummary, files }) {
+export function buildCommitMessage({ issueTitle, taskSummary, files }) {
   const type = extractIssueType(issueTitle);
   const scope = inferCommitScope(files);
   const baseDescription = taskSummary || issueTitle.replace(/^\[[^\]]+\]\s*/, '');
@@ -283,7 +284,7 @@ function buildCommitMessage({ issueTitle, taskSummary, files }) {
   return trimCommitSubject(prefix + description);
 }
 
-function looksTaskComplete(text, stopReason) {
+export function looksTaskComplete(text, stopReason) {
   if (!text || stopReason !== 'end_turn') return false;
   const lower = text.toLowerCase();
   if (BLOCKER_HINTS.some((h) => lower.includes(h))) return false;
@@ -348,7 +349,7 @@ function pushCurrentBranch(cwd, runner, branchName) {
   runOrThrow(runner, 'git', ['push', '-u', 'origin', branchName], cwd);
 }
 
-function runAutoFinish(input, options) {
+export function runAutoFinish(input, options) {
   const cwd = options?.cwd || input.cwd || process.cwd();
   const runner = options?.runner || defaultRunner;
 
@@ -432,15 +433,21 @@ function readStopInputFromStdin(stdin) {
   });
 }
 
-try {
-  const input = await readStopInputFromStdin(process.stdin);
-  const result = runAutoFinish(input);
-  if (result.status === 'committed') {
-    console.log(
-      `[AutoFinish] committed ${result.commitSha?.slice(0, 7)} and closed #${result.issueNumber}`,
-    );
+const isDirectRun =
+  import.meta.url === `file://${process.argv[1]}` ||
+  import.meta.url === `file://${fileURLToPath(import.meta.url)}` && process.argv[1] === fileURLToPath(import.meta.url);
+
+if (isDirectRun) {
+  try {
+    const input = await readStopInputFromStdin(process.stdin);
+    const result = runAutoFinish(input);
+    if (result.status === 'committed') {
+      console.log(
+        `[AutoFinish] committed ${result.commitSha?.slice(0, 7)} and closed #${result.issueNumber}`,
+      );
+    }
+  } catch (error) {
+    // Stop hooks must never block session shutdown.
+    console.error(`[AutoFinish] Failed: ${String(error)}`);
   }
-} catch (error) {
-  // Stop hooks must never block session shutdown.
-  console.error(`[AutoFinish] Failed: ${String(error)}`);
 }
