@@ -40,13 +40,27 @@ The `harness init` command walks you through a founder interview, validates your
 
 ## Install as Plugin
 
-The harness is a **Claude Code plugin**. Install it in any project:
+The harness is a **Claude Code plugin**. Inside any Claude Code session:
 
-```bash
-claude plugins add Cheggin/request-for-startups
+```
+/plugin marketplace add Cheggin/request-for-startups
+/plugin install startup-harness@harness
 ```
 
-All 96 skills become available as `/startup-harness:<skill-name>` in any Claude Code session. Skills auto-update when the repo is pushed.
+The first command registers this repo as a marketplace named `harness`. The second installs the `startup-harness` plugin from it. All 96 skills become available as `/startup-harness:<skill-name>` and 13 agents become available as `@startup-harness:<agent-name>` in any Claude Code session on this machine.
+
+To update to the latest version later:
+
+```
+/plugin marketplace update harness
+```
+
+To uninstall:
+
+```
+/plugin uninstall startup-harness@harness
+/plugin marketplace remove harness
+```
 
 ## Architecture
 
@@ -105,32 +119,39 @@ Every agent runs a pre/post learning loop:
 - After task: ingest what worked/failed back into the wiki
 - Track performance in a ledger (keep/discard decisions)
 
-## CLI Commands
+## How you use it — slash commands, not a CLI
 
-```bash
-harness init              # Full startup lifecycle (12 phases)
-harness resume            # Continue from where you left off
-harness status            # Comprehensive overview
+There is no `harness` binary. The entire surface is Claude Code skills + agents, reachable as:
 
-harness agent list        # All agents with model, level, status
-harness agent spawn <n>   # Spawn an agent in tmux
-harness agent kill <n>    # Kill a running agent
-
-harness team start <n>    # Coordinated multi-agent execution
-harness feature list      # Feature progress (--done, --todo, --progress)
-harness skill list        # Browse skills by category
-harness stack extend <t>  # Add a tool from the catalog
-
-harness eval static       # Tier 1: parse validation
-harness eval e2e          # Tier 2: behavioral tests
-harness eval judge        # Tier 3: LLM quality scoring
-
-harness deploy staging    # Deploy to staging
-harness deploy production # Deploy to production (requires rollback plan)
-harness update post       # Post investor update to Slack
+```
+/startup-harness:startup-init          # Full startup lifecycle (12 phases)
+/startup-harness:autopilot             # Autonomous idea → working code
+/startup-harness:ralph                 # Self-referential loop until completion
+/startup-harness:team                  # Multi-agent tmux coordination
+/startup-harness:plan                  # Strategic planning with optional interview
+/startup-harness:deep-interview        # Socratic ambiguity-gated requirements
+/startup-harness:review                # Third-party review of finished sessions
+/startup-harness:website-creation      # Enforced skill chain for website builds
+/startup-harness:deploy-pipeline       # Vercel / Railway / Convex deploy
+...120 skills total across orchestration, design, build, quality, ship, grow, ops, comms
 ```
 
-## Skills (96)
+And 32 agents reachable as `@startup-harness:<name>`:
+
+```
+@startup-harness:website       @startup-harness:backend       @startup-harness:deploy
+@startup-harness:architect     @startup-harness:critic        @startup-harness:designer
+@startup-harness:executor      @startup-harness:planner       @startup-harness:qa-tester
+...32 total
+```
+
+Plus deterministic enforcement hooks that ship with the plugin:
+
+- `skill-chain-enforcer` — blocks Edit/Write until the current flow's required phase skills have fired
+- `completion-signal` — writes a session-done signal on every Stop so `/startup-harness:review` can pick it up
+- `gateguard` — Read-before-Edit gate to prevent uninformed changes
+
+## Skills (120)
 
 Every skill has frontmatter: `group`, `prerequisites`, `next`, `workflows`. Three skills are always-load guards: `anti-ai-writing`, `verify`, `avoid-feature-creep`.
 

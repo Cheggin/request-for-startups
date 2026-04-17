@@ -1,7 +1,0 @@
-{
-  "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"bun -e '\\nimport { parse } from \\\"yaml\\\";\\nimport { readFileSync } from \\\"fs\\\";\\nconst content = readFileSync(\\\".harness/agent-categories.yml\\\", \\\"utf-8\\\");\\nconst parsed = parse(content);...",
-  "error": "Exit code 1\n1 | \n2 | import { parse } from \"yaml\";\n3 | import { readFileSync } from \"fs\";\n4 | const content = readFileSync(\".harness/agent-categories.yml\", \"utf-8\");\n                    ^\nENOENT: no such file or directory, open '.harness/agent-categories.yml'\n    path: \".harness/agent-categories.yml\",\n syscall: \"open\",\n   errno: -2,\n    code: \"ENOENT\"\n\n      at /Users/reagan/Documents/GitHub/request-for-startups/packages/cli/[eval]:4:17\n      at loadAndEvaluateModule (2:1)\n\nBun v1.3.10 (macOS ar...",
-  "timestamp": "2026-04-14T23:48:36.661Z",
-  "retry_count": 1
-}
