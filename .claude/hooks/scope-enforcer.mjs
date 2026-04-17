@@ -14,10 +14,11 @@
 
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const HARNESS_DIR = join(process.cwd(), '.harness');
 
-const CATEGORY_SCOPES = {
+export const CATEGORY_SCOPES = {
   coding: {
     allow: ['src/', 'app/', 'components/', 'lib/', 'pages/', 'public/', 'styles/', 'tests/', 'test/', '__tests__/', 'convex/'],
     deny: ['.harness/', '.claude/', 'agents/', 'skills/', 'packages/hooks/', 'packages/cli/'],
@@ -44,7 +45,7 @@ const CATEGORY_SCOPES = {
   },
 };
 
-function getAgentCategories() {
+export function getAgentCategories() {
   const agentName = process.env.HARNESS_AGENT;
   if (!agentName) return null;
 
@@ -60,7 +61,7 @@ function getAgentCategories() {
   }
 }
 
-function isPathAllowed(filePath, categories) {
+export function isPathAllowed(filePath, categories) {
   const relative = filePath.replace(process.cwd() + '/', '');
 
   const mergedAllow = [];
@@ -93,34 +94,32 @@ function isPathAllowed(filePath, categories) {
   return true;
 }
 
-const chunks = [];
-process.stdin.on('data', (chunk) => chunks.push(chunk.toString()));
-process.stdin.on('end', () => {
-  const raw = chunks.join('');
-  try {
-    const input = JSON.parse(raw);
-    const filePath = input.tool_input?.file_path || '';
+const isDirectRun =
+  process.argv[1] && process.argv[1] === fileURLToPath(import.meta.url);
 
-    if (!filePath) {
+if (isDirectRun) {
+  const chunks = [];
+  process.stdin.on('data', (chunk) => chunks.push(chunk.toString()));
+  process.stdin.on('end', () => {
+    const raw = chunks.join('');
+    try {
+      const input = JSON.parse(raw);
+      const filePath = input.tool_input?.file_path || '';
+
+      if (!filePath) { console.log(raw); return; }
+
+      const categories = getAgentCategories();
+      if (!categories) { console.log(raw); return; }
+
+      if (!isPathAllowed(filePath, categories)) {
+        console.error(
+          `[ScopeEnforcer] ${process.env.HARNESS_AGENT} (${categories.join(', ')}) cannot modify ${filePath} — outside allowed scope`,
+        );
+        process.exit(2);
+      }
       console.log(raw);
-      return;
-    }
-
-    const categories = getAgentCategories();
-    if (!categories) {
+    } catch {
       console.log(raw);
-      return;
     }
-
-    if (!isPathAllowed(filePath, categories)) {
-      console.error(
-        `[ScopeEnforcer] ${process.env.HARNESS_AGENT} (${categories.join(', ')}) cannot modify ${filePath} — outside allowed scope`,
-      );
-      process.exit(2);
-    }
-
-    console.log(raw);
-  } catch {
-    console.log(raw);
-  }
-});
+  });
+}
