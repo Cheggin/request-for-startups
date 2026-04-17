@@ -20,9 +20,16 @@ out/
 # Harness state (local only)
 .harness/secrets.env
 .harness/signals/
+.harness/handoffs/
+.harness/metrics/
+.harness/learnings/
 
 # OMC state
 .omc/state/
+.omc/sessions/
+
+# Firecrawl scratch
+.firecrawl/
 
 # Agent platform directories (created by npx skills add)
 .adal/
