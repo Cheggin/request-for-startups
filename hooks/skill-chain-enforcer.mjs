@@ -5,14 +5,14 @@ import { readFileSync, existsSync } from "fs";
 import { resolve } from "path";
 
 // packages/hooks/src/skill-chain-enforcer.ts
-function phaseSkills(phase) {
+export function phaseSkills(phase) {
   if ("required" in phase)
     return phase.required;
   if ("oneOf" in phase)
     return phase.oneOf;
   return phase.anyOf.of;
 }
-function isPhaseComplete(phase, fired) {
+export function isPhaseComplete(phase, fired) {
   if ("required" in phase)
     return phase.required.every((s) => fired.has(s));
   if ("oneOf" in phase)
@@ -20,7 +20,7 @@ function isPhaseComplete(phase, fired) {
   const hits = phase.anyOf.of.filter((s) => fired.has(s)).length;
   return hits >= phase.anyOf.min;
 }
-function missingFromPhase(phase, fired) {
+export function missingFromPhase(phase, fired) {
   if ("required" in phase)
     return phase.required.filter((s) => !fired.has(s));
   if ("oneOf" in phase) {
@@ -30,14 +30,14 @@ function missingFromPhase(phase, fired) {
   const need = phase.anyOf.min - (phase.anyOf.of.length - missing.length);
   return need > 0 ? missing : [];
 }
-function phaseIndexOfSkill(phases, skill) {
+export function phaseIndexOfSkill(phases, skill) {
   for (let i = 0;i < phases.length; i++) {
     if (phaseSkills(phases[i]).includes(skill))
       return i;
   }
   return -1;
 }
-function matchesGate(filePath, patterns) {
+export function matchesGate(filePath, patterns) {
   for (const pattern of patterns) {
     if (globMatch(filePath, pattern))
       return true;
@@ -48,7 +48,7 @@ function globMatch(path, pattern) {
   const re = new RegExp("^" + pattern.replace(/[.+^$()|[\]\\]/g, "\\$&").replace(/\*\*/g, "::DOUBLESTAR::").replace(/\*/g, "[^/]*").replace(/::DOUBLESTAR::/g, ".*").replace(/\?/g, "[^/]") + "$");
   return re.test(path);
 }
-function findActiveFlow(chains, skillHistory) {
+export function findActiveFlow(chains, skillHistory) {
   let latest = null;
   for (const [name, flow] of Object.entries(chains.flows)) {
     const idx = skillHistory.lastIndexOf(flow.trigger_skill);
@@ -58,7 +58,7 @@ function findActiveFlow(chains, skillHistory) {
   }
   return latest ? { name: latest.name, flow: latest.flow } : null;
 }
-function evaluate(chains, filePath, skillHistory) {
+export function evaluate(chains, filePath, skillHistory) {
   const active = findActiveFlow(chains, skillHistory);
   if (!active)
     return { decision: "ALLOW" };
@@ -146,9 +146,12 @@ function readSkillHistory(transcriptPath) {
   } catch {}
   return skills;
 }
-var chunks = [];
-process.stdin.on("data", (c) => chunks.push(c.toString()));
-process.stdin.on("end", () => {
+const isDirectRun = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
+
+if (isDirectRun) {
+  const chunks = [];
+  process.stdin.on("data", (c) => chunks.push(c.toString()));
+  process.stdin.on("end", () => {
   const raw = chunks.join("");
   try {
     const input = JSON.parse(raw);
@@ -183,4 +186,5 @@ process.stdin.on("end", () => {
   } catch {
     console.log(raw);
   }
-});
+  });
+}
