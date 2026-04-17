@@ -88,7 +88,7 @@
           },
           {
             "type": "command",
-            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/branch-enforcer.ts"
+            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/branch-enforcer.mjs"
           }
         ]
       }
