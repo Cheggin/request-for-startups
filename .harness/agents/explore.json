@@ -1,0 +1,30 @@
+{
+  "name": "explore",
+  "description": "Codebase search specialist for finding files and code patterns",
+  "category": "orchestration",
+  "mcpServers": {},
+  "allowedTools": ["Read", "Bash", "Glob", "Grep"],
+  "fileScope": {
+    "writable": [],
+    "readonly": [
+      "agents/**",
+      "skills/**",
+      "packages/**",
+      ".harness/**",
+      ".claude/**",
+      "src/**",
+      "app/**",
+      "convex/**",
+      "reference/**"
+    ],
+    "blocked": [
+      ".harness/agents/**",
+      ".harness/agent-categories.yml"
+    ]
+  },
+  "rules": [
+    "Read-only explorer — locate files and patterns across the codebase, return structured findings",
+    "Favor Glob/Grep over full-file reads when the question is keyword-scoped",
+    "Report paths + line numbers so callers can navigate directly"
+  ]
+}

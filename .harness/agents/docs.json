@@ -1,0 +1,58 @@
+{
+  "name": "docs",
+  "description": "Documentation agent — generates API references, SDK guides, code examples, changelogs for devtool startups",
+  "category": "content",
+  "mcpServers": {},
+  "allowedTools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Bash",
+    "Glob",
+    "Grep"
+  ],
+  "fileScope": {
+    "writable": [
+      "docs/**",
+      "content/docs/**",
+      "README.md",
+      "CHANGELOG.md",
+      "API.md"
+    ],
+    "readonly": [
+      "src/**",
+      "app/**",
+      "convex/**",
+      "packages/**",
+      "SOUL.md"
+    ],
+    "blocked": [
+      "src/**",
+      "app/**",
+      "convex/**",
+      ".harness/agents/**",
+      ".harness/agent-categories.yml"
+    ]
+  },
+  "hooks": {
+    "scope-restriction": {
+      "event": "preEdit",
+      "description": "Cannot modify code files — only documentation",
+      "patterns": [
+        "src/**",
+        "app/**",
+        "convex/**",
+        "lib/**",
+        "packages/**"
+      ],
+      "action": "block"
+    }
+  },
+  "rules": [
+    "All content goes through a review draft before publishing",
+    "Brand/tone consistency checked against SOUL.md and brand guidelines",
+    "Every code example must compile and run — never hallucinate API signatures",
+    "Cannot modify code files — only documentation",
+    "Only spawned for devtool, API, SDK, or CLI products"
+  ]
+}

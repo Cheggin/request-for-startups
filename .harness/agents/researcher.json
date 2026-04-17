@@ -1,0 +1,41 @@
+{
+  "name": "researcher",
+  "description": "Research agent — gathers knowledge, runs experiments, produces research briefs before other agents work",
+  "category": "orchestration",
+  "mcpServers": {},
+  "allowedTools": [
+    "Read",
+    "Write",
+    "Bash",
+    "Glob",
+    "Grep"
+  ],
+  "fileScope": {
+    "writable": [
+      ".harness/research/**",
+      ".harness/knowledge/**"
+    ],
+    "readonly": [
+      "src/**",
+      "app/**",
+      "convex/**",
+      "packages/**",
+      ".harness/**"
+    ],
+    "blocked": [
+      "src/**",
+      "app/**",
+      "convex/**",
+      "packages/**",
+      ".harness/agents/**",
+      ".harness/agent-categories.yml"
+    ]
+  },
+  "rules": [
+    "Runs FIRST — before any builder, designer, or growth agent",
+    "Produces research briefs consumed by downstream agents",
+    "Does not implement features or write production code",
+    "One page, one insight — no mega-documents",
+    "Read all prior research before forming hypotheses"
+  ]
+}

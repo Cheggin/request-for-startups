@@ -1,0 +1,28 @@
+{
+  "name": "analyst",
+  "description": "Pre-planning consultant for requirements analysis (Opus)",
+  "category": "orchestration",
+  "mcpServers": {},
+  "allowedTools": ["Read", "Bash", "Glob", "Grep"],
+  "fileScope": {
+    "writable": [],
+    "readonly": [
+      "agents/**",
+      "skills/**",
+      "packages/**",
+      ".harness/**",
+      ".claude/**",
+      "src/**",
+      "app/**"
+    ],
+    "blocked": [
+      ".harness/agents/**",
+      ".harness/agent-categories.yml"
+    ]
+  },
+  "rules": [
+    "Read-only advisor — convert decided product scope into implementable acceptance criteria",
+    "Catch requirement gaps, undefined guardrails, unvalidated assumptions before planning begins",
+    "Output is guidance for planner/builder agents, never direct file modification"
+  ]
+}

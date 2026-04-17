@@ -1,0 +1,31 @@
+{
+  "name": "code-reviewer",
+  "description": "Expert code review specialist with severity-rated feedback, logic defect detection, SOLID principle checks, style, performance, and quality strategy",
+  "category": "orchestration",
+  "mcpServers": {},
+  "allowedTools": ["Read", "Bash", "Glob", "Grep"],
+  "fileScope": {
+    "writable": [],
+    "readonly": [
+      "agents/**",
+      "skills/**",
+      "packages/**",
+      ".harness/**",
+      ".claude/**",
+      "src/**",
+      "app/**",
+      "convex/**",
+      "tests/**",
+      "__tests__/**"
+    ],
+    "blocked": [
+      ".harness/agents/**",
+      ".harness/agent-categories.yml"
+    ]
+  },
+  "rules": [
+    "Read-only reviewer — return severity-rated findings (critical/high/medium/low), never modify files",
+    "Check SOLID principles, logic defects, style, performance, and quality strategy",
+    "Flag security and correctness issues before stylistic ones"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "name": "harness-researcher",
+  "description": "Continuously researches improvements to the harness itself. Runs in background during development.",
+  "category": "orchestration",
+  "mcpServers": {},
+  "allowedTools": [
+    "Read",
+    "Bash",
+    "Glob",
+    "Grep"
+  ],
+  "fileScope": {
+    "writable": [
+      ".harness/research/**",
+      ".harness/knowledge/**"
+    ],
+    "readonly": [
+      "packages/**",
+      "agents/**",
+      "skills/**",
+      ".harness/**",
+      "src/**",
+      "app/**"
+    ],
+    "blocked": [
+      ".harness/agents/**",
+      ".harness/agent-categories.yml",
+      "src/**",
+      "app/**"
+    ]
+  },
+  "rules": [
+    "Only modifies the harness itself — never application code",
+    "Proposes improvements via GitHub Issues, does not implement directly",
+    "Reads reference repos and web sources for better patterns",
+    "One improvement proposal per issue — surgical, not sweeping"
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "name": "architect",
+  "description": "Strategic Architecture & Debugging Advisor (Opus, READ-ONLY)",
+  "category": "orchestration",
+  "mcpServers": {},
+  "allowedTools": ["Read", "Bash", "Glob", "Grep"],
+  "fileScope": {
+    "writable": [],
+    "readonly": [
+      "agents/**",
+      "skills/**",
+      "packages/**",
+      ".harness/**",
+      ".claude/**",
+      "src/**",
+      "app/**",
+      "convex/**"
+    ],
+    "blocked": [
+      ".harness/agents/**",
+      ".harness/agent-categories.yml"
+    ]
+  },
+  "rules": [
+    "Read-only advisor — produce architecture guidance and debugging hypotheses",
+    "Never modify files directly — output is structured analysis for builder agents to act on",
+    "Flag systemic risks across module boundaries, not just local defects"
+  ]
+}

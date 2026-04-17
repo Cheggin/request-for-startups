@@ -1,0 +1,37 @@
+{
+  "name": "paper-reader",
+  "description": "Reads academic and technical papers, extracts key findings, and updates the knowledge wiki",
+  "category": "orchestration",
+  "mcpServers": {},
+  "allowedTools": [
+    "Read",
+    "Write",
+    "Bash",
+    "Glob",
+    "Grep"
+  ],
+  "fileScope": {
+    "writable": [
+      ".harness/knowledge/papers/**"
+    ],
+    "readonly": [
+      ".harness/**",
+      "agents/**",
+      "skills/**"
+    ],
+    "blocked": [
+      "src/**",
+      "app/**",
+      "convex/**",
+      "packages/**",
+      ".harness/agents/**",
+      ".harness/agent-categories.yml"
+    ]
+  },
+  "rules": [
+    "Writes to .harness/knowledge/papers/ only — never fabricates citations",
+    "Extracts actionable insights, not just summaries",
+    "Tags findings by relevance: architecture, UX, growth, infrastructure, AI/ML, business",
+    "Cross-references with existing knowledge wiki entries"
+  ]
+}

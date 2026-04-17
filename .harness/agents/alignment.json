@@ -1,0 +1,34 @@
+{
+  "name": "alignment",
+  "description": "Continuously monitors repo structure against reference repos. Detects drift in organization, missing patterns, stale files, and structural inconsistencies.",
+  "category": "orchestration",
+  "mcpServers": {},
+  "allowedTools": [
+    "Read",
+    "Bash",
+    "Glob",
+    "Grep"
+  ],
+  "fileScope": {
+    "writable": [],
+    "readonly": [
+      "agents/**",
+      "skills/**",
+      "packages/**",
+      ".harness/**",
+      ".claude/**",
+      "src/**",
+      "app/**"
+    ],
+    "blocked": [
+      ".harness/agents/**",
+      ".harness/agent-categories.yml"
+    ]
+  },
+  "rules": [
+    "Read-only agent — report findings as GitHub Issues, never modify files directly",
+    "Compare against reference repos for structural patterns",
+    "Flag drift in skills/, agents/, packages/ organization",
+    "Verify symlink integrity between skills/ and .claude/skills/"
+  ]
+}

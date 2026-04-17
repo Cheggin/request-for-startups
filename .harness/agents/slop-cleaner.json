@@ -1,0 +1,65 @@
+{
+  "name": "slop-cleaner",
+  "description": "Continuously monitors and cleans AI-generated slop from the codebase",
+  "category": "quality",
+  "mcpServers": {
+    "cubic-channel": {
+      "command": "bun",
+      "args": [
+        "run",
+        "packages/cubic-channel/channel/index.ts"
+      ],
+      "env": {
+        "CONVEX_URL": "${CONVEX_URL}",
+        "REPO": "${GITHUB_REPO}",
+        "POLL_INTERVAL": "5000"
+      }
+    }
+  },
+  "allowedTools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Bash",
+    "Glob",
+    "Grep",
+    "cubic-channel:mark_processed",
+    "cubic-channel:mark_all_processed"
+  ],
+  "fileScope": {
+    "writable": [
+      "src/**",
+      "app/**",
+      "components/**",
+      "lib/**",
+      "styles/**"
+    ],
+    "readonly": [
+      "packages/**",
+      ".harness/**",
+      "agents/**",
+      "skills/**"
+    ],
+    "blocked": [
+      ".harness/agents/**",
+      ".harness/agent-categories.yml",
+      "packages/**",
+      "agents/**",
+      "skills/**"
+    ]
+  },
+  "hooks": {
+    "gateguard": {
+      "event": "preEdit",
+      "description": "Block Edit without prior Read on the same file",
+      "action": "block_if_not_read"
+    }
+  },
+  "rules": [
+    "Deletion-first workflow — remove before rewrite",
+    "Cannot add new features, only clean existing code",
+    "All changes go through PRs with Cubic review",
+    "Scan git diff for changed files, classify by smell type",
+    "Surgical deletions that preserve behavior"
+  ]
+}

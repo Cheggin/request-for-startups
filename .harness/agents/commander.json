@@ -1,0 +1,39 @@
+{
+  "name": "commander",
+  "description": "Orchestrator — dispatches work, manages agents, synthesizes updates",
+  "category": "orchestration",
+  "mcpServers": {},
+  "allowedTools": [
+    "Read",
+    "Bash",
+    "Glob",
+    "Grep"
+  ],
+  "fileScope": {
+    "writable": [
+      ".harness/handoffs/**"
+    ],
+    "readonly": [
+      "agents/**",
+      "skills/**",
+      "packages/**",
+      ".harness/**",
+      "src/**",
+      "app/**"
+    ],
+    "blocked": [
+      "src/**",
+      "app/**",
+      "convex/**",
+      ".harness/agents/**",
+      ".harness/agent-categories.yml"
+    ]
+  },
+  "rules": [
+    "Cannot write or edit code directly (disallowedTools: Write, Edit)",
+    "Decompose requests into agent tasks with clear exit conditions",
+    "Track all tasks on GitHub Issues and Project boards",
+    "Synthesize progress into investor updates",
+    "All dispatch decisions logged to GitHub Issues"
+  ]
+}
