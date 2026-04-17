@@ -30,21 +30,8 @@
     ],
     "PreToolUse": [
       {
-        "matcher": "Read",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-gateguard.ts"
-          }
-        ]
-      },
-      {
         "matcher": "Edit",
         "hooks": [
-          {
-            "type": "command",
-            "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-gateguard.ts"
-          },
           {
             "type": "command",
             "command": "bun run $CLAUDE_PROJECT_DIR/packages/hooks/src/run-config-protection.ts"
