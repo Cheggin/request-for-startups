@@ -1,34 +1,63 @@
-# Agents
+# AGENTS.md — Runtime-Agnostic Agent Coordination Contract
 
-13 agent definitions in `agents/`. Each agent is a blank Claude Code session whose identity comes from its loaded skills and ground-truth rules.
+## Operating Principles
 
-## Agent Index
+- Solve tasks directly when safe; delegate only when it materially improves quality or speed.
+- Verify before claiming completion.
+- Never skip phases in multi-phase skill workflows.
 
-| Agent | Role | Model | Level | Restrictions |
-|-------|------|-------|-------|-------------|
-| **commander** | Orchestrator — dispatches work, manages agents, synthesizes updates | opus | 4 | No Write, Edit |
-| **ops** | Operations — CI/CD, monitoring, incidents, infrastructure | opus | 3 | — |
-| **researcher** | Gathers knowledge, runs experiments, produces research briefs | opus | 3 | — |
-| **harness-researcher** | Researches improvements to the harness itself | opus | 3 | — |
-| **paper-reader** | Reads papers, extracts findings, updates knowledge wiki | opus | 3 | — |
-| **website** | Frontend — builds UI from designs, runs visual QA | opus | 2 | — |
-| **backend** | Backend — Convex schema, API routes, server logic | opus | 2 | — |
-| **growth** | Growth/analytics — PostHog, SEO, metrics, experiments | opus | 2 | — |
-| **deploy** | Production deployments, rollbacks, health verification | opus | 2 | — |
-| **docs** | API references, SDK guides, code examples, changelogs | opus | 2 | — |
-| **alignment** | Monitors repo structure, detects drift and inconsistencies | opus | 2 | — |
-| **slop-cleaner** | Monitors and cleans AI-generated slop from codebase | opus | 2 | No WebFetch, WebSearch |
-| **writing** | Docs, blog posts, social media, README | opus | 1 | No Edit |
+## Skill Invocation
 
-## Levels
+Skills are invoked via their registered command:
+- **Claude Code**: `/startup-harness:<skill-name>`
+- **Codex CLI**: `$<skill-name>`
 
-- **Level 4**: Full orchestration — can spawn agents, manage projects, access all systems
-- **Level 3**: Research + planning — can read broadly, run experiments, query external sources
-- **Level 2**: Execution — builds, deploys, reviews within scoped directories
-- **Level 1**: Content only — writes text, cannot modify code
+Never interpret a skill name as a description and freestyle the implementation.
+Every phase defined in the skill must execute in order.
 
-## How Agents Work
+## Agent Categories & Scope Enforcement
 
-An agent's identity comes from which skills are loaded. A "website agent" is just a Claude Code session with design + coding + convex skills loaded. Agent-to-skill mapping is defined in `.harness/agent-categories.yml`.
+Agent scopes are enforced by `.harness/hooks/scope-enforcer.mjs`.
+Agent definitions live in `.harness/agents/<name>.json`.
+Categories: coding, content, growth, operations, orchestration, quality.
 
-Agents are spawned in tmux panes via `harness agent spawn <name>` or the `tmux-spawn` skill. The commander dispatches tasks to agents and tracks completion via GitHub Issues.
+## Hook Governance
+
+All hooks live in `.harness/hooks/` and work with both Claude Code and Codex CLI.
+Tool name normalization handles the mapping (Edit/file_edit, Bash/shell, etc.).
+
+### Active Hooks
+- **scope-enforcer**: File access control per agent category
+- **config-protection**: Blocks edits to infrastructure configs
+- **auto-finish**: Auto-commits and closes issues on session stop
+- **inter-agent-signal**: Writes completion/approval state files
+- **deploy-gate**: Requires rollback plan before deploys
+- **branch-enforcer**: Blocks direct pushes to main/master
+- **metrics-gate**: Requires hypothesis for growth agent actions
+- **validate-commit-msg**: Conventional Commits format enforcement
+- **validate-issue-create**: GitHub Issue schema enforcement
+- **log-commands**: Command audit trail
+
+## Inter-Agent Communication
+
+- Signal files: `.harness/signals/<agent>.done` / `.harness/signals/<agent>.needs-approval`
+- Handoff docs: `.harness/handoffs/`
+- Knowledge base: `.harness/knowledge/`
+
+## Verification
+
+Before concluding: confirm no pending work, features function, tests pass.
+If not met, continue rather than stop prematurely.
+
+## Project Rules (from CLAUDE.md)
+
+# Project Rules
+
+## Skill Invocation — Slash Commands Only
+
+Agents MUST invoke skills via their slash command (e.g., `/startup-harness:startup-init`). Never interpret a skill name as a description of what to build and improvise the implementation. The skill contains phase-by-phase instructions that get completely bypassed when an agent freestyles.
+
+- Type the slash command and press Enter — do not paraphrase, summarize, or re-implement what the skill does.
+- Every phase defined in the skill (interview, research, spec, design, build, deploy, growth) must execute in order. No phase may be skipped.
+- If a prompt says "run startup-init" or "run competitor-research", that means invoke `/startup-harness:startup-init` or `/startup-harness:competitor-research` — not "build a startup" or "research competitors" freestyle.
+

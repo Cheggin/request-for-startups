@@ -1,0 +1,69 @@
+{
+  "pre_tool_use": [
+    {
+      "matcher": [
+        "file_edit",
+        "file_write"
+      ],
+      "command": "node .harness/hooks/config-protection.mjs"
+    },
+    {
+      "matcher": [
+        "file_edit",
+        "file_write"
+      ],
+      "command": "node .harness/hooks/scope-enforcer.mjs"
+    },
+    {
+      "matcher": [
+        "file_edit",
+        "file_write",
+        "shell"
+      ],
+      "command": "node .harness/hooks/metrics-gate.mjs"
+    },
+    {
+      "matcher": [
+        "shell"
+      ],
+      "command": "bash .harness/hooks/log-commands.sh"
+    },
+    {
+      "matcher": [
+        "shell"
+      ],
+      "command": "node .harness/hooks/validate-commit-msg.mjs"
+    },
+    {
+      "matcher": [
+        "shell"
+      ],
+      "command": "node .harness/hooks/validate-issue-create.mjs"
+    },
+    {
+      "matcher": [
+        "shell"
+      ],
+      "command": "node .harness/hooks/deploy-gate.mjs"
+    },
+    {
+      "matcher": [
+        "shell"
+      ],
+      "command": "node .harness/hooks/branch-enforcer.mjs"
+    }
+  ],
+  "on_stop": [
+    {
+      "command": "node .harness/hooks/inter-agent-signal.mjs"
+    },
+    {
+      "command": "node .harness/hooks/auto-finish.mjs"
+    }
+  ],
+  "on_permission_request": [
+    {
+      "command": "node .harness/hooks/inter-agent-signal.mjs"
+    }
+  ]
+}
