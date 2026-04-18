@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/inter-agent-signal.mjs"
+            "command": "node .harness/hooks/inter-agent-signal.mjs"
           }
         ]
       },
@@ -13,7 +13,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/auto-finish.mjs"
+            "command": "node .harness/hooks/auto-finish.mjs"
           }
         ]
       }
@@ -23,7 +23,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/inter-agent-signal.mjs"
+            "command": "node .harness/hooks/inter-agent-signal.mjs"
           }
         ]
       }
@@ -34,15 +34,15 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/config-protection.mjs"
+            "command": "node .harness/hooks/config-protection.mjs"
           },
           {
             "type": "command",
-            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/scope-enforcer.mjs"
+            "command": "node .harness/hooks/scope-enforcer.mjs"
           },
           {
             "type": "command",
-            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/metrics-gate.mjs"
+            "command": "node .harness/hooks/metrics-gate.mjs"
           }
         ]
       },
@@ -51,15 +51,15 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/config-protection.mjs"
+            "command": "node .harness/hooks/config-protection.mjs"
           },
           {
             "type": "command",
-            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/scope-enforcer.mjs"
+            "command": "node .harness/hooks/scope-enforcer.mjs"
           },
           {
             "type": "command",
-            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/metrics-gate.mjs"
+            "command": "node .harness/hooks/metrics-gate.mjs"
           }
         ]
       },
@@ -68,27 +68,27 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/log-commands.sh"
+            "command": "bash .harness/hooks/log-commands.sh"
           },
           {
             "type": "command",
-            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/validate-commit-msg.mjs"
+            "command": "node .harness/hooks/validate-commit-msg.mjs"
           },
           {
             "type": "command",
-            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/validate-issue-create.mjs"
+            "command": "node .harness/hooks/validate-issue-create.mjs"
           },
           {
             "type": "command",
-            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/deploy-gate.mjs"
+            "command": "node .harness/hooks/deploy-gate.mjs"
           },
           {
             "type": "command",
-            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/metrics-gate.mjs"
+            "command": "node .harness/hooks/metrics-gate.mjs"
           },
           {
             "type": "command",
-            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/branch-enforcer.mjs"
+            "command": "node .harness/hooks/branch-enforcer.mjs"
           }
         ]
       }
