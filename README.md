@@ -24,32 +24,47 @@ Works for any startup type: B2C, B2B SaaS, devtool, marketplace, hardware+softwa
 
 ## Quick Start
 
-The harness is a **Claude Code plugin**. Inside any Claude Code session:
+The harness is **runtime-agnostic** -- it works with both **Claude Code** and **OpenAI Codex CLI**.
+
+### Claude Code
 
 ```
 /plugin marketplace add Cheggin/request-for-startups
 /plugin install startup-harness@harness
 ```
 
-The first command registers this repo as a marketplace named `harness`. The second installs the `startup-harness` plugin from it. All 121 skills become available as `/startup-harness:<skill-name>` and 32 agents become available as `@startup-harness:<agent-name>` in any Claude Code session on this machine.
-
-Once installed, kick off an autonomous build with:
+All 121 skills become available as `/startup-harness:<skill-name>` and 32 agents as `@startup-harness:<agent-name>`.
 
 ```
 /startup-harness:startup-init
 ```
 
-This walks you through the founder interview, validates your service connections, and then builds the startup end-to-end.
+### Codex CLI
 
-To update to the latest version later:
+```bash
+git clone https://github.com/Cheggin/request-for-startups
+cd request-for-startups
+node .harness/hooks/setup.mjs --runtime codex
+```
+
+This generates `.codex/config.toml`, `.codex/hooks.json`, symlinks skills to `.agents/skills/`, and creates `AGENTS.md`. Skills become available as `$<skill-name>`.
+
+### Existing Repo
+
+To add harness hooks and agent governance to any existing repo:
+
+```bash
+# Copy .harness/ into your repo, then:
+node .harness/hooks/setup.mjs              # auto-detects runtime
+node .harness/hooks/setup.mjs --runtime codex   # Codex only
+node .harness/hooks/setup.mjs --runtime claude  # Claude Code only
+node .harness/hooks/setup.mjs --runtime both    # both runtimes
+```
+
+### Update / Uninstall (Claude Code)
 
 ```
 /plugin marketplace update harness
-```
-
-To uninstall:
-
-```
 /plugin uninstall startup-harness@harness
 /plugin marketplace remove harness
 ```
@@ -82,15 +97,34 @@ commands/          Entry points (startup-init, resume)
 agents/            32 agent definitions (website, backend, growth, writing, ops, deploy, commander, researcher, docs, slop-cleaner, harness-researcher, alignment, paper-reader, plus OMC-merged roles like architect, critic, executor, planner, analyst, debugger, tracer, verifier, designer, qa-tester, git-master, security-reviewer, code-reviewer, code-simplifier, test-engineer, scientist, document-specialist, writer)
 skills/            121 skills as Claude Code plugin format (skills/<name>/SKILL.md)
 templates/         Integration templates (Stripe, Clerk auth, Resend email)
-hooks/             Plugin hooks (node .mjs/.cjs) + hooks.json wiring every Claude Code event type
+hooks/             Plugin hooks (node .mjs/.cjs) + hooks.json wiring every hook event type
 bridge/            OMC CLI + MCP server + tmux team-bridge daemons (direct-merged from OMC)
 dist/              Vendored OMC compiled runtime (476 .js files)
 chains/            Deterministic skill-chain flows (website, startup-e2e, deploy-loop, debug-loop)
 features/          Checklist-driven development tracking
-.harness/          Configuration (stacks, agent categories, tool catalog, knowledge wiki, commit schema, issue schema)
+.harness/          Configuration + runtime-agnostic hooks
+.harness/hooks/    Canonical hook location — works with both Claude Code and Codex CLI
+.codex/            Generated Codex CLI config (config.toml, hooks.json)
+.agents/skills/    Symlink to skills/ for Codex skill discovery
 .claude-plugin/    Plugin manifest — registers as Claude Code marketplace plugin
 .github/           Issue templates (feature, bug) with normalized fields
 ```
+
+## Runtime Adapter
+
+Hooks live in `.harness/hooks/` and are runtime-agnostic. A shared `runtime.mjs` module normalizes tool names between runtimes:
+
+| Claude Code | Codex CLI | Normalized |
+|------------|-----------|------------|
+| `Bash` | `shell` | `Bash` |
+| `Edit` | `file_edit` | `Edit` |
+| `Write` | `file_write` | `Write` |
+| `Read` | `file_read` | `Read` |
+
+Run `node .harness/hooks/setup.mjs` to generate the appropriate config for your runtime. It auto-detects which CLI tools are installed and wires up:
+
+- **Claude Code**: `.claude/settings.json` with PreToolUse/Stop/PermissionRequest hooks
+- **Codex CLI**: `.codex/config.toml` + `.codex/hooks.json` + `.agents/skills/` symlink + `AGENTS.md`
 
 ## How It Works
 
@@ -370,7 +404,9 @@ All plugin-distributed functionality lives at the repo root — no `packages/` s
 | `skills/` | 121 SKILL.md definitions (37 OMC + 84 harness-specific) |
 | `agents/` | 32 agent prompts with per-agent scope configs in `.harness/agents/*.json` |
 | `hooks/` | Plugin-shipped hooks (node `.mjs`/`.cjs`). Wired to every Claude Code hook event type. |
-| `.claude/hooks/` | Repo-local hooks for dev-time enforcement (not shipped to plugin consumers). |
+| `.claude/hooks/` | Legacy hook location (now points to `.harness/hooks/`). |
+| `.harness/hooks/` | Canonical runtime-agnostic hooks — work with both Claude Code and Codex CLI. |
+| `.codex/` | Generated Codex CLI configuration (`config.toml`, `hooks.json`). |
 | `dist/` | Vendored OMC compiled TypeScript runtime (476 `.js` files) — powers the advanced paths of hooks that dynamic-import it. |
 | `bridge/` | Bundled daemons — `mcp-server.cjs` (registered MCP server `t`), `cli.cjs` (the `omc` binary), `team-bridge.cjs` + `team-mcp.cjs` + `runtime-cli.cjs` (tmux-pane orchestration). |
 | `chains/` | `skill-chains.json` — deterministic flow enforcement (website-end-to-end, startup-end-to-end, deploy-loop, debug-loop). |
