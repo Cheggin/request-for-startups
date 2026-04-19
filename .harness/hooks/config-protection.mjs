@@ -28,6 +28,7 @@ const EXEMPT_PATHS = [
   'learnings/',
   'metrics/',
   'hooks/',
+  'skills.yml',
 ];
 
 const PROTECTED_PATHS = [

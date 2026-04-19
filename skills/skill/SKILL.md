@@ -838,10 +838,109 @@ What would you like to do?
 
 ---
 
-## Future Enhancements
+## Skill Configuration (Enable/Disable)
 
-- `/skill export <name>` - Export skill as shareable file
-- `/skill import <file>` - Import skill from file
-- `/skill stats` - Show usage statistics across all skills
-- `/skill validate` - Check all skills for format errors
-- `/skill template <type>` - Create from predefined templates
+Control which skills are active across all runtimes via `.harness/skills.yml`.
+
+### /skill enable <name>
+
+Re-enable a previously disabled skill.
+
+**Behavior:**
+1. Run: `node .harness/hooks/skill-config.mjs enable <name>`
+2. Removes the skill from the `disabled` list in `.harness/skills.yml`
+3. Report result
+
+### /skill disable <name>
+
+Disable a skill so it won't be loaded by any agent.
+
+**Behavior:**
+1. Run: `node .harness/hooks/skill-config.mjs disable <name>`
+2. Adds the skill to the `disabled` list in `.harness/skills.yml`
+3. Report result
+
+### /skill status <name>
+
+Check if a skill is enabled or disabled.
+
+**Behavior:**
+1. Run: `node .harness/hooks/skill-config.mjs status <name>`
+2. Reports ENABLED or DISABLED
+
+---
+
+## Skill Chain Management
+
+Manage deterministic multi-phase skill chains. Built-in chains live in `chains/skill-chains.json`. Custom chains live in `.harness/skills.yml`.
+
+### /skill chain list
+
+Show all skill chains (built-in and custom).
+
+**Behavior:**
+1. Run: `node .harness/hooks/skill-config.mjs chain list`
+2. Displays built-in chains from `chains/skill-chains.json` and custom chains from `.harness/skills.yml`
+
+### /skill chain show <name>
+
+Show full details of a chain including all phases and their required skills.
+
+**Behavior:**
+1. Run: `node .harness/hooks/skill-config.mjs chain show <name>`
+2. Shows description, trigger, gate patterns, and all phases with skills
+
+### /skill chain create <name> <trigger-skill> <description>
+
+Create a new custom skill chain.
+
+**Behavior:**
+1. Run: `node .harness/hooks/skill-config.mjs chain create <name> <trigger> <description>`
+2. Creates an empty chain in `.harness/skills.yml`
+3. Follow up with `chain add-gates` and `chain add-phase` to build it out
+
+### /skill chain add-phase <chain> <phase-name> <skill1,skill2,...>
+
+Add a phase to a custom chain.
+
+**Behavior:**
+1. Run: `node .harness/hooks/skill-config.mjs chain add-phase <chain> <phase> <skills>`
+2. Validates all skill names exist
+3. Appends the phase to the chain
+
+### /skill chain add-gates <chain> <pattern1,pattern2,...>
+
+Add file gate patterns to a custom chain.
+
+**Behavior:**
+1. Run: `node .harness/hooks/skill-config.mjs chain add-gates <chain> <patterns>`
+2. Appends glob patterns that trigger phase enforcement
+
+### /skill chain delete <name>
+
+Delete a custom chain. Built-in chains cannot be deleted.
+
+**Behavior:**
+1. Run: `node .harness/hooks/skill-config.mjs chain delete <name>`
+2. Removes the chain from `.harness/skills.yml`
+
+---
+
+## Example: Custom Chain Workflow
+
+```bash
+# Create a new chain
+/skill chain create api-build convex-schema-validator API-first build
+
+# Add file gate patterns
+/skill chain add-gates api-build convex/**,api/**,server/**
+
+# Add phases in order
+/skill chain add-phase api-build schema convex-schema-validator
+/skill chain add-phase api-build functions convex-functions,convex-http-actions
+/skill chain add-phase api-build test test-generator
+/skill chain add-phase api-build ship deploy-pipeline
+
+# Verify
+/skill chain show api-build
+```

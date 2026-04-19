@@ -41,7 +41,8 @@ const EXEMPT_PATHS = [
   'agents/',
   'learnings/',
   'metrics/',
-  'hooks/',
+    'hooks/',
+  'skills.yml',
 ];
 
 const PROTECTED_PATHS = [
