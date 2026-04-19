@@ -56,8 +56,8 @@ export function createGateGuard() {
 // ── CLI runner ──────────────────────────────────────────────────────────
 
 function sessionStateFile() {
-  const sessionId = process.env.CLAUDE_SESSION_ID || `pid-${process.ppid}`;
   const repoHash = createHash('sha256').update(process.cwd()).digest('hex').slice(0, 8);
+  const sessionId = process.env.CLAUDE_SESSION_ID || 'shared';
   return `/tmp/gateguard-reads-${sessionId}-${repoHash}.json`;
 }
 
