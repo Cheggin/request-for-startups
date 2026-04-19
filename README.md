@@ -232,10 +232,9 @@ Load-test the plugin with `npm run validate` (node-native, no bun). It parses `.
 
 ## Agents (32)
 
-Agents are blank sessions with identity defined by loaded skills. Each maps to a category in `.harness/agent-categories.yml`.
-
 <details>
-<summary><strong>View all 32 agents</strong></summary>
+<summary><strong>View all agents</strong></summary>
+<br>
 
 | Agent | Category | Description |
 |-------|----------|-------------|
@@ -276,213 +275,241 @@ Agents are blank sessions with identity defined by loaded skills. Each maps to a
 
 ## Skills (121)
 
-Every skill is a `skills/<name>/SKILL.md` file with YAML frontmatter. To add a skill, create the directory and file. To enable/disable, use `node .harness/hooks/skill-config.mjs enable|disable <name>`.
+To add a skill, create `skills/<name>/SKILL.md` with YAML frontmatter. To enable/disable:
 
-Invocation:
-- **Claude Code**: `/startup-harness:<skill-name>`
-- **Codex CLI**: `$<skill-name>`
+```bash
+node .harness/hooks/skill-config.mjs disable <name>
+node .harness/hooks/skill-config.mjs enable <name>
+```
 
 <details>
-<summary><strong>Orchestration (20 skills)</strong> — used by: `alignment`, `analyst`, `architect`, `code-reviewer`, `commander`, `critic`, `document-specialist`, `explore`, `harness-researcher`, `paper-reader`, `planner`, `researcher`, `scientist`, `security-reviewer`, `tracer`</summary>
+<summary><strong>Orchestration</strong> (20)</summary>
+<br>
+
+**Agents:** alignment, analyst, architect, code-reviewer, commander, critic, document-specialist, explore, harness-researcher, paper-reader, planner, researcher, scientist, security-reviewer, tracer
 
 | Skill | Description |
 |-------|-------------|
-| `agent-creator` | Create new agent definitions with specific instruction sets, skill assignments, and behavioral rules |
-| `autopilot` | Full autonomous execution from idea to working code |
-| `cancel` | Cancel any active OMC mode (autopilot, ralph, ultrawork, ultraqa, swarm, ultrapilot, pipeline, team) |
-| `context-reset-handler` | Detect context window limits and perform clean resets with structured handoff documents for session  |
-| `debug` | Diagnose the current OMC session or repo state using logs, traces, state, and focused reproduction |
-| `deep-dive` | "2-stage pipeline: trace (causal investigation) -> deep-interview (requirements crystallization) wit |
-| `error-classifier` | Classify errors as FATAL, TRANSIENT, or UNKNOWN and transform raw stack traces into actionable agent |
-| `github-state-manager` | Track all task state via GitHub Issues and Project boards with automated column transitions and audi |
-| `issue-creator` | Turn a one-line request into a schema-compliant GitHub issue draft or creation command. Use when the |
-| `loop-prompt` | Generate optimized loop prompts for agents that run continuously. Use when spawning persistent agent |
-| `ralph` | Self-referential loop until task completion with configurable verification reviewer |
-| `self-improve` | Autonomous evolutionary code improvement engine with tournament selection |
-| `startup-init` | Autonomous startup builder — idea to running company in 11 phases |
-| `team` | N coordinated agents on shared task list using Claude Code native teams |
-| `tiered-memory` | Three-tier memory system (hot, warm, cold) to prevent context pollution with stale state and preserv |
-| `tmux-spawn` | Reliable agent spawning in tmux with load-wait and verification |
-| `trace` | Evidence-driven tracing lane that orchestrates competing tracer hypotheses in Claude built-in team m |
-| `trajectory-logging` | ATIF trajectory serialization with ring buffer for post-hoc debugging, eval dataset construction, an |
-| `ultraqa` | QA cycling workflow - test, verify, fix, repeat until goal met |
-| `ultrawork` | Parallel execution engine for high-throughput task completion |
+| agent-creator | Create new agent definitions with specific instruction sets, skill assignments, and beh... |
+| autopilot | Full autonomous execution from idea to working code |
+| cancel | Cancel any active OMC mode (autopilot, ralph, ultrawork, ultraqa, swarm, ultrapilot, pi... |
+| context-reset-handler | Detect context window limits and perform clean resets with structured handoff documents... |
+| debug | Diagnose the current OMC session or repo state using logs, traces, state, and focused r... |
+| deep-dive | "2-stage pipeline: trace (causal investigation) -> deep-interview (requirements crystal... |
+| error-classifier | Classify errors as FATAL, TRANSIENT, or UNKNOWN and transform raw stack traces into act... |
+| github-state-manager | Track all task state via GitHub Issues and Project boards with automated column transit... |
+| issue-creator | Turn a one-line request into a schema-compliant GitHub issue draft or creation command.... |
+| loop-prompt | Generate optimized loop prompts for agents that run continuously. Use when spawning per... |
+| ralph | Self-referential loop until task completion with configurable verification reviewer |
+| self-improve | Autonomous evolutionary code improvement engine with tournament selection |
+| startup-init | Autonomous startup builder — idea to running company in 11 phases |
+| team | N coordinated agents on shared task list using Claude Code native teams |
+| tiered-memory | Three-tier memory system (hot, warm, cold) to prevent context pollution with stale stat... |
+| tmux-spawn | Reliable agent spawning in tmux with load-wait and verification |
+| trace | Evidence-driven tracing lane that orchestrates competing tracer hypotheses in Claude bu... |
+| trajectory-logging | ATIF trajectory serialization with ring buffer for post-hoc debugging, eval dataset con... |
+| ultraqa | QA cycling workflow - test, verify, fix, repeat until goal met |
+| ultrawork | Parallel execution engine for high-throughput task completion |
 
 </details>
 
 <details>
-<summary><strong>Strategy (8 skills)</strong> — used by: `alignment`, `analyst`, `architect`, `code-reviewer`, `commander`, `critic`, `document-specialist`, `explore`, `harness-researcher`, `paper-reader`, `planner`, `researcher`, `scientist`, `security-reviewer`, `tracer`</summary>
+<summary><strong>Strategy</strong> (8)</summary>
+<br>
+
+**Agents:** alignment, analyst, architect, code-reviewer, commander, critic, document-specialist, explore, harness-researcher, paper-reader, planner, researcher, scientist, security-reviewer, tracer
 
 | Skill | Description |
 |-------|-------------|
-| `avoid-feature-creep` | Prevent feature creep when building software, apps, and AI-powered products. Use this skill when pla |
-| `brand-guidelines` | Extract and codify brand guidelines from design assets into a reusable brand configuration. Use when |
-| `competitor-research` | Deep competitor research using browser agents to visit actual competitor sites. Captures screenshots |
-| `deep-interview` | Socratic deep interview with mathematical ambiguity gating before autonomous execution |
-| `plan` | Strategic planning with optional interview workflow |
-| `research` | Query, store, and loop on persistent research knowledge. Check prior experiments before building. |
-| `shape` | Plan the UX and UI for a feature before writing code. Runs a structured discovery interview, then pr |
-| `sprint-contracts` | Negotiate structured success criteria contracts between generator and evaluator agents before each i |
+| avoid-feature-creep | Prevent feature creep when building software, apps, and AI-powered products. Use this s... |
+| brand-guidelines | Extract and codify brand guidelines from design assets into a reusable brand configurat... |
+| competitor-research | Deep competitor research using browser agents to visit actual competitor sites. Capture... |
+| deep-interview | Socratic deep interview with mathematical ambiguity gating before autonomous execution |
+| plan | Strategic planning with optional interview workflow |
+| research | Query, store, and loop on persistent research knowledge. Check prior experiments before... |
+| shape | Plan the UX and UI for a feature before writing code. Runs a structured discovery inter... |
+| sprint-contracts | Negotiate structured success criteria contracts between generator and evaluator agents ... |
 
 </details>
 
 <details>
-<summary><strong>Design (17 skills)</strong> — used by: `backend`, `code-simplifier`, `debugger`, `designer`, `executor`, `git-master`, `ops`, `website`</summary>
+<summary><strong>Design</strong> (17)</summary>
+<br>
+
+**Agents:** backend, code-simplifier, debugger, designer, executor, git-master, ops, website
 
 | Skill | Description |
 |-------|-------------|
-| `adapt` | Adapt designs to work across different screen sizes, devices, contexts, or platforms. Implements bre |
-| `animate` | Review a feature and enhance it with purposeful animations, micro-interactions, and motion effects t |
-| `asset-generation` | Generate hero images, illustrations, and visual assets for SaaS websites using AI image APIs. Every  |
-| `bolder` | Amplify safe or boring designs to make them more visually interesting and stimulating. Increases imp |
-| `clarify` | Improve unclear UX copy, error messages, microcopy, labels, and instructions to make interfaces easi |
-| `colorize` | Add strategic color to features that are too monochromatic or lack visual interest, making interface |
-| `critique` | Evaluate design from a UX perspective, assessing visual hierarchy, information architecture, emotion |
-| `delight` | Add moments of joy, personality, and unexpected touches that make interfaces memorable and enjoyable |
-| `distill` | Strip designs to their essence by removing unnecessary complexity. Great design is simple, powerful, |
-| `impeccable` | Create distinctive, production-grade frontend interfaces with high design quality. Generates creativ |
-| `layout` | Improve layout, spacing, and visual rhythm. Fixes monotonous grids, inconsistent spacing, and weak v |
-| `optimize` | Diagnoses and fixes UI performance across loading speed, rendering, animations, images, and bundle s |
-| `overdrive` | Pushes interfaces past conventional limits with technically ambitious implementations — shaders, spr |
-| `polish` | Performs a final quality pass fixing alignment, spacing, consistency, and micro-detail issues before |
-| `quieter` | Tones down visually aggressive or overstimulating designs, reducing intensity while preserving quali |
-| `typeset` | Improves typography by fixing font choices, hierarchy, sizing, weight, and readability so text feels |
-| `website-creation` | Build production-quality SaaS websites with opinionated design presets. Use when creating any startu |
+| adapt | Adapt designs to work across different screen sizes, devices, contexts, or platforms. I... |
+| animate | Review a feature and enhance it with purposeful animations, micro-interactions, and mot... |
+| asset-generation | Generate hero images, illustrations, and visual assets for SaaS websites using AI image... |
+| bolder | Amplify safe or boring designs to make them more visually interesting and stimulating. ... |
+| clarify | Improve unclear UX copy, error messages, microcopy, labels, and instructions to make in... |
+| colorize | Add strategic color to features that are too monochromatic or lack visual interest, mak... |
+| critique | Evaluate design from a UX perspective, assessing visual hierarchy, information architec... |
+| delight | Add moments of joy, personality, and unexpected touches that make interfaces memorable ... |
+| distill | Strip designs to their essence by removing unnecessary complexity. Great design is simp... |
+| impeccable | Create distinctive, production-grade frontend interfaces with high design quality. Gene... |
+| layout | Improve layout, spacing, and visual rhythm. Fixes monotonous grids, inconsistent spacin... |
+| optimize | Diagnoses and fixes UI performance across loading speed, rendering, animations, images,... |
+| overdrive | Pushes interfaces past conventional limits with technically ambitious implementations —... |
+| polish | Performs a final quality pass fixing alignment, spacing, consistency, and micro-detail ... |
+| quieter | Tones down visually aggressive or overstimulating designs, reducing intensity while pre... |
+| typeset | Improves typography by fixing font choices, hierarchy, sizing, weight, and readability ... |
+| website-creation | Build production-quality SaaS websites with opinionated design presets. Use when creati... |
 
 </details>
 
 <details>
-<summary><strong>Build (15 skills)</strong> — used by: `backend`, `code-simplifier`, `debugger`, `designer`, `executor`, `git-master`, `ops`, `website`</summary>
+<summary><strong>Build</strong> (15)</summary>
+<br>
+
+**Agents:** backend, code-simplifier, debugger, designer, executor, git-master, ops, website
 
 | Skill | Description |
 |-------|-------------|
-| `convex` | Umbrella skill for all Convex development patterns. Routes to specific skills like convex-functions, |
-| `convex-agents` | Building AI agents with the Convex Agent component including thread management, tool integration, st |
-| `convex-best-practices` | Guidelines for building production-ready Convex apps covering function organization, query patterns, |
-| `convex-component-authoring` | How to create, structure, and publish self-contained Convex components with proper isolation, export |
-| `convex-cron-jobs` | Scheduled function patterns for background tasks including interval scheduling, cron expressions, jo |
-| `convex-file-storage` | Complete file handling including upload flows, serving files via URL, storing generated files from a |
-| `convex-functions` | Writing queries, mutations, actions, and HTTP actions with proper argument validation, error handlin |
-| `convex-http-actions` | External API integration and webhook handling including HTTP endpoint routing, request/response hand |
-| `convex-migrations` | Schema migration strategies for evolving applications including adding new fields, backfilling data, |
-| `convex-realtime` | Patterns for building reactive apps including subscription management, optimistic updates, cache beh |
-| `convex-schema-validator` | Defining and validating database schemas with proper typing, index configuration, optional fields, u |
-| `convex-security-audit` | Deep security review patterns for authorization logic, data access boundaries, action isolation, rat |
-| `convex-security-check` | Quick security audit checklist covering authentication, function exposure, argument validation, row- |
-| `stack-extend` | Add a new tool to the project stack at runtime. Reads the tool catalog for known configs, installs t |
-| `test-generator` | Auto-generate Vitest unit tests and Playwright e2e tests from product spec acceptance criteria using |
+| convex | Umbrella skill for all Convex development patterns. Routes to specific skills like conv... |
+| convex-agents | Building AI agents with the Convex Agent component including thread management, tool in... |
+| convex-best-practices | Guidelines for building production-ready Convex apps covering function organization, qu... |
+| convex-component-authoring | How to create, structure, and publish self-contained Convex components with proper isol... |
+| convex-cron-jobs | Scheduled function patterns for background tasks including interval scheduling, cron ex... |
+| convex-file-storage | Complete file handling including upload flows, serving files via URL, storing generated... |
+| convex-functions | Writing queries, mutations, actions, and HTTP actions with proper argument validation, ... |
+| convex-http-actions | External API integration and webhook handling including HTTP endpoint routing, request/... |
+| convex-migrations | Schema migration strategies for evolving applications including adding new fields, back... |
+| convex-realtime | Patterns for building reactive apps including subscription management, optimistic updat... |
+| convex-schema-validator | Defining and validating database schemas with proper typing, index configuration, optio... |
+| convex-security-audit | Deep security review patterns for authorization logic, data access boundaries, action i... |
+| convex-security-check | Quick security audit checklist covering authentication, function exposure, argument val... |
+| stack-extend | Add a new tool to the project stack at runtime. Reads the tool catalog for known config... |
+| test-generator | Auto-generate Vitest unit tests and Playwright e2e tests from product spec acceptance c... |
 
 </details>
 
 <details>
-<summary><strong>Quality (10 skills)</strong> — used by: `qa-tester`, `slop-cleaner`, `test-engineer`, `verifier`</summary>
+<summary><strong>Quality</strong> (10)</summary>
+<br>
+
+**Agents:** qa-tester, slop-cleaner, test-engineer, verifier
 
 | Skill | Description |
 |-------|-------------|
-| `accessibility-checker` | Run automated WCAG 2.1 AA accessibility audits using axe-core via Playwright. Use when implementing  |
-| `audit` | Run technical quality checks across accessibility, performance, theming, responsive design, and anti |
-| `cubic-codebase-scan` | Run periodic full-codebase security and quality scans via Cubic with automated GitHub Issue creation |
-| `eval-framework` | Evaluation framework using pass@k metrics to measure agent reliability with diff-based eval selectio |
-| `gap-analysis` | Compare a harness-built product against a reference product in the same category. Scores feature cou |
-| `performance-benchmark` | Monitor Core Web Vitals (LCP, INP, CLS) using Lighthouse CI with budget thresholds and deploy gating |
-| `security-scanner` | Multi-layered security scanning for dependency vulnerabilities, secret detection, and OWASP top 10 c |
-| `slop-cleaner` | Clean AI-generated code slop with a regression-safe, deletion-first workflow |
-| `verify` | Verify that a change really works before you claim completion |
-| `visual-qa-pipeline` | Screenshot every page with Playwright, feed to visual QA agent for design evaluation, report results |
+| accessibility-checker | Run automated WCAG 2.1 AA accessibility audits using axe-core via Playwright. Use when ... |
+| audit | Run technical quality checks across accessibility, performance, theming, responsive des... |
+| cubic-codebase-scan | Run periodic full-codebase security and quality scans via Cubic with automated GitHub I... |
+| eval-framework | Evaluation framework using pass@k metrics to measure agent reliability with diff-based ... |
+| gap-analysis | Compare a harness-built product against a reference product in the same category. Score... |
+| performance-benchmark | Monitor Core Web Vitals (LCP, INP, CLS) using Lighthouse CI with budget thresholds and ... |
+| security-scanner | Multi-layered security scanning for dependency vulnerabilities, secret detection, and O... |
+| slop-cleaner | Clean AI-generated code slop with a regression-safe, deletion-first workflow |
+| verify | Verify that a change really works before you claim completion |
+| visual-qa-pipeline | Screenshot every page with Playwright, feed to visual QA agent for design evaluation, r... |
 
 </details>
 
 <details>
-<summary><strong>Ship (5 skills)</strong> — used by: `deploy`, `git-master`, `ops`</summary>
+<summary><strong>Ship</strong> (5)</summary>
+<br>
+
+**Agents:** deploy, git-master, ops
 
 | Skill | Description |
 |-------|-------------|
-| `ci-cd-pipeline` | Set up and maintain a GitHub Actions CI/CD pipeline with parallel lint/typecheck/test jobs, staging  |
-| `dependency-manager` | Automate dependency management with scheduled security audits, auto-created PRs for safe updates, hu |
-| `deploy-pipeline` | Automated deploy pipeline for Vercel (frontend), Railway (backend), and Convex (database) with pre/p |
-| `legal-generator` | Generate Terms of Service, Privacy Policy, and Cookie Policy from startup type and jurisdiction. Use |
-| `seo-setup` | Generate comprehensive SEO assets from the product spec including sitemap.xml, robots.txt, meta tags |
+| ci-cd-pipeline | Set up and maintain a GitHub Actions CI/CD pipeline with parallel lint/typecheck/test j... |
+| dependency-manager | Automate dependency management with scheduled security audits, auto-created PRs for saf... |
+| deploy-pipeline | Automated deploy pipeline for Vercel (frontend), Railway (backend), and Convex (databas... |
+| legal-generator | Generate Terms of Service, Privacy Policy, and Cookie Policy from startup type and juri... |
+| seo-setup | Generate comprehensive SEO assets from the product spec including sitemap.xml, robots.t... |
 
 </details>
 
 <details>
-<summary><strong>Grow (9 skills)</strong> — used by: `growth`</summary>
+<summary><strong>Grow</strong> (9)</summary>
+<br>
+
+**Agents:** growth
 
 | Skill | Description |
 |-------|-------------|
-| `analytics-integration` | Integrate PostHog product analytics into a Next.js application with page views, event tracking, conv |
-| `blog-scaffolder` | Scaffold SEO-optimized blog post systems derived from product specs and competitor research. Use whe |
-| `data-driven-blog` | Create blog posts powered by unique data the SaaS generates. Use instead of generic AI content. Post |
-| `landing-page-optimizer` | Run hypothesis-driven A/B tests on the landing page, measure conversion improvements via PostHog fea |
-| `programmatic-seo` | Generate programmatic SEO pages at scale from structured data. Use when a SaaS has a natural "matrix |
-| `seo-chat` | Query SEO Chat API for sourced SEO answers, URL audits, and content strategy. Use when optimizing pa |
-| `social-intelligence` | Monitor social media platforms (Reddit, Twitter/X, LinkedIn, Hacker News) for startup mentions, comp |
-| `social-media` | Generate and schedule platform-adapted social media posts with brand-consistent voice. Use when the  |
-| `user-feedback-collector` | Build an in-app feedback widget that collects user feedback, categorizes it by type (bug, feature re |
+| analytics-integration | Integrate PostHog product analytics into a Next.js application with page views, event t... |
+| blog-scaffolder | Scaffold SEO-optimized blog post systems derived from product specs and competitor rese... |
+| data-driven-blog | Create blog posts powered by unique data the SaaS generates. Use instead of generic AI ... |
+| landing-page-optimizer | Run hypothesis-driven A/B tests on the landing page, measure conversion improvements vi... |
+| programmatic-seo | Generate programmatic SEO pages at scale from structured data. Use when a SaaS has a na... |
+| seo-chat | Query SEO Chat API for sourced SEO answers, URL audits, and content strategy. Use when ... |
+| social-intelligence | Monitor social media platforms (Reddit, Twitter/X, LinkedIn, Hacker News) for startup m... |
+| social-media | Generate and schedule platform-adapted social media posts with brand-consistent voice. ... |
+| user-feedback-collector | Build an in-app feedback widget that collects user feedback, categorizes it by type (bu... |
 
 </details>
 
 <details>
-<summary><strong>Operate (6 skills)</strong> — used by: `deploy`, `git-master`, `ops`</summary>
+<summary><strong>Operate</strong> (6)</summary>
+<br>
+
+**Agents:** deploy, git-master, ops
 
 | Skill | Description |
 |-------|-------------|
-| `cost-tracker` | Per-agent per-session cost tracking with configurable ceilings and model tier optimization. |
-| `error-tracking` | Integrate error tracking with Sentry for frontend and backend applications. Capture, classify, dedup |
-| `incident-response` | Automated incident lifecycle from detection through diagnosis, fix, deploy, verification, and post-m |
-| `log-aggregation` | Aggregate and search logs from Vercel and Railway with structured format, ring buffer storage, and a |
-| `post-deploy-loop` | Continuous post-deploy monitoring and growth loop. Use after deploying a startup to keep it running, |
-| `uptime-monitor` | Continuous health check polling with failure detection, consecutive-failure thresholds, Slack alerts |
+| cost-tracker | Per-agent per-session cost tracking with configurable ceilings and model tier optimizat... |
+| error-tracking | Integrate error tracking with Sentry for frontend and backend applications. Capture, cl... |
+| incident-response | Automated incident lifecycle from detection through diagnosis, fix, deploy, verificatio... |
+| log-aggregation | Aggregate and search logs from Vercel and Railway with structured format, ring buffer s... |
+| post-deploy-loop | Continuous post-deploy monitoring and growth loop. Use after deploying a startup to kee... |
+| uptime-monitor | Continuous health check polling with failure detection, consecutive-failure thresholds,... |
 
 </details>
 
 <details>
-<summary><strong>Comms (6 skills)</strong> — used by: `docs`, `writer`, `writing`</summary>
+<summary><strong>Comms</strong> (6)</summary>
+<br>
+
+**Agents:** docs, writer, writing
 
 | Skill | Description |
 |-------|-------------|
-| `anti-ai-writing` | Detect and eliminate signs of AI-generated writing. Use when producing any user-facing text — blog p |
-| `contributing-guide` | Auto-generate a CONTRIBUTING.md covering dev setup, coding standards, and PR process. Use when the u |
-| `documentation-generator` | Auto-generate user-facing documentation including API reference, user guides, and changelog. Use whe |
-| `investor-updates` | Structured milestone progress reports posted to Slack with metrics from GitHub, CI, and cost telemet |
-| `readme-generator` | Auto-generate a README.md with product overview, tech stack, setup instructions, and architecture. U |
-| `slack-course-correction` | Detect user feedback in Slack threads, classify intent, and propagate direction changes to specs, Is |
+| anti-ai-writing | Detect and eliminate signs of AI-generated writing. Use when producing any user-facing ... |
+| contributing-guide | Auto-generate a CONTRIBUTING.md covering dev setup, coding standards, and PR process. U... |
+| documentation-generator | Auto-generate user-facing documentation including API reference, user guides, and chang... |
+| investor-updates | Structured milestone progress reports posted to Slack with metrics from GitHub, CI, and... |
+| readme-generator | Auto-generate a README.md with product overview, tech stack, setup instructions, and ar... |
+| slack-course-correction | Detect user feedback in Slack threads, classify intent, and propagate direction changes... |
 
 </details>
 
 <details>
-<summary><strong>Uncategorized (25 skills)</strong></summary>
+<summary><strong>Uncategorized</strong> (25)</summary>
+<br>
 
 | Skill | Description |
 |-------|-------------|
-| `ai-slop-cleaner` | Clean AI-generated code slop with a regression-safe, deletion-first workflow and optional reviewer-o |
-| `ask` | Process-first advisor routing for Claude, Codex, or Gemini via `omc ask`, with artifact capture and  |
-| `ccg` | Claude-Codex-Gemini tri-model orchestration via /ask codex + /ask gemini, then Claude synthesizes re |
-| `configure-notifications` | Configure notification integrations (Telegram, Discord, Slack) via natural language |
-| `deepinit` | Deep codebase initialization with hierarchical AGENTS.md documentation |
-| `external-context` | Invoke parallel document-specialist agents for external web searches and documentation lookup |
-| `hud` | Configure HUD display options (layout, presets, display elements) |
-| `learner` | Extract a learned skill from the current conversation |
-| `mcp-setup` | Configure popular MCP servers for enhanced agent capabilities |
-| `omc-doctor` | Diagnose and fix oh-my-claudecode installation issues |
-| `omc-reference` | OMC agent catalog, available tools, team pipeline routing, commit protocol, and skills registry. Aut |
-| `omc-setup` | Install or refresh oh-my-claudecode for plugin, npm, and local-dev setups from the canonical setup f |
-| `omc-teams` | CLI-team runtime for claude, codex, or gemini workers in tmux panes when you need process-based para |
-| `project-session-manager` | Worktree-first dev environment manager for issues, PRs, and features with optional tmux sessions |
-| `ralplan` | Consensus planning entrypoint that auto-gates vague ralph/autopilot/team requests before execution |
-| `release` | Generic release assistant — analyzes repo release rules, caches them in .omc/RELEASE_RULE.md, then g |
-| `remember` | Review reusable project knowledge and decide what belongs in project memory, notepad, or durable doc |
-| `review` | Third-party review of finished Claude sessions. Reads completion signals written by the plugin's Sto |
-| `sciomc` | Orchestrate parallel scientist agents for comprehensive analysis with AUTO mode |
-| `setup` | Use first for install/update routing — sends setup, doctor, or MCP requests to the correct OMC setup |
-| `skill` | Manage local skills - list, add, remove, search, edit, setup wizard |
-| `skillify` | Turn a repeatable workflow from the current session into a reusable OMC skill draft |
-| `visual-verdict` | Structured visual QA verdict for screenshot-to-reference comparisons |
-| `wiki` | LLM Wiki — persistent markdown knowledge base that compounds across sessions (Karpathy model) |
-| `writer-memory` | Agentic memory system for writers - track characters, relationships, scenes, and themes |
+| ai-slop-cleaner | Clean AI-generated code slop with a regression-safe, deletion-first workflow and option... |
+| ask | Process-first advisor routing for Claude, Codex, or Gemini via `omc ask`, with artifact... |
+| ccg | Claude-Codex-Gemini tri-model orchestration via /ask codex + /ask gemini, then Claude s... |
+| configure-notifications | Configure notification integrations (Telegram, Discord, Slack) via natural language |
+| deepinit | Deep codebase initialization with hierarchical AGENTS.md documentation |
+| external-context | Invoke parallel document-specialist agents for external web searches and documentation ... |
+| hud | Configure HUD display options (layout, presets, display elements) |
+| learner | Extract a learned skill from the current conversation |
+| mcp-setup | Configure popular MCP servers for enhanced agent capabilities |
+| omc-doctor | Diagnose and fix oh-my-claudecode installation issues |
+| omc-reference | OMC agent catalog, available tools, team pipeline routing, commit protocol, and skills ... |
+| omc-setup | Install or refresh oh-my-claudecode for plugin, npm, and local-dev setups from the cano... |
+| omc-teams | CLI-team runtime for claude, codex, or gemini workers in tmux panes when you need proce... |
+| project-session-manager | Worktree-first dev environment manager for issues, PRs, and features with optional tmux... |
+| ralplan | Consensus planning entrypoint that auto-gates vague ralph/autopilot/team requests befor... |
+| release | Generic release assistant — analyzes repo release rules, caches them in .omc/RELEASE_RU... |
+| remember | Review reusable project knowledge and decide what belongs in project memory, notepad, o... |
+| review | Third-party review of finished Claude sessions. Reads completion signals written by the... |
+| sciomc | Orchestrate parallel scientist agents for comprehensive analysis with AUTO mode |
+| setup | Use first for install/update routing — sends setup, doctor, or MCP requests to the corr... |
+| skill | Manage local skills - list, add, remove, search, edit, setup wizard |
+| skillify | Turn a repeatable workflow from the current session into a reusable OMC skill draft |
+| visual-verdict | Structured visual QA verdict for screenshot-to-reference comparisons |
+| wiki | LLM Wiki — persistent markdown knowledge base that compounds across sessions (Karpathy ... |
+| writer-memory | Agentic memory system for writers - track characters, relationships, scenes, and themes |
 
 </details>
-
 
 ## Canonical Stack
 
