@@ -41,25 +41,50 @@ All 121 skills become available as `/startup-harness:<skill-name>` and 32 agents
 
 ### Codex CLI
 
+Install Codex CLI if you haven't already:
+
+```bash
+npm install -g @openai/codex
+```
+
+Then clone this repo and run the setup script:
+
 ```bash
 git clone https://github.com/Cheggin/request-for-startups
 cd request-for-startups
 node .harness/hooks/setup.mjs --runtime codex
 ```
 
-This generates `.codex/config.toml`, `.codex/hooks.json`, symlinks skills to `.agents/skills/`, and creates `AGENTS.md`. Skills become available as `$<skill-name>`.
+This generates:
 
-### Existing Repo
+| File | Purpose |
+|------|---------|
+| `.codex/config.toml` | Feature flags, skill paths, MCP server config |
+| `.codex/hooks.json` | All 10 enforcement hooks wired to Codex lifecycle events |
+| `.agents/skills/` | Symlink to `skills/` for Codex skill discovery |
+| `AGENTS.md` | Agent coordination contract (Codex equivalent of CLAUDE.md) |
 
-To add harness hooks and agent governance to any existing repo:
+After setup, launch Codex in the repo:
 
 ```bash
-# Copy .harness/ into your repo, then:
-node .harness/hooks/setup.mjs              # auto-detects runtime
+codex
+```
+
+Skills are available as `$<skill-name>` (e.g., `$startup-init`, `$plan`, `$team`). All hooks (scope enforcement, config protection, deploy gates, commit validation) work identically to Claude Code.
+
+### Existing Repo (Claude Code or Codex)
+
+To add harness governance to any existing project:
+
+```bash
+# Copy .harness/ and skills/ into your repo, then:
+node .harness/hooks/setup.mjs              # auto-detects installed runtime
 node .harness/hooks/setup.mjs --runtime codex   # Codex only
 node .harness/hooks/setup.mjs --runtime claude  # Claude Code only
 node .harness/hooks/setup.mjs --runtime both    # both runtimes
 ```
+
+The setup script auto-detects which CLI tools are on your PATH and generates the right config. No npm package or external dependencies required -- the hooks are vanilla Node.js.
 
 ### Update / Uninstall (Claude Code)
 
