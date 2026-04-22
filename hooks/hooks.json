@@ -71,21 +71,8 @@
         ]
       },
       {
-        "matcher": "Read",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/run.cjs ${CLAUDE_PLUGIN_ROOT}/hooks/gateguard.mjs"
-          }
-        ]
-      },
-      {
         "matcher": "Edit",
         "hooks": [
-          {
-            "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/run.cjs ${CLAUDE_PLUGIN_ROOT}/hooks/gateguard.mjs"
-          },
           {
             "type": "command",
             "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/run.cjs ${CLAUDE_PLUGIN_ROOT}/hooks/skill-chain-enforcer.mjs"
