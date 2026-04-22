@@ -16,6 +16,9 @@
  *   node .harness/hooks/skill-config.mjs chain add-gates <chain> <pattern1,pattern2,...>
  *   node .harness/hooks/skill-config.mjs chain delete <name>
  *   node .harness/hooks/skill-config.mjs chain show <name>
+ *   node .harness/hooks/skill-config.mjs hook list
+ *   node .harness/hooks/skill-config.mjs hook enable <name>
+ *   node .harness/hooks/skill-config.mjs hook disable <name>
  */
 
 import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
@@ -28,7 +31,7 @@ const SKILLS_DIR = join(PROJECT_ROOT, 'skills');
 const CHAINS_JSON = join(PROJECT_ROOT, 'chains', 'skill-chains.json');
 
 function parseSimpleYaml(content) {
-  const result = { disabled: [], chains: {} };
+  const result = { disabled: [], hooks: { disabled: [] }, chains: {} };
   let currentSection = null;
   let currentChain = null;
   let currentListKey = null;
@@ -39,10 +42,15 @@ function parseSimpleYaml(content) {
     if (trimmed.startsWith('#') || trimmed === '') continue;
     const indent = line.length - line.trimStart().length;
 
-    if (trimmed === 'disabled:' || trimmed === 'disabled: []') {
+    if (indent === 0 && (trimmed === 'disabled:' || trimmed === 'disabled: []')) {
       currentSection = 'disabled';
       currentChain = null;
       if (trimmed === 'disabled: []') result.disabled = [];
+      continue;
+    }
+    if (indent === 0 && (trimmed === 'hooks:')) {
+      currentSection = 'hooks';
+      currentChain = null;
       continue;
     }
     if (trimmed === 'chains:' || trimmed === 'chains: {}') {
@@ -55,6 +63,18 @@ function parseSimpleYaml(content) {
     if (currentSection === 'disabled' && trimmed.startsWith('- ')) {
       result.disabled.push(trimmed.slice(2).trim());
       continue;
+    }
+
+    if (currentSection === 'hooks') {
+      if (trimmed === 'disabled: []' || trimmed === 'disabled:') {
+        currentListKey = 'hooks-disabled';
+        if (trimmed === 'disabled: []') result.hooks.disabled = [];
+        continue;
+      }
+      if (currentListKey === 'hooks-disabled' && trimmed.startsWith('- ')) {
+        result.hooks.disabled.push(trimmed.slice(2).trim());
+        continue;
+      }
     }
 
     if (currentSection === 'chains') {
@@ -112,7 +132,7 @@ function parseSimpleYaml(content) {
 
 function serializeYaml(config) {
   let out = '# Skill Configuration\n';
-  out += '# Controls which skills are active and defines custom skill chains.\n';
+  out += '# Controls which skills and hooks are active and defines custom skill chains.\n';
   out += '# Read by .harness/hooks/setup.mjs and .harness/hooks/skill-config.mjs.\n\n';
 
   if (config.disabled.length === 0) {
@@ -121,6 +141,19 @@ function serializeYaml(config) {
     out += 'disabled:\n';
     for (const s of config.disabled.sort()) {
       out += `  - ${s}\n`;
+    }
+  }
+
+  out += '\n';
+
+  const hooksDisabled = config.hooks?.disabled || [];
+  out += 'hooks:\n';
+  if (hooksDisabled.length === 0) {
+    out += '  disabled: []\n';
+  } else {
+    out += '  disabled:\n';
+    for (const h of hooksDisabled.sort()) {
+      out += `    - ${h}\n`;
     }
   }
 
@@ -157,9 +190,12 @@ function serializeYaml(config) {
 
 function loadConfig() {
   if (!existsSync(SKILLS_YML)) {
-    return { disabled: [], chains: {} };
+    return { disabled: [], hooks: { disabled: [] }, chains: {} };
   }
-  return parseSimpleYaml(readFileSync(SKILLS_YML, 'utf-8'));
+  const config = parseSimpleYaml(readFileSync(SKILLS_YML, 'utf-8'));
+  if (!config.hooks) config.hooks = { disabled: [] };
+  if (!config.hooks.disabled) config.hooks.disabled = [];
+  return config;
 }
 
 function saveConfig(config) {
@@ -425,6 +461,75 @@ function cmdChainShow(name) {
   }
 }
 
+const ALL_HOOKS = [
+  'auto-finish',
+  'branch-enforcer',
+  'config-protection',
+  'deploy-gate',
+  'inter-agent-signal',
+  'log-commands',
+  'metrics-gate',
+  'scope-enforcer',
+  'validate-commit-msg',
+  'validate-issue-create',
+];
+
+function cmdHookList() {
+  const config = loadConfig();
+  const disabledSet = new Set(config.hooks.disabled);
+
+  const enabled = ALL_HOOKS.filter(h => !disabledSet.has(h));
+  const disabled = ALL_HOOKS.filter(h => disabledSet.has(h));
+
+  console.log(`Hooks: ${ALL_HOOKS.length} total, ${enabled.length} enabled, ${disabled.length} disabled\n`);
+
+  for (const h of ALL_HOOKS) {
+    const status = disabledSet.has(h) ? 'DISABLED' : 'enabled';
+    console.log(`  ${status === 'DISABLED' ? 'x' : '-'} ${h} ${status === 'DISABLED' ? '(DISABLED)' : ''}`);
+  }
+
+  if (disabled.length > 0) {
+    console.log(`\nRun 'node .harness/hooks/setup.mjs --runtime both' to apply changes.`);
+  }
+}
+
+function cmdHookEnable(name) {
+  if (!ALL_HOOKS.includes(name)) {
+    console.error(`Hook "${name}" not found. Available: ${ALL_HOOKS.join(', ')}`);
+    process.exit(1);
+  }
+
+  const config = loadConfig();
+  const idx = config.hooks.disabled.indexOf(name);
+  if (idx === -1) {
+    console.log(`Hook "${name}" is already enabled.`);
+    return;
+  }
+
+  config.hooks.disabled.splice(idx, 1);
+  saveConfig(config);
+  console.log(`Enabled hook: ${name}`);
+  console.log(`Run 'node .harness/hooks/setup.mjs' to regenerate runtime configs.`);
+}
+
+function cmdHookDisable(name) {
+  if (!ALL_HOOKS.includes(name)) {
+    console.error(`Hook "${name}" not found. Available: ${ALL_HOOKS.join(', ')}`);
+    process.exit(1);
+  }
+
+  const config = loadConfig();
+  if (config.hooks.disabled.includes(name)) {
+    console.log(`Hook "${name}" is already disabled.`);
+    return;
+  }
+
+  config.hooks.disabled.push(name);
+  saveConfig(config);
+  console.log(`Disabled hook: ${name}`);
+  console.log(`Run 'node .harness/hooks/setup.mjs' to regenerate runtime configs.`);
+}
+
 // --- CLI dispatch ---
 const [,, cmd, ...args] = process.argv;
 
@@ -440,6 +545,22 @@ switch (cmd) {
     break;
   case 'status':
     cmdStatus(args[0]);
+    break;
+  case 'hook':
+    switch (args[0]) {
+      case 'list':
+        cmdHookList();
+        break;
+      case 'enable':
+        cmdHookEnable(args[1]);
+        break;
+      case 'disable':
+        cmdHookDisable(args[1]);
+        break;
+      default:
+        console.error('Unknown hook command. Use: list, enable, disable');
+        process.exit(1);
+    }
     break;
   case 'chain':
     switch (args[0]) {
@@ -480,5 +601,8 @@ switch (cmd) {
     console.log('  node .harness/hooks/skill-config.mjs chain add-gates <chain> <pattern1,pattern2>');
     console.log('  node .harness/hooks/skill-config.mjs chain delete <name>');
     console.log('  node .harness/hooks/skill-config.mjs chain show <name>');
+    console.log('  node .harness/hooks/skill-config.mjs hook list');
+    console.log('  node .harness/hooks/skill-config.mjs hook enable <name>');
+    console.log('  node .harness/hooks/skill-config.mjs hook disable <name>');
     break;
 }

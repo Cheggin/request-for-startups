@@ -1,7 +1,10 @@
 # Skill Configuration
-# Controls which skills are active and defines custom skill chains.
+# Controls which skills and hooks are active and defines custom skill chains.
 # Read by .harness/hooks/setup.mjs and .harness/hooks/skill-config.mjs.
 
 disabled: []
+
+hooks:
+  disabled: []
 
 chains: {}

@@ -24,8 +24,32 @@ const CODEX_DIR = join(PROJECT_ROOT, '.codex');
 const AGENTS_SKILLS_DIR = join(PROJECT_ROOT, '.agents', 'skills');
 const SKILLS_DIR = join(PROJECT_ROOT, 'skills');
 
+const SKILLS_YML = join(HARNESS_DIR, 'skills.yml');
+
 function log(msg) {
   console.log(`[harness-setup] ${msg}`);
+}
+
+function loadDisabledHooks() {
+  if (!existsSync(SKILLS_YML)) return new Set();
+  const content = readFileSync(SKILLS_YML, 'utf-8');
+  const hooks = [];
+  let inHooks = false;
+  let inDisabled = false;
+  for (const line of content.split('\n')) {
+    const trimmed = line.trim();
+    const indent = line.length - line.trimStart().length;
+    if (indent === 0 && trimmed === 'hooks:') { inHooks = true; inDisabled = false; continue; }
+    if (indent === 0 && !trimmed.startsWith('#') && trimmed !== '') { inHooks = false; continue; }
+    if (inHooks && trimmed.startsWith('disabled:')) { inDisabled = true; if (trimmed === 'disabled: []') break; continue; }
+    if (inHooks && inDisabled && trimmed.startsWith('- ')) { hooks.push(trimmed.slice(2).trim()); continue; }
+    if (inHooks && inDisabled && indent <= 2 && !trimmed.startsWith('-')) break;
+  }
+  return new Set(hooks);
+}
+
+function isHookEnabled(name, disabledSet) {
+  return !disabledSet.has(name);
 }
 
 function detectRuntime() {
@@ -43,62 +67,62 @@ function detectRuntime() {
 
 function generateClaudeSettings() {
   const hooksRelative = '.harness/hooks';
+  const disabled = loadDisabledHooks();
 
-  const settings = {
-    hooks: {
-      Stop: [
-        {
-          hooks: [{
-            type: 'command',
-            command: `node ${hooksRelative}/inter-agent-signal.mjs`,
-          }],
-        },
-        {
-          hooks: [{
-            type: 'command',
-            command: `node ${hooksRelative}/auto-finish.mjs`,
-          }],
-        },
-      ],
-      PermissionRequest: [
-        {
-          hooks: [{
-            type: 'command',
-            command: `node ${hooksRelative}/inter-agent-signal.mjs`,
-          }],
-        },
-      ],
-      PreToolUse: [
-        {
-          matcher: 'Edit',
-          hooks: [
-            { type: 'command', command: `node ${hooksRelative}/config-protection.mjs` },
-            { type: 'command', command: `node ${hooksRelative}/scope-enforcer.mjs` },
-            { type: 'command', command: `node ${hooksRelative}/metrics-gate.mjs` },
-          ],
-        },
-        {
-          matcher: 'Write',
-          hooks: [
-            { type: 'command', command: `node ${hooksRelative}/config-protection.mjs` },
-            { type: 'command', command: `node ${hooksRelative}/scope-enforcer.mjs` },
-            { type: 'command', command: `node ${hooksRelative}/metrics-gate.mjs` },
-          ],
-        },
-        {
-          matcher: 'Bash',
-          hooks: [
-            { type: 'command', command: `bash ${hooksRelative}/log-commands.sh` },
-            { type: 'command', command: `node ${hooksRelative}/validate-commit-msg.mjs` },
-            { type: 'command', command: `node ${hooksRelative}/validate-issue-create.mjs` },
-            { type: 'command', command: `node ${hooksRelative}/deploy-gate.mjs` },
-            { type: 'command', command: `node ${hooksRelative}/metrics-gate.mjs` },
-            { type: 'command', command: `node ${hooksRelative}/branch-enforcer.mjs` },
-          ],
-        },
-      ],
-    },
-  };
+  function h(name, cmd) {
+    if (!isHookEnabled(name, disabled)) return null;
+    return { type: 'command', command: cmd };
+  }
+
+  const stopHooks = [
+    h('inter-agent-signal', `node ${hooksRelative}/inter-agent-signal.mjs`),
+    h('auto-finish', `node ${hooksRelative}/auto-finish.mjs`),
+  ].filter(Boolean);
+
+  const permHooks = [
+    h('inter-agent-signal', `node ${hooksRelative}/inter-agent-signal.mjs`),
+  ].filter(Boolean);
+
+  const editHooks = [
+    h('config-protection', `node ${hooksRelative}/config-protection.mjs`),
+    h('scope-enforcer', `node ${hooksRelative}/scope-enforcer.mjs`),
+    h('metrics-gate', `node ${hooksRelative}/metrics-gate.mjs`),
+  ].filter(Boolean);
+
+  const writeHooks = [
+    h('config-protection', `node ${hooksRelative}/config-protection.mjs`),
+    h('scope-enforcer', `node ${hooksRelative}/scope-enforcer.mjs`),
+    h('metrics-gate', `node ${hooksRelative}/metrics-gate.mjs`),
+  ].filter(Boolean);
+
+  const bashHooks = [
+    h('log-commands', `bash ${hooksRelative}/log-commands.sh`),
+    h('validate-commit-msg', `node ${hooksRelative}/validate-commit-msg.mjs`),
+    h('validate-issue-create', `node ${hooksRelative}/validate-issue-create.mjs`),
+    h('deploy-gate', `node ${hooksRelative}/deploy-gate.mjs`),
+    h('metrics-gate', `node ${hooksRelative}/metrics-gate.mjs`),
+    h('branch-enforcer', `node ${hooksRelative}/branch-enforcer.mjs`),
+  ].filter(Boolean);
+
+  const preToolUse = [];
+  if (editHooks.length > 0) preToolUse.push({ matcher: 'Edit', hooks: editHooks });
+  if (writeHooks.length > 0) preToolUse.push({ matcher: 'Write', hooks: writeHooks });
+  if (bashHooks.length > 0) preToolUse.push({ matcher: 'Bash', hooks: bashHooks });
+
+  const settings = { hooks: {} };
+  if (stopHooks.length > 0) {
+    settings.hooks.Stop = stopHooks.map(hook => ({ hooks: [hook] }));
+  }
+  if (permHooks.length > 0) {
+    settings.hooks.PermissionRequest = [{ hooks: permHooks }];
+  }
+  if (preToolUse.length > 0) {
+    settings.hooks.PreToolUse = preToolUse;
+  }
+
+  if (disabled.size > 0) {
+    log(`Disabled hooks: ${[...disabled].join(', ')}`);
+  }
 
   mkdirSync(CLAUDE_DIR, { recursive: true });
   const settingsPath = join(CLAUDE_DIR, 'settings.json');
