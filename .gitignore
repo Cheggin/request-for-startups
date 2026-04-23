@@ -28,9 +28,13 @@ out/
 .harness/handoffs/
 .harness/metrics/
 .harness/learnings/
+.harness/command-log.txt
+*/.harness/
+**/.harness/signals/
 
 # OMC state
 .omc/
+**/.omc/
 
 # Claude Code local state
 .claude/command-log.txt
