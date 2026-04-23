@@ -30,8 +30,11 @@ out/
 .harness/learnings/
 
 # OMC state
-.omc/state/
-.omc/sessions/
+.omc/
+
+# Claude Code local state
+.claude/command-log.txt
+.claude/scheduled_tasks.lock
 
 # Firecrawl scratch
 .firecrawl/
@@ -69,8 +72,8 @@ out/
 .playwright-mcp/
 skills-lock.json
 
-# Product references — large cloned repos, not committed
-reference/products/
+# Reference repos — large cloned repos, not committed
+reference/
 
 # Personal planning/working documents
 reagan_*.md
