@@ -16,7 +16,16 @@ function getColor(count: number, max: number): string {
   return COLORS.heatmapMax;
 }
 
-const DAY_LABELS = ["Today", "1d", "2d", "3d", "4d", "5d", "6d"];
+const DAY_LABELS = (() => {
+  const days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  const labels: string[] = [];
+  const now = new Date();
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(now); d.setDate(d.getDate() - i);
+    labels.push(i === 0 ? "Today" : days[d.getDay()]);
+  }
+  return labels;
+})();
 const HOUR_LABELS = ["0", "6", "12", "18"];
 
 export function Heatmap({ data }: HeatmapProps) {

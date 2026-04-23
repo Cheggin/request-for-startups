@@ -140,7 +140,12 @@ export function getSkillChain(): SkillChainState | null {
     }
   }
 
-  const flowName = "website-end-to-end";
+  let flowName = Object.keys(chains.flows)[0] || "website-end-to-end";
+  let bestCount = 0;
+  for (const [fn, f] of Object.entries(chains.flows)) {
+    const count = f.phases.reduce((s, p) => s + p.required.filter((sk) => completedSkills.has(sk)).length, 0);
+    if (count > bestCount) { bestCount = count; flowName = fn; }
+  }
   const flow = chains.flows[flowName];
   if (!flow) return null;
 
@@ -194,7 +199,7 @@ export function getTraceEvents(): TraceEvent[] {
         timestamp: stat.mtimeMs,
         type,
         file,
-        content: content || file.replace(/\.(done|needs-approval|signal)$/, ""),
+        content: (() => { try { const p = JSON.parse(content); return p.agent ? p.agent + " · " + (p.session_id || "").slice(0,8) : file.replace(/\.json$/, ""); } catch { return file.replace(/\.json$/, ""); } })(),
       });
     } catch {}
   }

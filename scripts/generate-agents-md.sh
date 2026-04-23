@@ -25,14 +25,14 @@ through tmux grids, GitHub Issues, and loop-based automation.
 ## Build & Test
 
 ```bash
-# Dashboard
-cd packages/harness-dashboard && npm run dev
+# Install runtime deps (ajv, ajv-formats, better-sqlite3)
+npm install
 
-# Run all startup-init test levels
-bash scripts/commander-issue-loop.sh
+# Run the hook test suite
+npm run test:hooks
 
-# Lint / typecheck (per-package)
-npm run lint && npm run typecheck
+# Link the omc binary onto PATH
+npm link
 ```
 
 > [!IMPORTANT]
@@ -43,16 +43,18 @@ npm run lint && npm run typecheck
 
 ```
 .harness/                 # Harness configuration
-  agent-categories.yml    # Agent role definitions
+  agents/*.json           # Per-agent scope config (writable/readonly/blocked)
+  agent-categories.yml    # Category -> skills mapping
   loops.yml               # Loop automation registry
   stacks.yml              # Tech stack definitions
-  secrets.env             # Service credentials
-skills/                   # Skill definitions (SKILL.md per skill)
-packages/
-  harness-dashboard/      # Next.js founder command center
-  website-template/       # Startup website scaffold
+  secrets.env             # Service credentials (gitignored)
+skills/                   # Skill definitions (SKILL.md per skill, 121 total)
+agents/                   # Agent prompts (*.md per agent, 32 total)
+hooks/                    # Plugin-shipped hooks (node .mjs/.cjs)
+dist/                     # Vendored OMC compiled runtime
+bridge/                   # Bundled daemons (cli.cjs, mcp-server.cjs, team-bridge.cjs)
+chains/skill-chains.json  # Deterministic flow enforcement
 scripts/                  # Automation scripts
-test-runs/                # Test run outputs
 ```
 
 HEADER
