@@ -76,7 +76,7 @@ export function evaluate(chains, filePath, skillHistory) {
     };
   }
   const currentPhaseIdx = phaseIndexOfSkill(flow.phases, lastPhaseSkill);
-  for (let i = 0;i < currentPhaseIdx; i++) {
+  for (let i = 0;i <= currentPhaseIdx; i++) {
     const phase = flow.phases[i];
     if (!isPhaseComplete(phase, fired)) {
       const missing = missingFromPhase(phase, fired);
